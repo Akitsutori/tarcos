@@ -200,9 +200,9 @@ export const RaidScreen: React.FC<RaidScreenProps> = ({
               <div>
                 <span className="text-slate-500">Eff. Accuracy</span>
                 <div className="text-slate-300 font-bold">
-                  {weaponStats.accuracy + pmc.skills.weaponSkill.level}%
+                  {weaponStats.accuracy + pmc.skills.weaponSkill.level + (hideout.shootingRange.level >= 3 ? 6 : hideout.shootingRange.level === 2 ? 3 : hideout.shootingRange.level === 1 ? 1 : 0)}%
                   <span className="text-[9px] text-emerald-400 font-normal ml-1">
-                    (+{pmc.skills.weaponSkill.level} skill)
+                    (+{pmc.skills.weaponSkill.level} skill{hideout.shootingRange.level > 0 ? ` +${hideout.shootingRange.level >= 3 ? 6 : hideout.shootingRange.level === 2 ? 3 : 1} range` : ""})
                   </span>
                 </div>
               </div>

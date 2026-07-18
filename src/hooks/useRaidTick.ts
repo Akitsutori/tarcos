@@ -42,12 +42,13 @@ export const useRaidTick = (
         }
 
         if (nutritionLvl >= 1) {
+          const nutritionRecovery = nutritionLvl >= 2 ? 4 : 2;
           if (pmc.energy < pmc.maxEnergy) {
-            pmc.energy = Math.min(pmc.maxEnergy, pmc.energy + 2);
+            pmc.energy = Math.min(pmc.maxEnergy, pmc.energy + nutritionRecovery);
             hasUpdates = true;
           }
           if (pmc.hydration < pmc.maxHydration) {
-            pmc.hydration = Math.min(pmc.maxHydration, pmc.hydration + 2);
+            pmc.hydration = Math.min(pmc.maxHydration, pmc.hydration + nutritionRecovery);
             hasUpdates = true;
           }
         }

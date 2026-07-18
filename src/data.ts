@@ -450,9 +450,9 @@ export const createInitialHideout = (): Hideout => {
   return {
     medstation: makeModule(
       "medstation", "Medstation", "Craft medkits and passive health recovery station.", "HeartPulse",
-      "Passive HP regeneration +2 HP/min out of raid",
-      "Craft advanced medical supplies & +5 HP/min out of raid",
-      "PMC heals automatically for free after raid and +10 HP/min passive regeneration",
+      "Passive HP regeneration: +2 HP per tick out of raid",
+      "Craft advanced medical supplies & +5 HP per tick out of raid",
+      "Powerful passive HP regeneration: +12 HP per tick out of raid",
       {
         1: { cost: 15000, reqItems: [{ itemId: "bolts", quantity: 2 }, { itemId: "nuts", quantity: 2 }] },
         2: { cost: 50000, reqItems: [{ itemId: "bolts", quantity: 4 }, { itemId: "nuts", quantity: 4 }, { itemId: "hose", quantity: 2 }] },
@@ -461,9 +461,9 @@ export const createInitialHideout = (): Hideout => {
     ),
     workbench: makeModule(
       "workbench", "Workbench", "Enables advanced weapon modification stat tuning and ammo assembly.", "Hammer",
-      "+5% Weapon Ergonomics and -3% Recoil across all weapons",
-      "Enables crafting of high-tier weapon attachments",
-      "+12% Weapon Ergonomics and -10% Weapon Recoil on all weapons",
+      "+5 Weapon Ergonomics and -3% Recoil across all weapons",
+      "+8 Weapon Ergonomics and -6% Recoil across all weapons",
+      "+12 Weapon Ergonomics and -10% Recoil on all weapons",
       {
         1: { cost: 20000, reqItems: [{ itemId: "bolts", quantity: 3 }, { itemId: "spark_plug", quantity: 2 }] },
         2: { cost: 65000, reqItems: [{ itemId: "cpu_fan", quantity: 4 }, { itemId: "circuit_board", quantity: 3 }, { itemId: "wd40", quantity: 1 }] },
@@ -473,8 +473,8 @@ export const createInitialHideout = (): Hideout => {
     intelligenceCenter: makeModule(
       "intelligenceCenter", "Intelligence Center", "Reduces scav raid timers, increases raid rouble yield and search speed.", "FileText",
       "+5% Experience gain from all sources",
-      "+15% Secure Container capacity & +10% Experience gain",
-      "+15% Trader payout & Secure Container size increased to Gamma (9 slots)",
+      "+10% Experience gain & Secure Container capacity increased (6 slots)",
+      "+15% Experience gain & Secure Container size increased to Gamma (9 slots)",
       {
         1: { cost: 30000, reqItems: [{ itemId: "circuit_board", quantity: 2 }, { itemId: "cpu_fan", quantity: 2 }] },
         2: { cost: 90000, reqItems: [{ itemId: "cpu", quantity: 3 }, { itemId: "ledger", quantity: 1 }] },
@@ -482,10 +482,10 @@ export const createInitialHideout = (): Hideout => {
       }
     ),
     shootingRange: makeModule(
-      "shootingRange", "Shooting Range", "Testing ground. Increases PMC weapon accuracy, combat XP, and critical chance.", "Target",
-      "+5% Base weapon damage in raid",
-      "+5% Critical hit chance",
-      "+15% Weapon Accuracy and +10% Critical hit damage",
+      "shootingRange", "Shooting Range", "Training ground. Increases PMC weapon skill through live practice.", "Target",
+      "+1 Weapon Skill point",
+      "+2 additional Weapon Skill points (total +3)",
+      "+3 additional Weapon Skill points (total +6)",
       {
         1: { cost: 180000, reqItems: [{ itemId: "bolts", quantity: 5 }, { itemId: "nuts", quantity: 5 }] },
         2: { cost: 75000, reqItems: [{ itemId: "bolts", quantity: 10 }, { itemId: "nuts", quantity: 10 }, { itemId: "wd40", quantity: 1 }] },
@@ -494,8 +494,8 @@ export const createInitialHideout = (): Hideout => {
     ),
     nutritionUnit: makeModule(
       "nutritionUnit", "Nutrition Unit", "Ensures PMC food and hydration decays slower and recovers faster.", "Apple",
-      "Passive energy and hydration recovery +1 per min out of raid",
-      "+25% maximum Energy and Hydration limit in raids",
+      "Passive energy and hydration recovery: +2 per tick out of raid",
+      "Passive energy and hydration recovery: +4 per tick out of raid",
       "Hunger and Hydration decay 20% slower in raids",
       {
         1: { cost: 12000, reqItems: [{ itemId: "bolts", quantity: 2 }, { itemId: "nuts", quantity: 2 }] },
@@ -540,9 +540,13 @@ export const getWeaponStats = (weapon: Weapon, workbenchLevel: number) => {
     ergo += 5;
     recoil = Math.max(10, recoil - Math.floor(recoil * 0.03));
   }
+  if (workbenchLevel >= 2) {
+    ergo += 3;
+    recoil = Math.max(10, recoil - Math.floor(recoil * 0.03));
+  }
   if (workbenchLevel >= 3) {
-    ergo += 7; // aggregate is +12%
-    recoil = Math.max(10, recoil - Math.floor(recoil * 0.07)); // aggregate is -10%
+    ergo += 4;
+    recoil = Math.max(10, recoil - Math.floor(recoil * 0.04));
   }
 
   return {

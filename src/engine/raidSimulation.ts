@@ -65,7 +65,7 @@ export const runRaidTick = (state: GameState): GameState => {
       else newState.stash.items.push({ item: containerEntry.item, quantity: containerEntry.quantity });
     });
 
-    const { logs: questLogs, earnedXp } = finalizeQuestsAndXP(newState, false);
+    const { logs: questLogs, earnedXp } = finalizeQuestsAndXP(newState, false, newState.hideout);
     pmc.xp += earnedXp;
     raid.logs.push(...questLogs);
     raid.logs.push(createLog(`PMC KIA from dehydration/starvation! Earned +${earnedXp} cumulative XP in raid.`, "death", raid.elapsedSeconds));
@@ -105,7 +105,7 @@ export const runRaidTick = (state: GameState): GameState => {
   // Combat State
   if (raid.status === "combat" && raid.combatTarget) {
     const enemy = raid.combatTarget;
-    const combatLogs = simulateCombatRound(pmc, enemy, equippedWeapon, weaponStats, raid.elapsedSeconds, raid);
+    const combatLogs = simulateCombatRound(pmc, enemy, equippedWeapon, weaponStats, raid.elapsedSeconds, raid, newState.hideout.shootingRange.level);
     raid.logs.push(...combatLogs);
 
     if (pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0) {
@@ -121,7 +121,7 @@ export const runRaidTick = (state: GameState): GameState => {
         else newState.stash.items.push({ item: containerEntry.item, quantity: containerEntry.quantity });
       });
 
-      const { logs: questLogs, earnedXp } = finalizeQuestsAndXP(newState, false);
+      const { logs: questLogs, earnedXp } = finalizeQuestsAndXP(newState, false, newState.hideout);
       pmc.xp += earnedXp;
       raid.logs.push(...questLogs);
       raid.logs.push(createLog(`PMC KIA in combat! Earned +${earnedXp} cumulative XP in raid.`, "death", raid.elapsedSeconds));
@@ -261,7 +261,7 @@ export const runRaidTick = (state: GameState): GameState => {
     newState.pastRaidOutcomes.push("extracted");
     raid.isActive = false;
 
-    const { logs: questLogs, earnedXp } = finalizeQuestsAndXP(newState, true);
+    const { logs: questLogs, earnedXp } = finalizeQuestsAndXP(newState, true, newState.hideout);
     pmc.xp += earnedXp;
     raid.logs.push(...questLogs);
     raid.logs.push(createLog(`PMC extracted successfully! Earned +${earnedXp} cumulative XP in raid.`, "extract", raid.elapsedSeconds));

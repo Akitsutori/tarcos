@@ -18,9 +18,10 @@ const createDefaultWeapon = (): Weapon => ({
   maxReserveMags: 3
 });
 
-const calculateAccuracy = (attacker: CombatantView, defender: CombatantView, burstDecay: number): number => {
+const calculateAccuracy = (attacker: CombatantView, defender: CombatantView, burstDecay: number, shootingRangeLevel: number): number => {
   const baseAcc = attacker.baseAccuracy;
   const skillWeap = attacker.skills.weaponSkill.level;
+  const shootingRangeBonus = shootingRangeLevel >= 3 ? 6 : shootingRangeLevel === 2 ? 3 : shootingRangeLevel === 1 ? 1 : 0;
   const coverPenalty = defender.isCovered ? 20 : 0;
   
   let hydrationPenalty = 0;
@@ -30,7 +31,7 @@ const calculateAccuracy = (attacker: CombatantView, defender: CombatantView, bur
   const weaponStats = getWeaponStats(attacker.equippedWeapon, 0); // basic stats for enemy, pmc passes active
 
   return Math.min(95, Math.max(5, 
-    baseAcc + (weaponStats.accuracy * 0.5) + skillWeap * 1.0 - burstDecay - coverPenalty - hydrationPenalty
+    baseAcc + (weaponStats.accuracy * 0.5) + (skillWeap + shootingRangeBonus) * 1.0 - burstDecay - coverPenalty - hydrationPenalty
   ));
 };
 
@@ -57,7 +58,7 @@ const resolveBleeding = (actor: CombatantView, logs: RaidLog[], elapsedSeconds: 
 /**
  * Simulates a single round of combat using functional structural typing (CombatantView).
  */
-export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon: Weapon, weaponStats: any, elapsedSeconds: number, raid: RaidState): RaidLog[] => {
+export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon: Weapon, weaponStats: any, elapsedSeconds: number, raid: RaidState, shootingRangeLevel: number): RaidLog[] => {
   const roundLogs: RaidLog[] = [];
 
   // 1. Compose Views (Lenses)
@@ -189,7 +190,7 @@ export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon
         
         const decayRate = attacker.type === "pmc" ? 2.5 : 3.0;
         const burstDecay = b * decayRate;
-        const finalAccuracy = calculateAccuracy(attacker, defender, burstDecay);
+        const finalAccuracy = calculateAccuracy(attacker, defender, burstDecay, shootingRangeLevel);
 
         roundLogs.push(createLog(`[ACC] ${attacker.name} Accuracy: ${finalAccuracy.toFixed(1)}%`, "info", elapsedSeconds));
 

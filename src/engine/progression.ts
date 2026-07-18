@@ -1,4 +1,4 @@
-import { GameState, RaidLog } from "../types";
+import { GameState, RaidLog, Hideout } from "../types";
 import { ALL_QUESTS } from "../data";
 import { createLog } from "./utils";
 
@@ -8,9 +8,10 @@ import { createLog } from "./utils";
  *
  * @param state The global GameState
  * @param isExtraction True if the player successfully survived the raid
+ * @param hideout Hideout state for XP multiplier bonuses
  * @returns Logs generated from quest progress and total XP earned
  */
-export const finalizeQuestsAndXP = (state: GameState, isExtraction: boolean): { logs: RaidLog[]; earnedXp: number } => {
+export const finalizeQuestsAndXP = (state: GameState, isExtraction: boolean, hideout: Hideout): { logs: RaidLog[]; earnedXp: number } => {
   const raid = state.activeRaid;
   const logs: RaidLog[] = [];
 
@@ -22,6 +23,13 @@ export const finalizeQuestsAndXP = (state: GameState, isExtraction: boolean): { 
   let baseXP = (totalKills * 10) + Math.floor(lootValue / 10);
   if (isExtraction) {
     baseXP = Math.floor(baseXP * 1.25); // +25% Extraction bonus
+  }
+
+  // Intelligence Center XP multiplier
+  const intelLevel = hideout.intelligenceCenter.level;
+  if (intelLevel >= 1) {
+    const xpMultiplier = intelLevel === 1 ? 1.05 : intelLevel === 2 ? 1.10 : 1.15;
+    baseXP = Math.floor(baseXP * xpMultiplier);
   }
 
   let totalEarnedXp = baseXP;

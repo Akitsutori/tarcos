@@ -65,7 +65,7 @@ describe('Combat Diagnostics', () => {
 
     for (let round = 0; round < 20; round++) {
       const raid = createMockRaid();
-      const logs = simulateCombatRound(pmc, enemy, weapon, weaponStats, 60 + round * 15, raid);
+      const logs = simulateCombatRound(pmc, enemy, weapon, weaponStats, 60 + round * 15, raid, 0);
 
       totalBurstLogs += logs.filter(l => l.message.includes('burst spray')).length;
       totalAccLogs += logs.filter(l => l.message.includes('[ACC]')).length;
@@ -96,7 +96,7 @@ describe('Combat Diagnostics', () => {
 
     for (let i = 0; i < 20; i++) {
       const raid = createMockRaid();
-      simulateCombatRound(pmc, enemy, weapon, weaponStats, 60 + i * 15, raid);
+      simulateCombatRound(pmc, enemy, weapon, weaponStats, 60 + i * 15, raid, 0);
       const pmcDead = pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0;
       const enemyDead = enemy.bodyParts.head.current <= 0 || enemy.bodyParts.thorax.current <= 0;
       if (pmcDead || enemyDead) break;
@@ -123,7 +123,7 @@ describe('Combat Diagnostics', () => {
     let roundLogs: string[] = [];
     for (let i = 0; i < 20; i++) {
       const raid = createMockRaid();
-      const logs = simulateCombatRound(pmc, enemy, weapon, weaponStats, 60 + i * 15, raid);
+      const logs = simulateCombatRound(pmc, enemy, weapon, weaponStats, 60 + i * 15, raid, 0);
       const rounds = logs.filter(l => l.type === "combat_round");
       rounds.forEach(l => roundLogs.push(l.message));
 
@@ -147,7 +147,7 @@ describe('Combat Diagnostics', () => {
     let combatResolved = false;
     for (let tick = 0; tick < 100; tick++) {
       const raid = createMockRaid();
-      simulateCombatRound(pmc, enemy, weapon, weaponStats, 60 + tick * 15, raid);
+      simulateCombatRound(pmc, enemy, weapon, weaponStats, 60 + tick * 15, raid, 0);
 
       const pmcDead = pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0;
       const enemyDead = enemy.bodyParts.head.current <= 0 || enemy.bodyParts.thorax.current <= 0;
