@@ -198,8 +198,52 @@ export const RaidScreen: React.FC<RaidScreenProps> = ({
                 <div className="text-slate-300 font-bold">{weaponStats.dmg} HP</div>
               </div>
               <div>
-                <span className="text-slate-500">Accuracy</span>
-                <div className="text-slate-300 font-bold">{weaponStats.accuracy}%</div>
+                <span className="text-slate-500">Eff. Accuracy</span>
+                <div className="text-slate-300 font-bold">
+                  {weaponStats.accuracy + pmc.skills.weaponSkill.level}%
+                  <span className="text-[9px] text-emerald-400 font-normal ml-1">
+                    (+{pmc.skills.weaponSkill.level} skill)
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* DERIVED COMBAT STATS */}
+          <div className="mt-4 p-3 bg-slate-950 rounded border border-slate-800/80">
+            <h4 className="text-xs font-mono font-semibold text-slate-400 mb-2 uppercase tracking-wide">Derived Combat Stats</h4>
+            <div className="grid grid-cols-2 gap-3 text-xs font-mono">
+              <div>
+                <span className="text-slate-500">Dodge Chance</span>
+                <div className="text-slate-300 font-bold">
+                  {(pmc.skills.agility.level * 0.25).toFixed(1)}%
+                  {pmc.classType === ClassType.SCOUT && <span className="text-[9px] text-violet-400 font-normal ml-1">(SCOUT x2)</span>}
+                </div>
+              </div>
+              <div>
+                <span className="text-slate-500">Initiative</span>
+                <div className="text-slate-300 font-bold">d20+{pmc.skills.initiative.level}</div>
+              </div>
+              <div>
+                <span className="text-slate-500">Bleed Resist</span>
+                <div className="text-slate-300 font-bold">
+                  {Math.max(5, 35 - pmc.skills.constitution.level)}%
+                  <span className="text-[9px] text-slate-500 font-normal ml-1">threshold</span>
+                </div>
+              </div>
+              <div>
+                <span className="text-slate-500">Loot Chance</span>
+                <div className="text-slate-300 font-bold">{50 + pmc.skills.perception.level}%</div>
+              </div>
+              <div>
+                <span className="text-slate-500">Backpack</span>
+                <div className="text-slate-300 font-bold">
+                  {9 + Math.floor(Math.sqrt(pmc.skills.constitution.level * 30))} slots
+                </div>
+              </div>
+              <div>
+                <span className="text-slate-500">Stamina Drain</span>
+                <div className="text-slate-300 font-bold">x{Math.max(0.5, 1 - pmc.skills.constitution.level * 0.015).toFixed(2)}</div>
               </div>
             </div>
           </div>
