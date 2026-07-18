@@ -37,16 +37,15 @@ const calculateAccuracy = (attacker: CombatantView, defender: CombatantView, bur
 const resolveBleeding = (actor: CombatantView, logs: RaidLog[], elapsedSeconds: number) => {
   if (!actor.isBleeding) return;
 
-  const bleedPartId = actor.bleedingPartId as keyof PMCBodyParts | undefined;
-  const bleedPart = bleedPartId ? actor.bodyParts[bleedPartId] : null;
-  const highestPart = bleedPart && bleedPart.current > 0
-    ? bleedPart
-    : (Object.values(actor.bodyParts) as BodyPart[]).filter(p => p.current > 0).sort((a, b) => b.current - a.current)[0];
+  const damagedParts = (Object.values(actor.bodyParts) as BodyPart[])
+    .filter(p => p.current > 0 && p.current < p.max)
+    .sort((a, b) => b.current - a.current);
+  const target = damagedParts[0];
 
-  if (highestPart && highestPart.current > 0) {
+  if (target) {
     const bleedDmg = Math.max(1, 5 - Math.floor(actor.skills.constitution.level * 0.01));
-    highestPart.current = Math.max(0, highestPart.current - bleedDmg);
-    logs.push(createLog(`${actor.name} bled on [${highestPart.name}] for ${bleedDmg} damage.`, "combat_hit", elapsedSeconds));
+    target.current = Math.max(0, target.current - bleedDmg);
+    logs.push(createLog(`${actor.name} bled on [${target.name}] for ${bleedDmg} damage.`, "combat_hit", elapsedSeconds));
 
     if (actor.bodyParts.head.current <= 0 || actor.bodyParts.thorax.current <= 0) {
       logs.push(createLog(`${actor.name} succumbed to fatal arterial bleeding!`, "death", elapsedSeconds));
@@ -72,7 +71,6 @@ export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon
     equippedArmor: pmc.equippedArmor,
     equippedHelmet: pmc.equippedHelmet,
     isBleeding: pmc.isBleeding,
-    bleedingPartId: pmc.bleedingPartId,
     isCovered: pmc.isCovered,
     isDead: pmc.isDead
   };
@@ -88,7 +86,6 @@ export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon
     equippedArmor: enemy.equippedArmor,
     equippedHelmet: enemy.equippedHelmet,
     isBleeding: enemy.isBleeding,
-    bleedingPartId: enemy.bleedingPartId,
     isCovered: enemy.isCovered,
     isDead: enemy.isDead
   };
@@ -267,8 +264,7 @@ export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon
 
           if (Math.random() * 100 < bleedChance) {
             defender.isBleeding = true;
-            defender.bleedingPartId = targetedPartId;
-            roundLogs.push(createLog(`[BLEED] ${attacker.name} → ${defender.name}: HIT | Target BLEEDING from [${targetedPart.name}]!`, "warning", elapsedSeconds));
+            roundLogs.push(createLog(`[BLEED] ${attacker.name} → ${defender.name}: HIT! Target is now BLEEDING!`, "warning", elapsedSeconds));
           }
         }
 
@@ -300,12 +296,10 @@ export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon
 
   // 4. Copy primitives back to source objects
   pmc.isBleeding = pmcView.isBleeding;
-  pmc.bleedingPartId = pmcView.bleedingPartId;
   pmc.isCovered = pmcView.isCovered;
   pmc.isDead = pmcView.isDead;
 
   enemy.isBleeding = enemyView.isBleeding;
-  enemy.bleedingPartId = enemyView.bleedingPartId;
   enemy.isCovered = enemyView.isCovered;
   enemy.isDead = enemyView.isDead;
 

@@ -44,7 +44,6 @@ export const executeMaintenancePhase = (pmc: PMCCharacter, raid: RaidState, equi
     if (pmc.equippedMedkit && pmc.equippedMedkit.resourceCurrent && pmc.equippedMedkit.resourceCurrent >= 20) {
       pmc.equippedMedkit.resourceCurrent -= 20;
       pmc.isBleeding = false;
-      pmc.bleedingPartId = undefined;
       raid.logs.push(createLog(`Stopped active arterial bleeding. Consumed 20 resource points of ${pmc.equippedMedkit.name}. Capacity: ${pmc.equippedMedkit.resourceCurrent}/${pmc.equippedMedkit.resourceMax}.`, "heal", raid.elapsedSeconds));
     } else {
       const backupIdx = raid.lootFound.findIndex(e => e.item.type === "medical" && e.item.resourceCurrent && e.item.resourceCurrent >= 20);
@@ -53,7 +52,6 @@ export const executeMaintenancePhase = (pmc: PMCCharacter, raid: RaidState, equi
         backup.resourceCurrent! -= 20;
         pmc.equippedMedkit = backup;
         pmc.isBleeding = false;
-        pmc.bleedingPartId = undefined;
         raid.logs.push(createLog(`Equipped backup medkit ${backup.name} and stopped arterial bleeding. Capacity: ${backup.resourceCurrent}/${backup.resourceMax}.`, "heal", raid.elapsedSeconds));
         
         if (raid.lootFound[backupIdx].quantity > 1) raid.lootFound[backupIdx].quantity--;

@@ -58,7 +58,6 @@ export interface CombatantView {
   equippedArmor: GameItem | null;
   equippedHelmet: GameItem | null;
   isBleeding: boolean;
-  bleedingPartId?: string;
   isCovered: boolean;
   isDead: boolean;
 }
@@ -89,7 +88,6 @@ export interface PMCCharacter {
 
   // Combat status (unified with EnemyState for structural typing)
   isBleeding: boolean;
-  bleedingPartId?: string;
   isCovered: boolean;
   isDead: boolean;
 }
@@ -237,7 +235,6 @@ export interface EnemyState {
   equippedArmor: GameItem | null;
   equippedHelmet: GameItem | null;
   isBleeding: boolean;
-  bleedingPartId?: string;
   isCovered: boolean;
   isDead: boolean;
 }
