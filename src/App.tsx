@@ -77,6 +77,7 @@ export default function App() {
 
     setGameState((prev) => {
       const newState = { ...prev, activeRaid: startingRaidState, selectedMapId: mapId };
+      newState.pmc.isDead = false;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
       return newState;
     });

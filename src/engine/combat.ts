@@ -110,13 +110,13 @@ export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon
   const actors = pmcFirst ? [pmcView, enemyView] : [enemyView, pmcView];
 
   // 3. Combat Loop
-  console.log(`[COMBAT DEBUG] Starting combat loop. actors=${actors.length}, pmcFirst=${pmcFirst}, pmcDead=${pmcView.isDead}, enemyDead=${enemyView.isDead}, pmcHeadHP=${pmcView.bodyParts.head.current}, enemyHeadHP=${enemyView.bodyParts.head.current}`);
   for (const attacker of actors) {
     const defender = attacker.type === "pmc" ? enemyView : pmcView;
-    console.log(`[COMBAT DEBUG] Actor: ${attacker.name} (${attacker.type}), isDead=${attacker.isDead}, defenderDead=${defender.isDead}, headHP=${attacker.bodyParts.head.current}, mag=${attacker.equippedWeapon?.currentMagRounds}`);
 
     if (attacker.bodyParts.head.current <= 0 || attacker.bodyParts.thorax.current <= 0) attacker.isDead = true;
+    else if (attacker.isDead) attacker.isDead = false;
     if (defender.bodyParts.head.current <= 0 || defender.bodyParts.thorax.current <= 0) defender.isDead = true;
+    else if (defender.isDead) defender.isDead = false;
     if (attacker.isDead || defender.isDead) break;
 
     resolveBleeding(attacker, roundLogs, elapsedSeconds);
