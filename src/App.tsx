@@ -10,8 +10,8 @@ import { RaidScreen } from "./components/RaidScreen";
 import { StashScreen } from "./components/StashScreen";
 import { WeaponModding } from "./components/WeaponModding";
 import { ProgressionScreen } from "./components/ProgressionScreen";
-import { 
-  MapPin, PackageOpen, Hammer, TrendingUp, Info, RotateCcw, ShieldCheck 
+import {
+  MapPin, PackageOpen, Hammer, TrendingUp, Info, RotateCcw, ShieldCheck
 } from "lucide-react";
 
 import { useGameSave, STORAGE_KEY } from "./hooks/useGameSave";
@@ -20,7 +20,7 @@ import { useRaidTick } from "./hooks/useRaidTick";
 export default function App() {
   const { gameState, setGameState, resetProgress } = useGameSave();
   const { handleTick } = useRaidTick(setGameState);
-  
+
   const [activeTab, setActiveTab] = useState<"raid" | "stash" | "modding" | "progression">("raid");
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
@@ -360,16 +360,16 @@ export default function App() {
   const handleChangeClass = (classType: ClassType) => {
     setGameState((prev) => {
       const newState = JSON.parse(JSON.stringify(prev)) as GameState;
-      
+
       // Generate new class core stats but keep level, xp, and skills
       const freshPMC = createInitialPMC(classType);
-      
+
       // Preserve level & skills progression
       freshPMC.level = newState.pmc.level;
       freshPMC.xp = newState.pmc.xp;
       freshPMC.maxXp = newState.pmc.maxXp;
       freshPMC.skills = newState.pmc.skills;
-      
+
       // Carry statistics
       freshPMC.raidsCount = newState.pmc.raidsCount;
       freshPMC.survivedCount = newState.pmc.survivedCount;
@@ -380,7 +380,7 @@ export default function App() {
       // Check if signature weapon is in stash, if not add it
       const sigWeapon = INITIAL_WEAPONS[classType];
       const hasWeapon = newState.stash.weapons.some((w) => w.id === sigWeapon.id);
-      
+
       if (!hasWeapon) {
         newState.stash.weapons.push({ ...sigWeapon });
       }
@@ -452,16 +452,16 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between">
-      
+
       {/* GLOBAL HIGH-TECH MILITARY HEADER */}
       <header className="bg-slate-900/90 border-b border-slate-800 backdrop-blur sticky top-0 z-50 px-4 md:px-8 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-amber-500 rounded text-slate-950 font-black tracking-tighter text-sm font-mono">
-            EFT-ZP
+            T.A.R.C.O.S
           </div>
           <div>
             <h1 className="text-md font-black tracking-widest uppercase text-white font-sans flex items-center gap-2">
-              TARKOV ZERO PLAYER <span className="text-amber-500 text-[10px] font-mono border border-amber-900 rounded px-1 py-0.2">ROGUELIKE</span>
+              <span className="text-amber-500 text-[10px] font-mono border border-amber-900 rounded px-1 py-0.2">Tactical Armed Roguelike Combat Observation Simulator</span>
             </h1>
             <p className="text-[10px] text-slate-500 font-mono">Real-Time Autonomous PMC Simulation & Combat Monitor</p>
           </div>
@@ -479,7 +479,7 @@ export default function App() {
             <span className="text-slate-200 font-bold">{gameState.pmc.classType} (Lvl {gameState.pmc.level})</span>
           </div>
           <div className="w-px h-6 bg-slate-800" />
-          <button 
+          <button
             id="wipe-profile-btn"
             onClick={handleResetProgress}
             className="p-1.5 rounded bg-slate-950 hover:bg-red-950/40 border border-slate-800 hover:border-red-900 text-slate-500 hover:text-red-400 transition"
@@ -495,16 +495,15 @@ export default function App() {
         <button
           id="tab-raid-btn"
           onClick={() => setActiveTab("raid")}
-          className={`px-4 py-1.5 rounded-md font-mono text-xs font-bold uppercase transition flex items-center gap-1.5 ${
-            activeTab === "raid" 
-              ? "bg-slate-800 text-amber-500 border border-slate-700" 
-              : "text-slate-500 hover:text-slate-300"
-          }`}
+          className={`px-4 py-1.5 rounded-md font-mono text-xs font-bold uppercase transition flex items-center gap-1.5 ${activeTab === "raid"
+            ? "bg-slate-800 text-amber-500 border border-slate-700"
+            : "text-slate-500 hover:text-slate-300"
+            }`}
         >
           <MapPin size={13} />
           {gameState.activeRaid.isActive ? (
             <span className="flex items-center gap-1.5">
-              Raid Monitor 
+              Raid Monitor
               <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
             </span>
           ) : "Deploy Raid"}
@@ -513,11 +512,10 @@ export default function App() {
         <button
           id="tab-stash-btn"
           onClick={() => setActiveTab("stash")}
-          className={`px-4 py-1.5 rounded-md font-mono text-xs font-bold uppercase transition flex items-center gap-1.5 ${
-            activeTab === "stash" 
-              ? "bg-slate-800 text-amber-500 border border-slate-700" 
-              : "text-slate-500 hover:text-slate-300"
-          }`}
+          className={`px-4 py-1.5 rounded-md font-mono text-xs font-bold uppercase transition flex items-center gap-1.5 ${activeTab === "stash"
+            ? "bg-slate-800 text-amber-500 border border-slate-700"
+            : "text-slate-500 hover:text-slate-300"
+            }`}
         >
           <PackageOpen size={13} /> Stash & Market
         </button>
@@ -525,11 +523,10 @@ export default function App() {
         <button
           id="tab-modding-btn"
           onClick={() => setActiveTab("modding")}
-          className={`px-4 py-1.5 rounded-md font-mono text-xs font-bold uppercase transition flex items-center gap-1.5 ${
-            activeTab === "modding" 
-              ? "bg-slate-800 text-amber-500 border border-slate-700" 
-              : "text-slate-500 hover:text-slate-300"
-          }`}
+          className={`px-4 py-1.5 rounded-md font-mono text-xs font-bold uppercase transition flex items-center gap-1.5 ${activeTab === "modding"
+            ? "bg-slate-800 text-amber-500 border border-slate-700"
+            : "text-slate-500 hover:text-slate-300"
+            }`}
         >
           <Hammer size={13} /> Mod Bench
         </button>
@@ -537,11 +534,10 @@ export default function App() {
         <button
           id="tab-progression-btn"
           onClick={() => setActiveTab("progression")}
-          className={`px-4 py-1.5 rounded-md font-mono text-xs font-bold uppercase transition flex items-center gap-1.5 ${
-            activeTab === "progression" 
-              ? "bg-slate-800 text-amber-500 border border-slate-700" 
-              : "text-slate-500 hover:text-slate-300"
-          }`}
+          className={`px-4 py-1.5 rounded-md font-mono text-xs font-bold uppercase transition flex items-center gap-1.5 ${activeTab === "progression"
+            ? "bg-slate-800 text-amber-500 border border-slate-700"
+            : "text-slate-500 hover:text-slate-300"
+            }`}
         >
           <TrendingUp size={13} /> Hideout & Skills
         </button>
