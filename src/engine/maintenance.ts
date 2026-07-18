@@ -64,7 +64,7 @@ export const executeMaintenancePhase = (pmc: PMCCharacter, raid: RaidState, equi
 
   // Step 3: Medkit Healing
   const healOrder: (keyof PMCBodyParts)[] = ["head", "thorax", "stomach", "leftLeg", "rightLeg", "leftArm", "rightArm"];
-  const healHPRestore = 25;
+  const healHPRestore = pmc.equippedMedkit?.hpHeal ?? 25;
 
   let healAttemptsCount = 5;
   while (healAttemptsCount > 0) {

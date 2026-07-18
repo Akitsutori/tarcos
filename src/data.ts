@@ -5,171 +5,104 @@
 
 import { GameItem, Weapon, WeaponModCategory, ClassType, MapData, HideoutModule, Skill, CharacterSkills, PMCCharacter, Hideout, Quest, PMCBodyParts, BodyPart, RoomTile } from "./types";
 
-// Helper to create barter item
-const createBarter = (id: string, name: string, description: string, rarity: GameItem["rarity"], value: number, icon: string): GameItem => ({
-  id, name, description, type: "barter", rarity, value, iconName: icon, dropWeight: 1
-});
-
-// Helper to create medical item with resource pool
-const createMedical = (id: string, name: string, description: string, resource: number, value: number, icon: string, hpHeal = 25): GameItem => ({
-  id, name, description, type: "medical", rarity: resource > 300 ? "epic" : resource >= 150 ? "rare" : "common", value, hpHeal, resourceCurrent: resource, resourceMax: resource, iconName: icon, dropWeight: 1
-});
-
-// Helper to create surgical kit
-const createSurgicalKit = (id: string, name: string, description: string, uses: number, value: number, icon: string): GameItem => ({
-  id, name, description, type: "medical", rarity: uses > 5 ? "epic" : uses > 3 ? "rare" : "common", value, resourceCurrent: uses, resourceMax: uses, iconName: icon, dropWeight: 1
-});
-
-// Helper to create provisions item
-const createProvision = (id: string, name: string, description: string, resource: number, value: number, icon: string, provisionType: "hydration" | "energy"): GameItem => ({
-  id, name, description, type: "provision", provisionType, rarity: resource >= 80 ? "rare" : "common", value, resourceCurrent: resource, resourceMax: resource, iconName: icon, dropWeight: 1
-});
-
-// Helper to create ammo box
-const createAmmoBox = (id: string, name: string, caliber: string, value: number, icon: string): GameItem => ({
-  id, name, description: `A box containing matching rounds for weapons chambered in ${caliber}. Fully refills your magazine and reserves during maintenance.`, type: "ammo", rarity: "common", value, caliber, iconName: icon, dropWeight: 1
-});
-
-// Helper to create armor
-const createArmor = (id: string, name: string, armorClass: number, maxDurability: number, zones: string[], value: number, icon: string): GameItem => ({
-  id, name, description: `Body Armor Class ${armorClass}. Protects: ${zones.join(", ")}. Max Durability: ${maxDurability}.`, type: "armor", rarity: armorClass >= 5 ? "epic" : armorClass >= 4 ? "rare" : "common", value, armorClass, durability: maxDurability, maxDurability, protectedZones: zones, iconName: icon, dropWeight: 1
-});
-
-// Helper to create helmet
-const createHelmet = (id: string, name: string, armorClass: number, maxDurability: number, value: number, icon: string): GameItem => ({
-  id, name, description: `Tactical Helmet Class ${armorClass}. Protects Head. Max Durability: ${maxDurability}.`, type: "helmet", rarity: armorClass >= 5 ? "epic" : armorClass >= 4 ? "rare" : "common", value, armorClass, durability: maxDurability, maxDurability, protectedZones: ["Head"], iconName: icon, dropWeight: 1
-});
-
-// Helper to create valuable item
-const createValuable = (id: string, name: string, description: string, rarity: GameItem["rarity"], value: number, icon: string): GameItem => ({
-  id, name, description, type: "valuable", rarity, value, iconName: icon, dropWeight: 1
-});
-
-// Helper to create quest item
-const createQuestItem = (id: string, name: string, description: string, rarity: GameItem["rarity"], value = 0): GameItem => ({
-  id, name, description, type: "quest", rarity, value, iconName: "FileText", dropWeight: 1
-});
-
-// Helper to create mod item
-const createMod = (
-  id: string,
-  name: string,
-  category: WeaponModCategory,
-  ergo: number,
-  recoil: number,
-  dmg: number,
-  crit: number,
-  rarity: GameItem["rarity"],
-  value: number,
-  icon: string
-): GameItem => ({
-  id, name, description: `Weapon Mod - ${category}. Ergo: ${ergo > 0 ? "+" : ""}${ergo}, Recoil Reduction: ${recoil}%, Dmg: ${dmg > 0 ? "+" : ""}${dmg}, Crit: ${crit > 0 ? "+" : ""}${crit}%`,
-  type: "weapon_mod",
-  rarity,
-  value,
-  iconName: icon,
-  dropWeight: 1,
-  modCategory: category,
-  ergoBonus: ergo,
-  recoilReduction: recoil,
-  dmgBonus: dmg,
-  critBonus: crit
-});
-
-// All static items database matching GDD exactly
+// All static items database — plain objects, all properties explicit, rarity set directly
 export const ALL_ITEMS: { [id: string]: GameItem } = {
-  // BARTER ITEMS (for upgrades)
-  cpu_fan: createBarter("cpu_fan", "CPU Fan", "Standard PC cooler. Smells of cheap thermal paste.", "common", 8500, "Cpu"),
-  spark_plug: createBarter("spark_plug", "Spark Plug", "Standard automobile spark plug. Heavily requested by Mechanic.", "common", 12000, "Wrench"),
-  bolts: createBarter("bolts", "Pack of Bolts", "Assorted metal bolts. Useful for basic constructions.", "common", 15000, "Nut"),
-  nuts: createBarter("nuts", "Pack of Nuts", "Mating threads for bolts. Hard to find when you actually need them.", "common", 14500, "Nut"),
-  hose: createBarter("hose", "Corrugated Hose", "Flexible rubber hose. A staple of Hideout upgrades.", "rare", 35000, "Cable"),
-  circuit_board: createBarter("circuit_board", "Printed Circuit Board", "Salvaged electronic board from broken appliances.", "common", 18000, "Cpu"),
-  cpu: createBarter("cpu", "Central Processing Unit", "An older generation processor. Worth some decent roubles.", "rare", 45000, "Cpu"),
-  gpu: createBarter("gpu", "Graphics Processing Unit", "The legendary GPU. Used for physical mining or barter trades.", "legendary", 280000, "Cpu"),
-  car_battery: createBarter("car_battery", "Car Battery", "Heavy lead-acid battery. Extremely heavy but valuable.", "rare", 65000, "Battery"),
-  golden_rooster: createBarter("golden_rooster", "Golden Rooster", "An incredibly rare, shiny, and heavy golden figurine.", "legendary", 150000, "Award"),
-  ledger: createBarter("ledger", "Secure Ledger", "Encrypted hardware wallet. Contains highly classified trading ledgers.", "epic", 95000, "FileText"),
-  wd40: createBarter("wd40", "WD-40 (100ml)", "Multi-use water-displacing spray. Unsticks rusty joints.", "common", 19000, "Paintbrush"),
-  fuel_tank: createBarter("fuel_tank", "Expeditionary Fuel Tank", "Plastic fuel container. Essential for keeping Hideout generator running.", "epic", 85000, "Container"),
+  // BARTER ITEMS (for hideout upgrades)
+  cpu_fan: { id: "cpu_fan", name: "CPU Fan", description: "Standard PC cooler. Smells of cheap thermal paste.", type: "barter", rarity: "common", value: 8500, iconName: "Cpu" },
+  spark_plug: { id: "spark_plug", name: "Spark Plug", description: "Standard automobile spark plug. Heavily requested by Mechanic.", type: "barter", rarity: "common", value: 12000, iconName: "Wrench" },
+  bolts: { id: "bolts", name: "Pack of Bolts", description: "Assorted metal bolts. Useful for basic constructions.", type: "barter", rarity: "common", value: 15000, iconName: "Nut" },
+  nuts: { id: "nuts", name: "Pack of Nuts", description: "Mating threads for bolts. Hard to find when you actually need them.", type: "barter", rarity: "common", value: 14500, iconName: "Nut" },
+  hose: { id: "hose", name: "Corrugated Hose", description: "Flexible rubber hose. A staple of Hideout upgrades.", type: "barter", rarity: "rare", value: 35000, iconName: "Cable" },
+  circuit_board: { id: "circuit_board", name: "Printed Circuit Board", description: "Salvaged electronic board from broken appliances.", type: "barter", rarity: "common", value: 18000, iconName: "Cpu" },
+  cpu: { id: "cpu", name: "Central Processing Unit", description: "An older generation processor. Worth some decent roubles.", type: "barter", rarity: "rare", value: 45000, iconName: "Cpu" },
+  gpu: { id: "gpu", name: "Graphics Processing Unit", description: "The legendary GPU. Used for physical mining or barter trades.", type: "barter", rarity: "legendary", value: 280000, iconName: "Cpu" },
+  car_battery: { id: "car_battery", name: "Car Battery", description: "Heavy lead-acid battery. Extremely heavy but valuable.", type: "barter", rarity: "rare", value: 65000, iconName: "Battery" },
+  golden_rooster: { id: "golden_rooster", name: "Golden Rooster", description: "An incredibly rare, shiny, and heavy golden figurine.", type: "barter", rarity: "legendary", value: 150000, iconName: "Award" },
+  ledger: { id: "ledger", name: "Secure Ledger", description: "Encrypted hardware wallet. Contains highly classified trading ledgers.", type: "barter", rarity: "epic", value: 95000, iconName: "FileText" },
+  wd40: { id: "wd40", name: "WD-40 (100ml)", description: "Multi-use water-displacing spray. Unsticks rusty joints.", type: "barter", rarity: "common", value: 19000, iconName: "Paintbrush" },
+  fuel_tank: { id: "fuel_tank", name: "Expeditionary Fuel Tank", description: "Plastic fuel container. Essential for keeping Hideout generator running.", type: "barter", rarity: "epic", value: 85000, iconName: "Container" },
 
-  // AMMO BOXES (from GDD Loot Table)
-  ammo_762x39_ps: createAmmoBox("ammo_762x39_ps", "7.62x39mm PS Box", "7.62x39mm", 15, "Disc"),
-  ammo_9x18_pm: createAmmoBox("ammo_9x18_pm", "9x18mm PM Box", "9x18mm", 10, "Disc"),
-  ammo_556x45_m855: createAmmoBox("ammo_556x45_m855", "5.56x45mm M855 Box", "5.56x45mm", 12, "Disc"),
-  ammo_12x70_slug: createAmmoBox("ammo_12x70_slug", "12x70mm Slug Box", "12x70mm", 8, "Disc"),
-  ammo_762x54_snb: createAmmoBox("ammo_762x54_snb", "7.62x54mm SNB Box", "7.62x54mm", 15, "Disc"),
+  // AMMO BOXES
+  ammo_762x39_ps: { id: "ammo_762x39_ps", name: "7.62x39mm PS Box", description: "A box containing matching rounds for weapons chambered in 7.62x39mm.", type: "ammo", rarity: "common", value: 15, iconName: "Disc", caliber: "7.62x39mm" },
+  ammo_9x18_pm: { id: "ammo_9x18_pm", name: "9x18mm PM Box", description: "A box containing matching rounds for weapons chambered in 9x18mm.", type: "ammo", rarity: "common", value: 10, iconName: "Disc", caliber: "9x18mm" },
+  ammo_556x45_m855: { id: "ammo_556x45_m855", name: "5.56x45mm M855 Box", description: "A box containing matching rounds for weapons chambered in 5.56x45mm.", type: "ammo", rarity: "common", value: 12, iconName: "Disc", caliber: "5.56x45mm" },
+  ammo_12x70_slug: { id: "ammo_12x70_slug", name: "12x70mm Slug Box", description: "A box containing matching rounds for weapons chambered in 12x70mm.", type: "ammo", rarity: "common", value: 8, iconName: "Disc", caliber: "12x70mm" },
+  ammo_762x54_snb: { id: "ammo_762x54_snb", name: "7.62x54mm SNB Box", description: "A box containing matching rounds for weapons chambered in 7.62x54mm.", type: "ammo", rarity: "common", value: 15, iconName: "Disc", caliber: "7.62x54mm" },
 
-  // MEDICAL ITEMS (from GDD Loot Table)
-  ai2: { ...createMedical("ai2", "AI-2 Medkit", "The classic orange 'cheese' slice. Heals 25 HP per use. Capacity: 150", 150, 4500, "Activity"), soldBy: "therapist", traderCost: 5400 },
-  ifak: { ...createMedical("ifak", "IFAK Personal Tactical First Aid Kit", "Compact medical pouch. Capacity: 300", 300, 18000, "HeartPulse"), soldBy: "therapist", traderCost: 21600 },
-  afak: createMedical("afak", "AFAK First Aid Kit", "Advanced tactical trauma kit. High capacity. Capacity: 400", 400, 32000, "HeartPulse"),
-  
-  // SURGICAL KITS (from GDD Loot Table)
-  surgical_kit: { ...createSurgicalKit("surgical_kit", "Surgical Kit", "Surgical instruments to patch blacked-out body parts to 1 HP. 5 Uses.", 5, 25000, "Scissors"), soldBy: "therapist", traderCost: 30000 },
-  cms_kit: { ...createSurgicalKit("cms_kit", "CMS Kit", "Standard field surgery and limb restoration kit. 3 Uses.", 3, 20000, "Scissors"), soldBy: "therapist", traderCost: 24000 },
-  surv12: { ...createSurgicalKit("surv12", "Surv12 Surgical Kit", "Premium survival surgical kit with multi-use suture threads. 9 Uses.", 9, 30000, "Scissors"), soldBy: "therapist", traderCost: 36000 },
+  // MEDICAL ITEMS — MEDKITS
+  ai2: { id: "ai2", name: "AI-2 Medkit", description: "The classic orange cheese slice. Capacity: 150", type: "medical", medicalSubType: "medkit", rarity: "common", value: 4500, hpHeal: 25, resourceCurrent: 150, resourceMax: 150, iconName: "Activity", soldBy: "therapist", traderCost: 5400 },
+  ifak: { id: "ifak", name: "IFAK Personal Tactical First Aid Kit", description: "Compact medical pouch. Capacity: 300", type: "medical", medicalSubType: "medkit", rarity: "epic", value: 18000, hpHeal: 25, resourceCurrent: 300, resourceMax: 300, iconName: "HeartPulse", soldBy: "therapist", traderCost: 21600 },
+  afak: { id: "afak", name: "AFAK First Aid Kit", description: "Advanced tactical trauma kit. High capacity. Capacity: 400", type: "medical", medicalSubType: "medkit", rarity: "epic", value: 32000, hpHeal: 25, resourceCurrent: 400, resourceMax: 400, iconName: "HeartPulse" },
 
-  // PROVISIONS — HYDRATION (from GDD Loot Table)
-  water_bottle: { ...createProvision("water_bottle", "Water Bottle", "0.6L Bottle of Purified Water. Hydration: 60", 60, 4000, "Droplet", "hydration"), soldBy: "therapist", traderCost: 4800 },
-  juice: { ...createProvision("juice", "Juice Box", "Sweet pack of apple juice. Hydration: 30", 30, 3000, "GlassWater", "hydration"), soldBy: "therapist", traderCost: 3600 },
-  energy_drink: { ...createProvision("energy_drink", "Energy Drink", "Sweet carbonated drink. Hydration: 40", 40, 2000, "Zap", "hydration"), soldBy: "therapist", traderCost: 2400 },
-  aquamarin: createProvision("aquamarin", "Aquamarin", "Sparkling mineral water. Hydration: 100", 100, 6000, "Droplet", "hydration"),
+  // MEDICAL ITEMS — SURGICAL KITS
+  surgical_kit: { id: "surgical_kit", name: "Surgical Kit", description: "Surgical instruments to patch blacked-out body parts to 1 HP. 5 Uses.", type: "medical", medicalSubType: "surgical", rarity: "rare", value: 25000, resourceCurrent: 5, resourceMax: 5, iconName: "Scissors", soldBy: "therapist", traderCost: 30000 },
+  cms_kit: { id: "cms_kit", name: "CMS Kit", description: "Standard field surgery and limb restoration kit. 3 Uses.", type: "medical", medicalSubType: "surgical", rarity: "common", value: 20000, resourceCurrent: 3, resourceMax: 3, iconName: "Scissors", soldBy: "therapist", traderCost: 24000 },
+  surv12: { id: "surv12", name: "Surv12 Surgical Kit", description: "Premium survival surgical kit with multi-use suture threads. 9 Uses.", type: "medical", medicalSubType: "surgical", rarity: "epic", value: 30000, resourceCurrent: 9, resourceMax: 9, iconName: "Scissors", soldBy: "therapist", traderCost: 36000 },
 
-  // PROVISIONS — ENERGY (from GDD Loot Table)
-  crackers: { ...createProvision("crackers", "Crackers", "Dry crackers. Energy: 30", 30, 2000, "Cookie", "energy"), soldBy: "therapist", traderCost: 2400 },
-  canned_food: { ...createProvision("canned_food", "Canned Food", "Canned beef stew. Energy: 50", 50, 3500, "Utensils", "energy"), soldBy: "therapist", traderCost: 4200 },
-  mre: { ...createProvision("mre", "MRE", "Military meal ready to eat. Energy: 80", 80, 6000, "Beef", "energy"), soldBy: "therapist", traderCost: 7200 },
+  // PROVISIONS — HYDRATION
+  water_bottle: { id: "water_bottle", name: "Water Bottle", description: "0.6L Bottle of Purified Water. Hydration: 60", type: "provision", provisionType: "hydration", rarity: "common", value: 4000, resourceCurrent: 60, resourceMax: 60, iconName: "Droplet", soldBy: "therapist", traderCost: 4800 },
+  juice: { id: "juice", name: "Juice Box", description: "Sweet pack of apple juice. Hydration: 30", type: "provision", provisionType: "hydration", rarity: "common", value: 3000, resourceCurrent: 30, resourceMax: 30, iconName: "GlassWater", soldBy: "therapist", traderCost: 3600 },
+  energy_drink: { id: "energy_drink", name: "Energy Drink", description: "Sweet carbonated drink. Hydration: 40", type: "provision", provisionType: "hydration", rarity: "common", value: 2000, resourceCurrent: 40, resourceMax: 40, iconName: "Zap", soldBy: "therapist", traderCost: 2400 },
+  aquamarin: { id: "aquamarin", name: "Aquamarin", description: "Sparkling mineral water. Hydration: 100", type: "provision", provisionType: "hydration", rarity: "rare", value: 6000, resourceCurrent: 100, resourceMax: 100, iconName: "Droplet" },
 
-  // WEAPON MODS (from GDD Loot Table)
-  collimator: { ...createMod("collimator", "Red Dot Sight", WeaponModCategory.SIGHT, 3, 1, 0, 0, "common", 8000, "Eye"), soldBy: "mechanic", traderCost: 9600 },
-  eotech: { ...createMod("eotech", "Holographic Sight", WeaponModCategory.SIGHT, 5, 1, 0, 0, "rare", 12000, "Eye"), soldBy: "mechanic", traderCost: 14400 },
-  scope_4x: createMod("scope_4x", "4x Scope", WeaponModCategory.SIGHT, 8, -2, 0, 0, "rare", 15000, "Target"),
-  scope_thermal: createMod("scope_thermal", "Thermal Scope", WeaponModCategory.SIGHT, 12, -1, 0, 0, "epic", 25000, "Crosshair"),
+  // PROVISIONS — ENERGY
+  crackers: { id: "crackers", name: "Crackers", description: "Dry crackers. Energy: 30", type: "provision", provisionType: "energy", rarity: "common", value: 2000, resourceCurrent: 30, resourceMax: 30, iconName: "Cookie", soldBy: "therapist", traderCost: 2400 },
+  canned_food: { id: "canned_food", name: "Canned Food", description: "Canned beef stew. Energy: 50", type: "provision", provisionType: "energy", rarity: "common", value: 3500, resourceCurrent: 50, resourceMax: 50, iconName: "Utensils", soldBy: "therapist", traderCost: 4200 },
+  mre: { id: "mre", name: "MRE", description: "Military meal ready to eat. Energy: 80", type: "provision", provisionType: "energy", rarity: "rare", value: 6000, resourceCurrent: 80, resourceMax: 80, iconName: "Beef", soldBy: "therapist", traderCost: 7200 },
 
-  rotor43: { ...createMod("rotor43", "Suppressor", WeaponModCategory.SUPPRESSOR, 0, 2, 0, 0, "rare", 15000, "ShieldAlert"), soldBy: "mechanic", traderCost: 18000 },
-  long_barrel: createMod("long_barrel", "Long Barrel", WeaponModCategory.SUPPRESSOR, 3, -1, 0, 0, "common", 10000, "Flame"),
-  muzzle_brake: createMod("muzzle_brake", "Muzzle Brake", WeaponModCategory.SUPPRESSOR, 2, 1, 0, 0, "common", 6000, "Flame"),
+  // WEAPON MODS — SIGHTS
+  collimator: { id: "collimator", name: "Red Dot Sight", description: "Weapon Mod - Sight. Ergo: +3, Recoil: 1%", type: "weapon_mod", rarity: "common", value: 8000, iconName: "Eye", modCategory: WeaponModCategory.SIGHT, ergoBonus: 3, recoilReduction: 1, dmgBonus: 0, critBonus: 0, soldBy: "mechanic", traderCost: 9600 },
+  eotech: { id: "eotech", name: "Holographic Sight", description: "Weapon Mod - Sight. Ergo: +5, Recoil: 1%", type: "weapon_mod", rarity: "rare", value: 12000, iconName: "Eye", modCategory: WeaponModCategory.SIGHT, ergoBonus: 5, recoilReduction: 1, dmgBonus: 0, critBonus: 0, soldBy: "mechanic", traderCost: 14400 },
+  scope_4x: { id: "scope_4x", name: "4x Scope", description: "Weapon Mod - Sight. Ergo: +8, Recoil: -2%", type: "weapon_mod", rarity: "rare", value: 15000, iconName: "Target", modCategory: WeaponModCategory.SIGHT, ergoBonus: 8, recoilReduction: -2, dmgBonus: 0, critBonus: 0 },
+  scope_thermal: { id: "scope_thermal", name: "Thermal Scope", description: "Weapon Mod - Sight. Ergo: +12, Recoil: -1%", type: "weapon_mod", rarity: "epic", value: 25000, iconName: "Crosshair", modCategory: WeaponModCategory.SIGHT, ergoBonus: 12, recoilReduction: -1, dmgBonus: 0, critBonus: 0 },
 
-  rvg_grip: { ...createMod("rvg_grip", "Vertical Grip", WeaponModCategory.GRIP, 0, 3, 0, 0, "common", 8000, "Hand"), soldBy: "mechanic", traderCost: 9600 },
-  rk1_grip: { ...createMod("rk1_grip", "Angled Grip", WeaponModCategory.GRIP, 2, 1, 0, 0, "common", 7000, "Pocket"), soldBy: "mechanic", traderCost: 8400 },
-  laser_grip: createMod("laser_grip", "Laser Grip", WeaponModCategory.GRIP, 4, -1, 0, 0, "rare", 12000, "Zap"),
+  // WEAPON MODS — MUZZLE
+  rotor43: { id: "rotor43", name: "Suppressor", description: "Weapon Mod - Muzzle/Suppressor. Recoil: 2%", type: "weapon_mod", rarity: "rare", value: 15000, iconName: "ShieldAlert", modCategory: WeaponModCategory.SUPPRESSOR, ergoBonus: 0, recoilReduction: 2, dmgBonus: 0, critBonus: 0, soldBy: "mechanic", traderCost: 18000 },
+  long_barrel: { id: "long_barrel", name: "Long Barrel", description: "Weapon Mod - Muzzle/Suppressor. Ergo: +3, Recoil: -1%", type: "weapon_mod", rarity: "common", value: 10000, iconName: "Flame", modCategory: WeaponModCategory.SUPPRESSOR, ergoBonus: 3, recoilReduction: -1, dmgBonus: 0, critBonus: 0 },
+  muzzle_brake: { id: "muzzle_brake", name: "Muzzle Brake", description: "Weapon Mod - Muzzle/Suppressor. Ergo: +2, Recoil: 1%", type: "weapon_mod", rarity: "common", value: 6000, iconName: "Flame", modCategory: WeaponModCategory.SUPPRESSOR, ergoBonus: 2, recoilReduction: 1, dmgBonus: 0, critBonus: 0 },
 
-  light_stock: createMod("light_stock", "Light Stock", WeaponModCategory.STOCK, 0, 1, 0, 0, "common", 6000, "Bookmark"),
-  moe_stock: { ...createMod("moe_stock", "Precision Stock", WeaponModCategory.STOCK, 3, 2, 0, 0, "rare", 12000, "Crown"), soldBy: "mechanic", traderCost: 14400 },
-  folded_stock: createMod("folded_stock", "Folded Stock", WeaponModCategory.STOCK, -5, -3, 0, 0, "common", 5000, "FolderHeart"),
+  // WEAPON MODS — GRIPS
+  rvg_grip: { id: "rvg_grip", name: "Vertical Grip", description: "Weapon Mod - Foregrip. Recoil: 3%", type: "weapon_mod", rarity: "common", value: 8000, iconName: "Hand", modCategory: WeaponModCategory.GRIP, ergoBonus: 0, recoilReduction: 3, dmgBonus: 0, critBonus: 0, soldBy: "mechanic", traderCost: 9600 },
+  rk1_grip: { id: "rk1_grip", name: "Angled Grip", description: "Weapon Mod - Foregrip. Ergo: +2, Recoil: 1%", type: "weapon_mod", rarity: "common", value: 7000, iconName: "Pocket", modCategory: WeaponModCategory.GRIP, ergoBonus: 2, recoilReduction: 1, dmgBonus: 0, critBonus: 0, soldBy: "mechanic", traderCost: 8400 },
+  laser_grip: { id: "laser_grip", name: "Laser Grip", description: "Weapon Mod - Foregrip. Ergo: +4, Recoil: -1%", type: "weapon_mod", rarity: "rare", value: 12000, iconName: "Zap", modCategory: WeaponModCategory.GRIP, ergoBonus: 4, recoilReduction: -1, dmgBonus: 0, critBonus: 0 },
 
-  mag_pmag: { ...createMod("mag_pmag", "Extended Mag", WeaponModCategory.MAGAZINE, 0, 0, 0, 0, "rare", 10000, "Disc"), soldBy: "mechanic", traderCost: 12000 },
-  mag_drum: { ...createMod("mag_drum", "Drum Mag", WeaponModCategory.MAGAZINE, 0, -2, 0, 0, "epic", 20000, "Disc"), soldBy: "mechanic", traderCost: 24000 },
+  // WEAPON MODS — STOCKS
+  light_stock: { id: "light_stock", name: "Light Stock", description: "Weapon Mod - Stock. Recoil: 1%", type: "weapon_mod", rarity: "common", value: 6000, iconName: "Bookmark", modCategory: WeaponModCategory.STOCK, ergoBonus: 0, recoilReduction: 1, dmgBonus: 0, critBonus: 0 },
+  moe_stock: { id: "moe_stock", name: "Precision Stock", description: "Weapon Mod - Stock. Ergo: +3, Recoil: 2%", type: "weapon_mod", rarity: "rare", value: 12000, iconName: "Crown", modCategory: WeaponModCategory.STOCK, ergoBonus: 3, recoilReduction: 2, dmgBonus: 0, critBonus: 0, soldBy: "mechanic", traderCost: 14400 },
+  folded_stock: { id: "folded_stock", name: "Folded Stock", description: "Weapon Mod - Stock. Ergo: -5, Recoil: -3%", type: "weapon_mod", rarity: "common", value: 5000, iconName: "FolderHeart", modCategory: WeaponModCategory.STOCK, ergoBonus: -5, recoilReduction: -3, dmgBonus: 0, critBonus: 0 },
 
-  // VALUABLES (from GDD Loot Table)
-  tetriz: createValuable("tetriz", "Tetriz", "Handheld console. Highly requested by Ragman.", "epic", 50, "Gamepad"),
-  gp_coin: createValuable("gp_coin", "GP Coin", "Physical Bitcoin-adjacent golden coin.", "rare", 20, "Coins"),
-  ledx: createValuable("ledx", "LEDX", "Ophthalmoscope device used to check high-tier medical nodes.", "legendary", 50, "Award"),
+  // WEAPON MODS — MAGAZINES
+  mag_pmag: { id: "mag_pmag", name: "Extended Mag", description: "Weapon Mod - Magazine.", type: "weapon_mod", rarity: "rare", value: 10000, iconName: "Disc", modCategory: WeaponModCategory.MAGAZINE, ergoBonus: 0, recoilReduction: 0, dmgBonus: 0, critBonus: 0, soldBy: "mechanic", traderCost: 12000 },
+  mag_drum: { id: "mag_drum", name: "Drum Mag", description: "Weapon Mod - Magazine. Recoil: -2%", type: "weapon_mod", rarity: "epic", value: 20000, iconName: "Disc", modCategory: WeaponModCategory.MAGAZINE, ergoBonus: 0, recoilReduction: -2, dmgBonus: 0, critBonus: 0, soldBy: "mechanic", traderCost: 24000 },
 
-  // QUEST ITEMS (from GDD Loot Table)
-  golden_pocket_watch: createQuestItem("golden_pocket_watch", "Golden Pocket Watch", "Prapor's requested pocket watch, found deep in Customs.", "epic"),
-  bronze_pocket_watch: createQuestItem("bronze_pocket_watch", "Bronze Pocket Watch", "Bronze version of the pocket watch from Customs.", "rare"),
-  suspicious_letter: createQuestItem("suspicious_letter", "Suspicious Letter", "Unlabeled and sealed intelligence dispatch.", "rare"),
-  church_key: createQuestItem("church_key", "Church Key", "Rusted key to the local chapel.", "epic"),
-  toilet_paper: createQuestItem("toilet_paper", "Toilet Paper", "Extremely precious resource requested by Prapor for trade.", "common"),
+  // VALUABLES
+  tetriz: { id: "tetriz", name: "Tetriz", description: "Handheld console. Highly requested by Ragman.", type: "valuable", rarity: "epic", value: 50, iconName: "Gamepad" },
+  gp_coin: { id: "gp_coin", name: "GP Coin", description: "Physical Bitcoin-adjacent golden coin.", type: "valuable", rarity: "rare", value: 20, iconName: "Coins" },
+  ledx: { id: "ledx", name: "LEDX", description: "Ophthalmoscope device used to check high-tier medical nodes.", type: "valuable", rarity: "legendary", value: 50, iconName: "Award" },
 
-  // ARMORS (from GDD Loot Table)
-  paca: createArmor("paca", "PACA", 2, 30, ["Thorax"], 15000, "Shield"),
-  armor_6b23: createArmor("armor_6b23", "6B23-1", 3, 45, ["Thorax", "Stomach"], 25000, "Shield"),
-  armor_6b13: createArmor("armor_6b13", "6B13 M", 4, 50, ["Thorax", "Stomach"], 35000, "Shield"),
-  armor_6b13_heavy: createArmor("armor_6b13_heavy", "6B13 M (Heavy)", 4, 60, ["Thorax", "Stomach", "Arms"], 45000, "ShieldCheck"),
-  armor_killa: createArmor("armor_killa", "6B13 M (Killa)", 5, 80, ["Thorax", "Stomach", "Arms"], 80000, "Crown"),
-  armor_glukhar: createArmor("armor_glukhar", "6B13 M (Glukhar)", 5, 90, ["Thorax", "Stomach", "Arms"], 95000, "Crown"),
+  // QUEST ITEMS
+  golden_pocket_watch: { id: "golden_pocket_watch", name: "Golden Pocket Watch", description: "Prapor's requested pocket watch, found deep in Customs.", type: "quest", rarity: "epic", value: 0, iconName: "FileText" },
+  bronze_pocket_watch: { id: "bronze_pocket_watch", name: "Bronze Pocket Watch", description: "Bronze version of the pocket watch from Customs.", type: "quest", rarity: "rare", value: 0, iconName: "FileText" },
+  suspicious_letter: { id: "suspicious_letter", name: "Suspicious Letter", description: "Unlabeled and sealed intelligence dispatch.", type: "quest", rarity: "rare", value: 0, iconName: "FileText" },
+  church_key: { id: "church_key", name: "Church Key", description: "Rusted key to the local chapel.", type: "quest", rarity: "epic", value: 0, iconName: "FileText" },
+  toilet_paper: { id: "toilet_paper", name: "Toilet Paper", description: "Extremely precious resource requested by Prapor for trade.", type: "quest", rarity: "common", value: 0, iconName: "FileText" },
 
-  // HELMETS (from GDD Loot Table)
-  untar: createHelmet("untar", "UNTAR", 3, 25, 12000, "ShieldCheck"),
-  ssh68: createHelmet("ssh68", "SSh-68", 3, 30, 14000, "ShieldCheck"),
-  helmet_6b47: createHelmet("helmet_6b47", "6B47", 4, 40, 22000, "ShieldCheck"),
-  ulach: createHelmet("ulach", "UlACH", 4, 35, 25000, "ShieldCheck"),
-  fast_mt: createHelmet("fast_mt", "FAST MT", 4, 45, 32000, "ShieldCheck"),
-  tor_team: createHelmet("tor_team", "TOR Team", 4, 50, 38000, "ShieldCheck"),
-  altyn: createHelmet("altyn", "Altyn", 5, 60, 65000, "Shield")
+  // ARMOR
+  paca: { id: "paca", name: "PACA", description: "Body Armor Class 2. Protects: Thorax. Max Durability: 30.", type: "armor", rarity: "common", value: 15000, armorClass: 2, durability: 30, maxDurability: 30, protectedZones: ["Thorax"], iconName: "Shield" },
+  armor_6b23: { id: "armor_6b23", name: "6B23-1", description: "Body Armor Class 3. Protects: Thorax, Stomach. Max Durability: 45.", type: "armor", rarity: "common", value: 25000, armorClass: 3, durability: 45, maxDurability: 45, protectedZones: ["Thorax", "Stomach"], iconName: "Shield" },
+  armor_6b13: { id: "armor_6b13", name: "6B13 M", description: "Body Armor Class 4. Protects: Thorax, Stomach. Max Durability: 50.", type: "armor", rarity: "rare", value: 35000, armorClass: 4, durability: 50, maxDurability: 50, protectedZones: ["Thorax", "Stomach"], iconName: "Shield" },
+  armor_6b13_heavy: { id: "armor_6b13_heavy", name: "6B13 M (Heavy)", description: "Body Armor Class 4. Protects: Thorax, Stomach, Arms. Max Durability: 60.", type: "armor", rarity: "rare", value: 45000, armorClass: 4, durability: 60, maxDurability: 60, protectedZones: ["Thorax", "Stomach", "Arms"], iconName: "ShieldCheck" },
+  armor_killa: { id: "armor_killa", name: "6B13 M (Killa)", description: "Body Armor Class 5. Protects: Thorax, Stomach, Arms. Max Durability: 80.", type: "armor", rarity: "epic", value: 80000, armorClass: 5, durability: 80, maxDurability: 80, protectedZones: ["Thorax", "Stomach", "Arms"], iconName: "Crown" },
+  armor_glukhar: { id: "armor_glukhar", name: "6B13 M (Glukhar)", description: "Body Armor Class 5. Protects: Thorax, Stomach, Arms. Max Durability: 90.", type: "armor", rarity: "epic", value: 95000, armorClass: 5, durability: 90, maxDurability: 90, protectedZones: ["Thorax", "Stomach", "Arms"], iconName: "Crown" },
+
+  // HELMETS
+  untar: { id: "untar", name: "UNTAR", description: "Tactical Helmet Class 3. Protects Head. Max Durability: 25.", type: "helmet", rarity: "common", value: 12000, armorClass: 3, durability: 25, maxDurability: 25, protectedZones: ["Head"], iconName: "ShieldCheck" },
+  ssh68: { id: "ssh68", name: "SSh-68", description: "Tactical Helmet Class 3. Protects Head. Max Durability: 30.", type: "helmet", rarity: "common", value: 14000, armorClass: 3, durability: 30, maxDurability: 30, protectedZones: ["Head"], iconName: "ShieldCheck" },
+  helmet_6b47: { id: "helmet_6b47", name: "6B47", description: "Tactical Helmet Class 4. Protects Head. Max Durability: 40.", type: "helmet", rarity: "rare", value: 22000, armorClass: 4, durability: 40, maxDurability: 40, protectedZones: ["Head"], iconName: "ShieldCheck" },
+  ulach: { id: "ulach", name: "UlACH", description: "Tactical Helmet Class 4. Protects Head. Max Durability: 35.", type: "helmet", rarity: "rare", value: 25000, armorClass: 4, durability: 35, maxDurability: 35, protectedZones: ["Head"], iconName: "ShieldCheck" },
+  fast_mt: { id: "fast_mt", name: "FAST MT", description: "Tactical Helmet Class 4. Protects Head. Max Durability: 45.", type: "helmet", rarity: "rare", value: 32000, armorClass: 4, durability: 45, maxDurability: 45, protectedZones: ["Head"], iconName: "ShieldCheck" },
+  tor_team: { id: "tor_team", name: "TOR Team", description: "Tactical Helmet Class 4. Protects Head. Max Durability: 50.", type: "helmet", rarity: "rare", value: 38000, armorClass: 4, durability: 50, maxDurability: 50, protectedZones: ["Head"], iconName: "ShieldCheck" },
+  altyn: { id: "altyn", name: "Altyn", description: "Tactical Helmet Class 5. Protects Head. Max Durability: 60.", type: "helmet", rarity: "epic", value: 65000, armorClass: 5, durability: 60, maxDurability: 60, protectedZones: ["Head"], iconName: "Shield" }
 };
 
 // 6 Room Types for Procedural Generation (GDD Section 3)

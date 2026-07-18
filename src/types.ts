@@ -103,7 +103,6 @@ export interface GameItem {
   value: number; // in Roubles
   stackSize?: number;
   iconName: string; // Lucide icon mapping
-  dropWeight?: number; // 1 = droppbar, undefined = nicht droppbar. Gewicht via RARITY_WEIGHT.
   
   // Armor/Helmet specific properties
   armorClass?: number;
@@ -114,6 +113,9 @@ export interface GameItem {
   // Medical/Surgical/Provision specific properties
   resourceCurrent?: number;
   resourceMax?: number;
+
+  // Medical sub-type
+  medicalSubType?: "medkit" | "surgical";
 
   // Provision sub-type
   provisionType?: "hydration" | "energy";

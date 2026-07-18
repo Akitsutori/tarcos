@@ -189,8 +189,8 @@ export default function App() {
       const item = target.item;
       let used = false;
 
-      const isSurgicalKit = item.id === "surgical_kit" || item.id === "cms_kit" || item.id === "surv12";
-      const isMedkit = item.type === "medical" && !isSurgicalKit;
+      const isSurgicalKit = item.medicalSubType === "surgical";
+      const isMedkit = item.medicalSubType === "medkit";
       const isProvision = item.type === "provision";
 
       if (isMedkit) {

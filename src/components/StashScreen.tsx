@@ -183,8 +183,8 @@ export const StashScreen: React.FC<StashScreenProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-y-auto max-h-[600px] pr-1">
               {filteredItems.map(({ item, owned, buyable, resourceLowest, resourceMax }) => {
                 const isConsumable = item.type === "medical" || item.type === "provision";
-                const isMedkit = item.type === "medical" && (item.id === "ai2" || item.id === "ifak" || item.id === "afak");
-                const isSurgicalKit = item.type === "medical" && (item.id === "surgical_kit" || item.id === "cms_kit" || item.id === "surv12");
+                const isMedkit = item.medicalSubType === "medkit";
+                const isSurgicalKit = item.medicalSubType === "surgical";
                 const hasResource = isMedkit || isSurgicalKit || item.type === "provision";
                 const isAffordable = buyable && stash.roubles >= (item.traderCost ?? 0);
                 const isOwned = owned > 0;

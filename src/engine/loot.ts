@@ -16,7 +16,7 @@ const RARITY_WEIGHT: Record<string, number> = {
  */
 export const rollLootItem = (map: MapData): GameItem => {
   const lootTable = Object.values(ALL_ITEMS)
-    .filter(item => (item.dropWeight ?? 0) > 0 && (RARITY_WEIGHT[item.rarity] ?? 0) > 0)
+    .filter(item => (RARITY_WEIGHT[item.rarity] ?? 0) > 0)
     .map(item => ({ item, weight: RARITY_WEIGHT[item.rarity] }));
 
   const totalWeight = lootTable.reduce((acc, e) => acc + e.weight, 0);
