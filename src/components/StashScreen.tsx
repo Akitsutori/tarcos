@@ -18,6 +18,7 @@ interface StashScreenProps {
   onBuyItem: (itemId: string, cost: number) => void;
   onConsumeItem: (itemId: string) => void;
   onEquipWeapon: (weaponId: string) => void;
+  onEquipArmor: (itemId: string) => void;
 }
 
 export const StashScreen: React.FC<StashScreenProps> = ({
@@ -25,7 +26,8 @@ export const StashScreen: React.FC<StashScreenProps> = ({
   onSellItem,
   onBuyItem,
   onConsumeItem,
-  onEquipWeapon
+  onEquipWeapon,
+  onEquipArmor
 }) => {
   const { stash, pmc, hideout } = gameState;
 
@@ -103,6 +105,7 @@ export const StashScreen: React.FC<StashScreenProps> = ({
   // Filter by category
   const filteredItems = allVisibleItems.filter(({ item }) => {
     if (activeCategory === "all") return true;
+    if (activeCategory === "armor") return item.type === "armor" || item.type === "helmet";
     return item.type === activeCategory;
   });
 
@@ -156,7 +159,7 @@ export const StashScreen: React.FC<StashScreenProps> = ({
             
             {/* CATEGORY SELECTOR */}
             <div className="flex flex-wrap gap-1 bg-slate-950 p-1 rounded border border-slate-800/80">
-              {(["all", "barter", "medical", "provision", "weapon_mod"] as const).map((cat) => (
+              {(["all", "barter", "medical", "provision", "weapon_mod", "armor"] as const).map((cat) => (
                 <button
                   id={`stash-cat-${cat}-btn`}
                   key={cat}
@@ -186,8 +189,12 @@ export const StashScreen: React.FC<StashScreenProps> = ({
                 const isMedkit = item.medicalSubType === "medkit";
                 const isSurgicalKit = item.medicalSubType === "surgical";
                 const hasResource = isMedkit || isSurgicalKit || item.type === "provision";
+                const isArmor = item.type === "armor" || item.type === "helmet";
                 const isAffordable = buyable && stash.roubles >= (item.traderCost ?? 0);
                 const isOwned = owned > 0;
+                const isEquippedArmor = isArmor && isOwned && (item.id === pmc.equippedArmor?.id || item.id === pmc.equippedHelmet?.id);
+                const hasDurability = isArmor && item.durability !== undefined && item.maxDurability !== undefined && item.maxDurability > 0;
+                const durabilityPercent = hasDurability ? ((item.durability ?? 0) / (item.maxDurability ?? 1)) * 100 : null;
                 const resourcePercent = hasResource && resourceMax && resourceMax > 0 && resourceLowest !== undefined
                   ? (resourceLowest / resourceMax) * 100
                   : null;
@@ -232,6 +239,28 @@ export const StashScreen: React.FC<StashScreenProps> = ({
                               resourcePercent >= 60 ? "bg-emerald-500" : resourcePercent >= 25 ? "bg-amber-500" : "bg-red-500"
                             }`}
                             style={{ width: `${Math.min(100, Math.max(0, resourcePercent))}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Durability bar for armor/helmet items */}
+                    {isOwned && hasDurability && durabilityPercent !== null && (
+                      <div className="mt-2">
+                        <div className="flex justify-between items-center text-[9px] font-mono mb-0.5">
+                          <span className="text-slate-500">Durability {item.armorClass ? `(Class ${item.armorClass})` : ""}</span>
+                          <span className={`font-bold ${
+                            durabilityPercent >= 60 ? "text-emerald-400" : durabilityPercent >= 25 ? "text-amber-400" : "text-red-400"
+                          }`}>
+                            {item.durability}/{item.maxDurability}
+                          </span>
+                        </div>
+                        <div className="h-1 bg-slate-900 rounded overflow-hidden border border-slate-800/50">
+                          <div 
+                            className={`h-full rounded transition-all duration-300 ${
+                              durabilityPercent >= 60 ? "bg-emerald-500" : durabilityPercent >= 25 ? "bg-amber-500" : "bg-red-500"
+                            }`}
+                            style={{ width: `${Math.min(100, Math.max(0, durabilityPercent))}%` }}
                           />
                         </div>
                       </div>
@@ -285,6 +314,24 @@ export const StashScreen: React.FC<StashScreenProps> = ({
                           >
                             USE
                           </button>
+                        )}
+
+                        {/* EQUIP button — show when owned and armor/helmet and not currently equipped */}
+                        {isOwned && isArmor && !isEquippedArmor && (
+                          <button
+                            id={`equip-armor-btn-${item.id}`}
+                            onClick={() => onEquipArmor(item.id)}
+                            className="px-2 py-1 bg-cyan-950/40 text-cyan-400 border border-cyan-900/40 rounded text-[9px] font-mono hover:bg-cyan-950/60 transition"
+                          >
+                            EQUIP
+                          </button>
+                        )}
+
+                        {/* EQUIPPED badge — show when owned and currently equipped */}
+                        {isOwned && isArmor && isEquippedArmor && (
+                          <span className="px-2 py-1 bg-cyan-500 text-slate-950 rounded text-[9px] font-mono font-bold">
+                            Equipped
+                          </span>
                         )}
 
                         {/* SELL buttons — show when owned */}
@@ -459,6 +506,107 @@ export const StashScreen: React.FC<StashScreenProps> = ({
               <span className="text-xs text-slate-500 font-mono italic block text-center">
                 Use the dedicated **Mod Bench** tab to configure muzzle parts, sights, foregrips, stocks, or magazines on your firearms.
               </span>
+            </div>
+          </div>
+
+          {/* EQUIPPED ARMOR CARD */}
+          <div id="stash-armor-card" className="bg-slate-900 border border-slate-800 rounded-lg p-5">
+            <h3 className="text-md font-bold text-white font-mono uppercase tracking-wide border-b border-slate-800 pb-3 mb-4">
+              Equipped Armor
+            </h3>
+
+            <div className="space-y-3">
+              {/* Body Armor */}
+              <div className={`p-3 rounded-lg border ${pmc.equippedArmor ? "bg-slate-950 border-cyan-500" : "bg-slate-950/60 border-slate-800/60"}`}>
+                <div className="flex justify-between items-center mb-1.5">
+                  <span className="text-[10px] text-slate-500 font-mono font-bold uppercase">Body Armor</span>
+                  {pmc.equippedArmor && (
+                    <span className="px-1.5 py-0.5 rounded text-[8px] font-mono font-bold uppercase bg-cyan-500 text-slate-950">
+                      Equipped
+                    </span>
+                  )}
+                </div>
+                {pmc.equippedArmor ? (
+                  <div>
+                    <span className="text-xs font-bold text-slate-200 block">{pmc.equippedArmor.name}</span>
+                    <div className="text-[10px] text-slate-500 font-mono mt-1">
+                      Class <span className="text-slate-300">{pmc.equippedArmor.armorClass}</span>
+                      <span className="mx-1.5">|</span>
+                      Zones: <span className="text-slate-300">{pmc.equippedArmor.protectedZones?.join(", ") || "—"}</span>
+                    </div>
+                    {pmc.equippedArmor.durability !== undefined && pmc.equippedArmor.maxDurability !== undefined && (
+                      <div className="mt-2">
+                        <div className="flex justify-between items-center text-[9px] font-mono mb-0.5">
+                          <span className="text-slate-500">Durability</span>
+                          <span className={`font-bold ${
+                            (pmc.equippedArmor.durability / pmc.equippedArmor.maxDurability) >= 0.6 ? "text-emerald-400" :
+                            (pmc.equippedArmor.durability / pmc.equippedArmor.maxDurability) >= 0.25 ? "text-amber-400" : "text-red-400"
+                          }`}>
+                            {pmc.equippedArmor.durability}/{pmc.equippedArmor.maxDurability}
+                          </span>
+                        </div>
+                        <div className="h-1 bg-slate-900 rounded overflow-hidden border border-slate-800/50">
+                          <div 
+                            className={`h-full rounded transition-all duration-300 ${
+                              (pmc.equippedArmor.durability / pmc.equippedArmor.maxDurability) >= 0.6 ? "bg-emerald-500" :
+                              (pmc.equippedArmor.durability / pmc.equippedArmor.maxDurability) >= 0.25 ? "bg-amber-500" : "bg-red-500"
+                            }`}
+                            style={{ width: `${Math.min(100, Math.max(0, (pmc.equippedArmor.durability / pmc.equippedArmor.maxDurability) * 100))}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <span className="text-[10px] text-slate-600 font-mono italic">No body armor equipped</span>
+                )}
+              </div>
+
+              {/* Helmet */}
+              <div className={`p-3 rounded-lg border ${pmc.equippedHelmet ? "bg-slate-950 border-cyan-500" : "bg-slate-950/60 border-slate-800/60"}`}>
+                <div className="flex justify-between items-center mb-1.5">
+                  <span className="text-[10px] text-slate-500 font-mono font-bold uppercase">Helmet</span>
+                  {pmc.equippedHelmet && (
+                    <span className="px-1.5 py-0.5 rounded text-[8px] font-mono font-bold uppercase bg-cyan-500 text-slate-950">
+                      Equipped
+                    </span>
+                  )}
+                </div>
+                {pmc.equippedHelmet ? (
+                  <div>
+                    <span className="text-xs font-bold text-slate-200 block">{pmc.equippedHelmet.name}</span>
+                    <div className="text-[10px] text-slate-500 font-mono mt-1">
+                      Class <span className="text-slate-300">{pmc.equippedHelmet.armorClass}</span>
+                      <span className="mx-1.5">|</span>
+                      Zones: <span className="text-slate-300">{pmc.equippedHelmet.protectedZones?.join(", ") || "—"}</span>
+                    </div>
+                    {pmc.equippedHelmet.durability !== undefined && pmc.equippedHelmet.maxDurability !== undefined && (
+                      <div className="mt-2">
+                        <div className="flex justify-between items-center text-[9px] font-mono mb-0.5">
+                          <span className="text-slate-500">Durability</span>
+                          <span className={`font-bold ${
+                            (pmc.equippedHelmet.durability / pmc.equippedHelmet.maxDurability) >= 0.6 ? "text-emerald-400" :
+                            (pmc.equippedHelmet.durability / pmc.equippedHelmet.maxDurability) >= 0.25 ? "text-amber-400" : "text-red-400"
+                          }`}>
+                            {pmc.equippedHelmet.durability}/{pmc.equippedHelmet.maxDurability}
+                          </span>
+                        </div>
+                        <div className="h-1 bg-slate-900 rounded overflow-hidden border border-slate-800/50">
+                          <div 
+                            className={`h-full rounded transition-all duration-300 ${
+                              (pmc.equippedHelmet.durability / pmc.equippedHelmet.maxDurability) >= 0.6 ? "bg-emerald-500" :
+                              (pmc.equippedHelmet.durability / pmc.equippedHelmet.maxDurability) >= 0.25 ? "bg-amber-500" : "bg-red-500"
+                            }`}
+                            style={{ width: `${Math.min(100, Math.max(0, (pmc.equippedHelmet.durability / pmc.equippedHelmet.maxDurability) * 100))}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <span className="text-[10px] text-slate-600 font-mono italic">No helmet equipped</span>
+                )}
+              </div>
             </div>
           </div>
 

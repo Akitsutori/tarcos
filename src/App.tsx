@@ -297,6 +297,49 @@ export default function App() {
     });
   };
 
+  // EQUIP ARMOR / HELMET
+  const handleEquipArmor = (itemId: string) => {
+    setGameState((prev) => {
+      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
+      const item = ALL_ITEMS[itemId];
+      if (!item) return prev;
+
+      const stashEntry = newState.stash.items.find((e: { item: GameItem; quantity: number }) => e.item.id === itemId && e.quantity > 0);
+      if (!stashEntry) return prev;
+
+      if (item.type === "helmet") {
+        const oldHelmet = newState.pmc.equippedHelmet;
+        newState.pmc.equippedHelmet = { ...item };
+        if (oldHelmet) {
+          const existing = newState.stash.items.find((e: { item: GameItem; quantity: number }) => e.item.id === oldHelmet.id);
+          if (existing) existing.quantity++;
+          else newState.stash.items.push({ item: oldHelmet, quantity: 1 });
+        }
+        stashEntry.quantity--;
+        if (stashEntry.quantity <= 0) {
+          const idx = newState.stash.items.indexOf(stashEntry);
+          newState.stash.items.splice(idx, 1);
+        }
+      } else if (item.type === "armor") {
+        const oldArmor = newState.pmc.equippedArmor;
+        newState.pmc.equippedArmor = { ...item };
+        if (oldArmor) {
+          const existing = newState.stash.items.find((e: { item: GameItem; quantity: number }) => e.item.id === oldArmor.id);
+          if (existing) existing.quantity++;
+          else newState.stash.items.push({ item: oldArmor, quantity: 1 });
+        }
+        stashEntry.quantity--;
+        if (stashEntry.quantity <= 0) {
+          const idx = newState.stash.items.indexOf(stashEntry);
+          newState.stash.items.splice(idx, 1);
+        }
+      }
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+      return newState;
+    });
+  };
+
   // ATTACH WEAPON MOD PART
   const handleEquipMod = (weaponId: string, category: WeaponModCategory, modItem: GameItem) => {
     setGameState((prev) => {
@@ -564,6 +607,7 @@ export default function App() {
             onBuyItem={handleBuyItem}
             onConsumeItem={handleConsumeItem}
             onEquipWeapon={handleEquipWeapon}
+            onEquipArmor={handleEquipArmor}
           />
         )}
 
