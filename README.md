@@ -1,4 +1,4 @@
-# Escape from Tarkov: Zero-Player Roguelike
+# T.A.R.C.O.S: Tactical Armed Roguelike Combat Observation Simulator
 
 A browser-based, zero-player auto-battler roguelike inspired by *Escape from Tarkov*. The player never directly controls the PMC during raids — the game simulates autonomous combat, looting, healing, and navigation in real-time. Your role is strategic preparation: equipping weapons, managing stash, upgrading the hideout, and selecting deployment zones.
 
