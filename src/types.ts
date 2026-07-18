@@ -99,10 +99,11 @@ export interface GameItem {
   name: string;
   description: string;
   type: ItemType;
-  rarity: "common" | "rare" | "epic" | "legendary" | "quest";
+  rarity: "common" | "rare" | "epic" | "legendary";
   value: number; // in Roubles
   stackSize?: number;
   iconName: string; // Lucide icon mapping
+  dropWeight?: number; // 1 = droppbar, undefined = nicht droppbar. Gewicht via RARITY_WEIGHT.
   
   // Armor/Helmet specific properties
   armorClass?: number;

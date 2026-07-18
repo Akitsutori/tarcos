@@ -7,47 +7,47 @@ import { GameItem, Weapon, WeaponModCategory, ClassType, MapData, HideoutModule,
 
 // Helper to create barter item
 const createBarter = (id: string, name: string, description: string, rarity: GameItem["rarity"], value: number, icon: string): GameItem => ({
-  id, name, description, type: "barter", rarity, value, iconName: icon
+  id, name, description, type: "barter", rarity, value, iconName: icon, dropWeight: 1
 });
 
 // Helper to create medical item with resource pool
 const createMedical = (id: string, name: string, description: string, resource: number, value: number, icon: string, hpHeal = 25): GameItem => ({
-  id, name, description, type: "medical", rarity: resource > 300 ? "epic" : resource >= 150 ? "rare" : "common", value, hpHeal, resourceCurrent: resource, resourceMax: resource, iconName: icon
+  id, name, description, type: "medical", rarity: resource > 300 ? "epic" : resource >= 150 ? "rare" : "common", value, hpHeal, resourceCurrent: resource, resourceMax: resource, iconName: icon, dropWeight: 1
 });
 
 // Helper to create surgical kit
 const createSurgicalKit = (id: string, name: string, description: string, uses: number, value: number, icon: string): GameItem => ({
-  id, name, description, type: "medical", rarity: uses > 5 ? "epic" : uses > 3 ? "rare" : "common", value, resourceCurrent: uses, resourceMax: uses, iconName: icon
+  id, name, description, type: "medical", rarity: uses > 5 ? "epic" : uses > 3 ? "rare" : "common", value, resourceCurrent: uses, resourceMax: uses, iconName: icon, dropWeight: 1
 });
 
 // Helper to create provisions item
 const createProvision = (id: string, name: string, description: string, resource: number, value: number, icon: string, provisionType: "hydration" | "energy"): GameItem => ({
-  id, name, description, type: "provision", provisionType, rarity: resource >= 80 ? "rare" : "common", value, resourceCurrent: resource, resourceMax: resource, iconName: icon
+  id, name, description, type: "provision", provisionType, rarity: resource >= 80 ? "rare" : "common", value, resourceCurrent: resource, resourceMax: resource, iconName: icon, dropWeight: 1
 });
 
 // Helper to create ammo box
 const createAmmoBox = (id: string, name: string, caliber: string, value: number, icon: string): GameItem => ({
-  id, name, description: `A box containing matching rounds for weapons chambered in ${caliber}. Fully refills your magazine and reserves during maintenance.`, type: "ammo", rarity: "common", value, caliber, iconName: icon
+  id, name, description: `A box containing matching rounds for weapons chambered in ${caliber}. Fully refills your magazine and reserves during maintenance.`, type: "ammo", rarity: "common", value, caliber, iconName: icon, dropWeight: 1
 });
 
 // Helper to create armor
 const createArmor = (id: string, name: string, armorClass: number, maxDurability: number, zones: string[], value: number, icon: string): GameItem => ({
-  id, name, description: `Body Armor Class ${armorClass}. Protects: ${zones.join(", ")}. Max Durability: ${maxDurability}.`, type: "armor", rarity: armorClass >= 5 ? "epic" : armorClass >= 4 ? "rare" : "common", value, armorClass, durability: maxDurability, maxDurability, protectedZones: zones, iconName: icon
+  id, name, description: `Body Armor Class ${armorClass}. Protects: ${zones.join(", ")}. Max Durability: ${maxDurability}.`, type: "armor", rarity: armorClass >= 5 ? "epic" : armorClass >= 4 ? "rare" : "common", value, armorClass, durability: maxDurability, maxDurability, protectedZones: zones, iconName: icon, dropWeight: 1
 });
 
 // Helper to create helmet
 const createHelmet = (id: string, name: string, armorClass: number, maxDurability: number, value: number, icon: string): GameItem => ({
-  id, name, description: `Tactical Helmet Class ${armorClass}. Protects Head. Max Durability: ${maxDurability}.`, type: "helmet", rarity: armorClass >= 5 ? "epic" : armorClass >= 4 ? "rare" : "common", value, armorClass, durability: maxDurability, maxDurability, protectedZones: ["Head"], iconName: icon
+  id, name, description: `Tactical Helmet Class ${armorClass}. Protects Head. Max Durability: ${maxDurability}.`, type: "helmet", rarity: armorClass >= 5 ? "epic" : armorClass >= 4 ? "rare" : "common", value, armorClass, durability: maxDurability, maxDurability, protectedZones: ["Head"], iconName: icon, dropWeight: 1
 });
 
 // Helper to create valuable item
 const createValuable = (id: string, name: string, description: string, rarity: GameItem["rarity"], value: number, icon: string): GameItem => ({
-  id, name, description, type: "valuable", rarity, value, iconName: icon
+  id, name, description, type: "valuable", rarity, value, iconName: icon, dropWeight: 1
 });
 
 // Helper to create quest item
-const createQuestItem = (id: string, name: string, description: string, value = 0): GameItem => ({
-  id, name, description, type: "quest", rarity: "quest", value, iconName: "FileText"
+const createQuestItem = (id: string, name: string, description: string, rarity: GameItem["rarity"], value = 0): GameItem => ({
+  id, name, description, type: "quest", rarity, value, iconName: "FileText", dropWeight: 1
 });
 
 // Helper to create mod item
@@ -68,6 +68,7 @@ const createMod = (
   rarity,
   value,
   iconName: icon,
+  dropWeight: 1,
   modCategory: category,
   ergoBonus: ergo,
   recoilReduction: recoil,
@@ -147,11 +148,11 @@ export const ALL_ITEMS: { [id: string]: GameItem } = {
   ledx: createValuable("ledx", "LEDX", "Ophthalmoscope device used to check high-tier medical nodes.", "legendary", 50, "Award"),
 
   // QUEST ITEMS (from GDD Loot Table)
-  golden_pocket_watch: createQuestItem("golden_pocket_watch", "Golden Pocket Watch", "Prapor's requested pocket watch, found deep in Customs."),
-  bronze_pocket_watch: createQuestItem("bronze_pocket_watch", "Bronze Pocket Watch", "Bronze version of the pocket watch from Customs."),
-  suspicious_letter: createQuestItem("suspicious_letter", "Suspicious Letter", "Unlabeled and sealed intelligence dispatch."),
-  church_key: createQuestItem("church_key", "Church Key", "Rusted key to the local chapel."),
-  toilet_paper: createQuestItem("toilet_paper", "Toilet Paper", "Extremely precious resource requested by Prapor for trade."),
+  golden_pocket_watch: createQuestItem("golden_pocket_watch", "Golden Pocket Watch", "Prapor's requested pocket watch, found deep in Customs.", "epic"),
+  bronze_pocket_watch: createQuestItem("bronze_pocket_watch", "Bronze Pocket Watch", "Bronze version of the pocket watch from Customs.", "rare"),
+  suspicious_letter: createQuestItem("suspicious_letter", "Suspicious Letter", "Unlabeled and sealed intelligence dispatch.", "rare"),
+  church_key: createQuestItem("church_key", "Church Key", "Rusted key to the local chapel.", "epic"),
+  toilet_paper: createQuestItem("toilet_paper", "Toilet Paper", "Extremely precious resource requested by Prapor for trade.", "common"),
 
   // ARMORS (from GDD Loot Table)
   paca: createArmor("paca", "PACA", 2, 30, ["Thorax"], 15000, "Shield"),

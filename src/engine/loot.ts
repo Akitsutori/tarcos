@@ -2,58 +2,30 @@ import { MapData, GameItem, PMCCharacter, RaidState } from "../types";
 import { ALL_ITEMS } from "../data";
 import { createLog } from "./utils";
 
-/**
- * Rolls a random item from the loot table based on weights.
- *
- * @param map Map context (for map-specific loot rules if added later)
- * @param luckBonus Additional luck factor
- * @returns A cloned GameItem from the database
- */
-export const rollLootItem = (map: MapData, luckBonus: number = 0): GameItem => {
-  const lootTable = [
-    { id: "ammo_762x39_ps", weight: 10 },
-    { id: "ammo_9x18_pm", weight: 10 },
-    { id: "ammo_556x45_m855", weight: 10 },
-    { id: "ammo_12x70_slug", weight: 10 },
-    { id: "ammo_762x54_snb", weight: 10 },
-    { id: "ai2", weight: 9 },
-    { id: "ifak", weight: 8 },
-    { id: "afak", weight: 7 },
-    { id: "surgical_kit", weight: 6 },
-    { id: "cms_kit", weight: 4 },
-    { id: "surv12", weight: 3 },
-    { id: "collimator", weight: 3 },
-    { id: "eotech", weight: 2 },
-    { id: "rotor43", weight: 2 },
-    { id: "long_barrel", weight: 3 },
-    { id: "muzzle_brake", weight: 3 },
-    { id: "rvg_grip", weight: 3 },
-    { id: "rk1_grip", weight: 3 },
-    { id: "mag_pmag", weight: 2 },
-    { id: "moe_stock", weight: 2 },
-    { id: "light_stock", weight: 3 },
-    { id: "tetriz", weight: 2 },
-    { id: "gp_coin", weight: 2 },
-    { id: "ledx", weight: 2 },
-    { id: "golden_pocket_watch", weight: 1 },
-    { id: "bronze_pocket_watch", weight: 1 },
-    { id: "suspicious_letter", weight: 1 },
-    { id: "church_key", weight: 1 },
-    { id: "toilet_paper", weight: 1 },
-    { id: "armor_6b13", weight: 4 },
-    { id: "water_bottle", weight: 5 },
-    { id: "juice", weight: 4 },
-    { id: "energy_drink", weight: 3 }
-  ];
+// Zentrale Rarity-Gewichtung — alle Items mit dieser Gewichtung, keine individuellen Gewichte
+const RARITY_WEIGHT: Record<string, number> = {
+  common: 5,
+  rare: 3,
+  epic: 2,
+  legendary: 1,
+};
 
-  const totalWeight = lootTable.reduce((acc, item) => acc + item.weight, 0);
+/**
+ * Rolls a random item from the loot table.
+ * Dynamisch aus ALL_ITEMS gebaut — dropWeight > 0 = droppbar, Gewicht via RARITY_WEIGHT.
+ */
+export const rollLootItem = (map: MapData): GameItem => {
+  const lootTable = Object.values(ALL_ITEMS)
+    .filter(item => (item.dropWeight ?? 0) > 0 && (RARITY_WEIGHT[item.rarity] ?? 0) > 0)
+    .map(item => ({ item, weight: RARITY_WEIGHT[item.rarity] }));
+
+  const totalWeight = lootTable.reduce((acc, e) => acc + e.weight, 0);
   let roll = Math.random() * totalWeight;
 
   for (const entry of lootTable) {
     roll -= entry.weight;
     if (roll <= 0) {
-      const original = ALL_ITEMS[entry.id];
-      const cloned = JSON.parse(JSON.stringify(original)) as GameItem;
+      const cloned = JSON.parse(JSON.stringify(entry.item)) as GameItem;
       if (cloned.type === "armor" || cloned.type === "helmet") {
         cloned.durability = cloned.maxDurability;
       }
@@ -61,7 +33,9 @@ export const rollLootItem = (map: MapData, luckBonus: number = 0): GameItem => {
     }
   }
 
-  return JSON.parse(JSON.stringify(ALL_ITEMS.cpu_fan)) as GameItem;
+  // Fallback: erster Common
+  const fallback = lootTable.find(e => e.item.rarity === "common");
+  return JSON.parse(JSON.stringify(fallback?.item ?? ALL_ITEMS.ai2)) as GameItem;
 };
 
 /**
@@ -81,15 +55,20 @@ export const getBackpackCapacity = (constitution: number): number => {
  * @param map Map context
  */
 export const executeLootPhase = (pmc: PMCCharacter, raid: RaidState, map: MapData) => {
-  const baseLootChance = 0.50; // 50%
+  const baseLootChance = 0.50;
   const perceptionLevel = pmc.skills.perception.level;
-  const lootChance = baseLootChance + perceptionLevel * 0.01;
+  const mapMult = map.lootMultiplier ?? 1.0;
+  const lootChance = Math.min(0.95, (baseLootChance + perceptionLevel * 0.01) * mapMult);
+
+  const baseRolls = 3;
+  const luckyBonus = pmc.classType === "Lucky" ? 1 : 0;
+  const totalRolls = baseRolls + luckyBonus;
 
   let itemsFoundCount = 0;
 
-  for (let rollIdx = 0; rollIdx < 3; rollIdx++) {
+  for (let rollIdx = 0; rollIdx < totalRolls; rollIdx++) {
     if (Math.random() < lootChance) {
-      const item = rollLootItem(map, pmc.classType === "Lucky" ? 20 : 0);
+      const item = rollLootItem(map);
       const backpackCap = getBackpackCapacity(pmc.skills.constitution.level);
       const currentLoad = raid.lootFound.reduce((acc, entry) => acc + entry.quantity, 0);
 

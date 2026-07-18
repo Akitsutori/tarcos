@@ -179,12 +179,12 @@ export const runRaidTick = (state: GameState): GameState => {
         raid.logs.push(createLog(`SKILL INCREASE: Weapon Skill reached Level ${weaponSkill.level}!`, "info", raid.elapsedSeconds));
       }
 
-      const lootRollCount = enemy.tier === "Boss" ? 3 : enemy.tier === "PMC" ? 2 : 1;
-      const luckBonus = pmc.classType === ClassType.LUCKY ? 25 : 0;
-      const searchBonus = pmc.skills.perception.level * 1.0;
+      const baseLootRolls = enemy.tier === "Boss" ? 3 : enemy.tier === "PMC" ? 2 : 1;
+      const luckyBonus = pmc.classType === ClassType.LUCKY ? 1 : 0;
+      const lootRollCount = baseLootRolls + luckyBonus;
 
       for (let i = 0; i < lootRollCount; i++) {
-        const item = rollLootItem(map, luckBonus + searchBonus);
+        const item = rollLootItem(map);
         const capacity = getBackpackCapacity(pmc.skills.constitution.level);
         const uniqueBackpackCount = raid.lootFound.reduce((acc, e) => acc + e.quantity, 0);
 

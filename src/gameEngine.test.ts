@@ -27,7 +27,7 @@ describe('GameEngine Basics', () => {
 
   it('rolls a valid loot item from the map', () => {
     const map = ALL_MAPS[0];
-    const item = rollLootItem(map, 0);
+    const item = rollLootItem(map);
     expect(item).toBeDefined();
     expect(item.id).toBeDefined();
     expect(ALL_ITEMS[item.id]).toBeDefined(); // item exists in DB
