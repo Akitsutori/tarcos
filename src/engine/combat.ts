@@ -135,8 +135,6 @@ export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon
       actionChosen = "cover";
     }
 
-    console.log(`[COMBAT DEBUG] Action chosen: ${actionChosen}, isCovered=${attacker.isCovered}, magRounds=${curWep.currentMagRounds}, reserveMags=${curWep.reserveMags}`);
-
     // Execute Actions
     if (actionChosen === "reload") {
       curWep.currentMagRounds = curWep.maxMagSize;
@@ -171,15 +169,11 @@ export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon
     }
 
     if (actionChosen === "fire") {
-      console.log(`[COMBAT DEBUG] Entering fire block. isCovered=${attacker.isCovered}`);
+      // Cover expires when the actor commits to firing — it was a 1-tick bonus.
+      // The defender still had the cover accuracy penalty for THIS round's incoming shots.
       if (attacker.isCovered) {
-        if (Math.random() < 0.50) {
-          attacker.isCovered = false;
-          roundLogs.push(createLog(`${attacker.name} broke cover to engage.`, "info", elapsedSeconds));
-        } else {
-          roundLogs.push(createLog(`${attacker.name} remains pinned behind cover.`, "info", elapsedSeconds));
-          continue;
-        }
+        attacker.isCovered = false;
+        roundLogs.push(createLog(`${attacker.name} broke cover to engage.`, "info", elapsedSeconds));
       }
 
       const isScoutSMG = attacker.type === "pmc" && pmc.classType === ClassType.SCOUT;
@@ -189,7 +183,6 @@ export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon
       const burstCount = Math.floor(Math.random() * (maxPossible - minBurst + 1)) + minBurst;
 
       if (burstCount <= 0) continue;
-      console.log(`[COMBAT DEBUG] Burst spray: ${burstCount} rounds, maxPossible=${maxPossible}, minBurst=${minBurst}, magRounds=${curWep.currentMagRounds}`);
       roundLogs.push(createLog(`${attacker.name} initiated burst spray of ${burstCount} rounds.`, "info", elapsedSeconds));
 
       const activeWeaponStats = attacker.type === "pmc" ? weaponStats : getWeaponStats(curWep, 0);
@@ -306,7 +299,6 @@ export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon
   }
 
   // 4. Copy primitives back to source objects
-  console.log(`[COMBAT DEBUG] Combat round complete. Returning ${roundLogs.length} logs. PMC dead=${pmcView.isDead}, enemy dead=${enemyView.isDead}`);
   pmc.isBleeding = pmcView.isBleeding;
   pmc.bleedingPartId = pmcView.bleedingPartId;
   pmc.isCovered = pmcView.isCovered;
