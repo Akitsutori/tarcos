@@ -1,0 +1,8 @@
+node_modules/
+build/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+# uncomment when you have a better deployment method  dist/

@@ -1,0 +1,600 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { useState } from "react";
+import { GameState, RaidState, ClassType, GameItem, WeaponModCategory, PMCBodyParts } from "./types";
+import { ALL_MAPS, buildProceduralMap, ALL_ITEMS, INITIAL_WEAPONS, createInitialPMC } from "./data";
+import { RaidScreen } from "./components/RaidScreen";
+import { StashScreen } from "./components/StashScreen";
+import { WeaponModding } from "./components/WeaponModding";
+import { ProgressionScreen } from "./components/ProgressionScreen";
+import { 
+  MapPin, PackageOpen, Hammer, TrendingUp, Info, RotateCcw, ShieldCheck 
+} from "lucide-react";
+
+import { useGameSave, STORAGE_KEY } from "./hooks/useGameSave";
+import { useRaidTick } from "./hooks/useRaidTick";
+
+export default function App() {
+  const { gameState, setGameState, resetProgress } = useGameSave();
+  const { handleTick } = useRaidTick(setGameState);
+  
+  const [activeTab, setActiveTab] = useState<"raid" | "stash" | "modding" | "progression">("raid");
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
+  // Toggle play/pause simulation rate
+  const handleTogglePlay = (playState: boolean) => {
+    setIsPlaying(playState);
+  };
+
+  // Speed adjustment control
+  const handleChangeSpeed = (speed: number) => {
+    setGameState((prev) => {
+      const newState = { ...prev };
+      newState.activeRaid = { ...prev.activeRaid, playSpeed: speed };
+      return newState;
+    });
+  };
+
+  // Deploy on active raid
+  const handleDeployRaid = (mapId: string) => {
+    const targetMap = ALL_MAPS.find((m) => m.id === mapId);
+    if (!targetMap) return;
+
+    // Check hydration/energy. PMCs cannot deploy at 0 energy or hydration
+    if (gameState.pmc.energy <= 0 || gameState.pmc.hydration <= 0) {
+      alert("PMC is too starved/dehydrated to deploy! Feed them provisions or wait for hideout regeneration.");
+      return;
+    }
+
+    const proceduralTiles = buildProceduralMap(targetMap);
+
+    const startingRaidState: RaidState = {
+      isActive: true,
+      map: targetMap,
+      tiles: proceduralTiles,
+      currentStage: 0,
+      status: "deploying",
+      combatTarget: null,
+      logs: [
+        {
+          id: Math.random().toString(36).substring(2, 9),
+          timestamp: "00:00",
+          message: `PMC deployed into tactical sector: ${targetMap.name}. Procedural track constructed of ${proceduralTiles.length} tiles. Environment: ${targetMap.difficulty} danger level.`,
+          type: "info"
+        }
+      ],
+      lootFound: [],
+      secureContainerSaved: [],
+      elapsedSeconds: 0,
+      playSpeed: gameState.activeRaid.playSpeed || 1,
+      usedMedkitDuringRaid: false,
+      reinforcementsSpawnedThisTile: 0,
+      killsByTier: { Scav: 0, PMC: 0, Boss: 0 }
+    };
+
+    setGameState((prev) => {
+      const newState = { ...prev, activeRaid: startingRaidState, selectedMapId: mapId };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+      return newState;
+    });
+
+    setIsPlaying(true);
+    setActiveTab("raid");
+  };
+
+  // Emergency Disconnect / KIA
+  const handleCancelRaid = () => {
+    if (!confirm("Initiating emergency disconnect will trigger immediate KIA status. All un-secured backpack loot will be lost. Confirm disconnect?")) {
+      return;
+    }
+
+    setGameState((prev) => {
+      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
+      const raid = newState.activeRaid;
+      const pmc = newState.pmc;
+
+      raid.status = "kia";
+      pmc.bodyParts.head.current = 0;
+      pmc.bodyParts.thorax.current = 0;
+      pmc.kiaCount++;
+      pmc.raidsCount++;
+      newState.pastRaidOutcomes.push("kia");
+      raid.isActive = false;
+
+      // Secure container saved
+      raid.secureContainerSaved.forEach((containerEntry) => {
+        const stashEntry = newState.stash.items.find(i => i.item.id === containerEntry.item.id);
+        if (stashEntry) {
+          stashEntry.quantity += containerEntry.quantity;
+        } else {
+          newState.stash.items.push({ item: containerEntry.item, quantity: containerEntry.quantity });
+        }
+      });
+
+      pmc.survivalRate = Math.floor((pmc.survivedCount / pmc.raidsCount) * 100);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+      return newState;
+    });
+
+    setIsPlaying(false);
+  };
+
+  // SELL STASH ITEM
+  const handleSellItem = (itemId: string, quantity: number) => {
+    setGameState((prev) => {
+      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
+      const stashEntry = newState.stash.items.find((i) => i.item.id === itemId);
+
+      if (stashEntry && stashEntry.quantity >= quantity) {
+        stashEntry.quantity -= quantity;
+        newState.stash.roubles += stashEntry.item.value * quantity;
+
+        // Clean out empty slots
+        newState.stash.items = newState.stash.items.filter((i) => i.quantity > 0);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+        return newState;
+      }
+      return prev;
+    });
+  };
+
+  // BUY ITEM FROM TRADER
+  const handleBuyItem = (itemId: string, cost: number) => {
+    setGameState((prev) => {
+      if (prev.stash.roubles < cost) return prev;
+
+      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
+      const targetItem = ALL_ITEMS[itemId];
+      if (!targetItem) return prev;
+
+      newState.stash.roubles -= cost;
+
+      // Medical items: single entry, quantity = additional backup kits
+      if (targetItem.type === "medical" || targetItem.type === "provision") {
+        const existing = newState.stash.items.find((e) => e.item.id === itemId);
+        if (existing) {
+          existing.quantity++;
+        } else {
+          const newItem = JSON.parse(JSON.stringify(targetItem)) as GameItem;
+          newState.stash.items.push({ item: newItem, quantity: 0 });
+        }
+      } else {
+        const stashEntry = newState.stash.items.find((i) => i.item.id === itemId);
+        if (stashEntry) {
+          stashEntry.quantity++;
+        } else {
+          newState.stash.items.push({ item: JSON.parse(JSON.stringify(targetItem)), quantity: 1 });
+        }
+      }
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+      return newState;
+    });
+  };
+
+  // OUT-OF-RAID CONSUMPTION
+  const handleConsumeItem = (itemId: string) => {
+    setGameState((prev) => {
+      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
+
+      const target = newState.stash.items.find(
+        (e) => e.item.id === itemId && (e.quantity > 0 || (e.item.resourceCurrent !== undefined && e.item.resourceCurrent > 0))
+      );
+      if (!target) return prev;
+
+      const item = target.item;
+      let used = false;
+
+      const isSurgicalKit = item.id === "surgical_kit" || item.id === "cms_kit" || item.id === "surv12";
+      const isMedkit = item.type === "medical" && !isSurgicalKit;
+      const isProvision = item.type === "provision";
+
+      if (isMedkit) {
+        const partIds: (keyof PMCBodyParts)[] = ["head", "thorax", "stomach", "leftLeg", "rightLeg", "leftArm", "rightArm"];
+        for (const partId of partIds) {
+          const part = newState.pmc.bodyParts[partId];
+          if (part.current <= 0 || part.current >= part.max) continue;
+
+          let remaining = part.max - part.current;
+          while (remaining > 0) {
+            if (item.resourceCurrent !== undefined && item.resourceCurrent > 0) {
+              const heal = Math.min(remaining, item.resourceCurrent);
+              part.current += heal;
+              item.resourceCurrent -= heal;
+              remaining -= heal;
+              used = true;
+            } else if (target.quantity > 0) {
+              target.quantity--;
+              item.resourceCurrent = item.resourceMax;
+            } else {
+              break;
+            }
+          }
+          if (remaining > 0) break;
+        }
+        // Advance to next backup kit if active is depleted
+        if (used && item.resourceCurrent !== undefined && item.resourceCurrent <= 0 && target.quantity > 0) {
+          target.quantity--;
+          item.resourceCurrent = item.resourceMax;
+        }
+      }
+
+      if (isSurgicalKit) {
+        const surgicalTargetOrder: (keyof PMCBodyParts)[] = ["stomach", "leftLeg", "rightLeg", "leftArm", "rightArm"];
+        for (const partId of surgicalTargetOrder) {
+          const part = newState.pmc.bodyParts[partId];
+          if (part.current !== 0) continue;
+
+          if (item.resourceCurrent !== undefined && item.resourceCurrent > 0) {
+            part.current = 1;
+            item.resourceCurrent--;
+            used = true;
+          } else if (target.quantity > 0) {
+            target.quantity--;
+            item.resourceCurrent = item.resourceMax;
+          } else {
+            break;
+          }
+        }
+        // Advance to next backup kit if active is depleted
+        if (used && item.resourceCurrent !== undefined && item.resourceCurrent <= 0 && target.quantity > 0) {
+          target.quantity--;
+          item.resourceCurrent = item.resourceMax;
+        }
+      }
+
+      if (isProvision) {
+        const isHydration = item.provisionType === "hydration";
+        const maxStat = isHydration ? newState.pmc.maxHydration : newState.pmc.maxEnergy;
+        const currentStat = isHydration ? newState.pmc.hydration : newState.pmc.energy;
+        let remaining = maxStat - currentStat;
+
+        while (remaining > 0) {
+          if (item.resourceCurrent !== undefined && item.resourceCurrent > 0) {
+            const restore = Math.min(remaining, item.resourceCurrent);
+            if (isHydration) newState.pmc.hydration += restore;
+            else newState.pmc.energy += restore;
+            item.resourceCurrent -= restore;
+            remaining -= restore;
+            used = true;
+          } else if (target.quantity > 0) {
+            target.quantity--;
+            item.resourceCurrent = item.resourceMax;
+          } else {
+            break;
+          }
+        }
+        // Advance to next backup kit if active is depleted
+        if (used && item.resourceCurrent !== undefined && item.resourceCurrent <= 0 && target.quantity > 0) {
+          target.quantity--;
+          item.resourceCurrent = item.resourceMax;
+        }
+      }
+
+      if (used) {
+        // Remove entries that are fully depleted (rc=0, qty=0)
+        newState.stash.items = newState.stash.items.filter(
+          (i) => i.quantity > 0 || (i.item.resourceCurrent !== undefined && i.item.resourceCurrent > 0)
+        );
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+        return newState;
+      }
+      return prev;
+    });
+  };
+
+  // EQUIP WEAPON
+  const handleEquipWeapon = (weaponId: string) => {
+    setGameState((prev) => {
+      const newState = { ...prev };
+      newState.stash.equippedWeaponId = weaponId;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+      return newState;
+    });
+  };
+
+  // ATTACH WEAPON MOD PART
+  const handleEquipMod = (weaponId: string, category: WeaponModCategory, modItem: GameItem) => {
+    setGameState((prev) => {
+      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
+      const weapon = newState.stash.weapons.find((w) => w.id === weaponId);
+      const stashEntry = newState.stash.items.find((i) => i.item.id === modItem.id);
+
+      if (weapon && stashEntry && stashEntry.quantity > 0) {
+        // Return existing mod to stash if present
+        const oldMod = weapon.mods[category];
+        if (oldMod) {
+          const oldStashEntry = newState.stash.items.find((i) => i.item.id === oldMod.id);
+          if (oldStashEntry) {
+            oldStashEntry.quantity++;
+          } else {
+            newState.stash.items.push({ item: oldMod, quantity: 1 });
+          }
+        }
+
+        // Equip new mod
+        weapon.mods[category] = modItem;
+        stashEntry.quantity--;
+
+        // Clean empty entries
+        newState.stash.items = newState.stash.items.filter((i) => i.quantity > 0);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+        return newState;
+      }
+      return prev;
+    });
+  };
+
+  // UNEQUIP WEAPON MOD PART
+  const handleUnequipMod = (weaponId: string, category: WeaponModCategory) => {
+    setGameState((prev) => {
+      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
+      const weapon = newState.stash.weapons.find((w) => w.id === weaponId);
+      if (!weapon) return prev;
+
+      const mod = weapon.mods[category];
+      if (mod) {
+        // Remove mod
+        weapon.mods[category] = null;
+
+        // Return to stash
+        const stashEntry = newState.stash.items.find((i) => i.item.id === mod.id);
+        if (stashEntry) {
+          stashEntry.quantity++;
+        } else {
+          newState.stash.items.push({ item: mod, quantity: 1 });
+        }
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+        return newState;
+      }
+      return prev;
+    });
+  };
+
+  // CHANGE PMC CLASS SPECIALIZATION
+  const handleChangeClass = (classType: ClassType) => {
+    setGameState((prev) => {
+      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
+      
+      // Generate new class core stats but keep level, xp, and skills
+      const freshPMC = createInitialPMC(classType);
+      
+      // Preserve level & skills progression
+      freshPMC.level = newState.pmc.level;
+      freshPMC.xp = newState.pmc.xp;
+      freshPMC.maxXp = newState.pmc.maxXp;
+      freshPMC.skills = newState.pmc.skills;
+      
+      // Carry statistics
+      freshPMC.raidsCount = newState.pmc.raidsCount;
+      freshPMC.survivedCount = newState.pmc.survivedCount;
+      freshPMC.kiaCount = newState.pmc.kiaCount;
+      freshPMC.killsCount = newState.pmc.killsCount;
+      freshPMC.survivalRate = newState.pmc.survivalRate;
+
+      // Check if signature weapon is in stash, if not add it
+      const sigWeapon = INITIAL_WEAPONS[classType];
+      const hasWeapon = newState.stash.weapons.some((w) => w.id === sigWeapon.id);
+      
+      if (!hasWeapon) {
+        newState.stash.weapons.push({ ...sigWeapon });
+      }
+
+      newState.pmc = freshPMC;
+      newState.stash.equippedWeaponId = sigWeapon.id;
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+      return newState;
+    });
+  };
+
+  // HIDEOUT STATION UPGRADE
+  const handleUpgradeModule = (moduleId: string) => {
+    setGameState((prev) => {
+      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
+      const module = newState.hideout[moduleId as keyof typeof newState.hideout];
+      if (!module || module.level >= module.maxLevel) return prev;
+
+      const nextLvl = module.level + 1;
+      const upgradeReqs = module.upgrades[nextLvl];
+      if (!upgradeReqs) return prev;
+
+      // Double-check funds
+      if (newState.stash.roubles < upgradeReqs.cost) return prev;
+
+      // Double-check barter quantities
+      let possible = true;
+      upgradeReqs.requirements.forEach((req) => {
+        const stashEntry = newState.stash.items.find((i) => i.item.id === req.itemId);
+        if (!stashEntry || stashEntry.quantity < req.quantity) {
+          possible = false;
+        }
+      });
+
+      if (possible) {
+        // Subtract roubles
+        newState.stash.roubles -= upgradeReqs.cost;
+
+        // Subtract barter requirements
+        upgradeReqs.requirements.forEach((req) => {
+          const stashEntry = newState.stash.items.find((i) => i.item.id === req.itemId);
+          if (stashEntry) {
+            stashEntry.quantity -= req.quantity;
+          }
+        });
+
+        // Level up module
+        module.level = nextLvl;
+
+        // Filter out empty items
+        newState.stash.items = newState.stash.items.filter((i) => i.quantity > 0);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+        return newState;
+      }
+
+      return prev;
+    });
+  };
+
+  // FULL RESET PROGRESSION
+  const handleResetProgress = () => {
+    const reset = resetProgress();
+    if (reset) {
+      setIsPlaying(false);
+      setActiveTab("raid");
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between">
+      
+      {/* GLOBAL HIGH-TECH MILITARY HEADER */}
+      <header className="bg-slate-900/90 border-b border-slate-800 backdrop-blur sticky top-0 z-50 px-4 md:px-8 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-amber-500 rounded text-slate-950 font-black tracking-tighter text-sm font-mono">
+            EFT-ZP
+          </div>
+          <div>
+            <h1 className="text-md font-black tracking-widest uppercase text-white font-sans flex items-center gap-2">
+              TARKOV ZERO PLAYER <span className="text-amber-500 text-[10px] font-mono border border-amber-900 rounded px-1 py-0.2">ROGUELIKE</span>
+            </h1>
+            <p className="text-[10px] text-slate-500 font-mono">Real-Time Autonomous PMC Simulation & Combat Monitor</p>
+          </div>
+        </div>
+
+        {/* PERSISTENT GLOBAL METRICS PANEL */}
+        <div className="flex items-center gap-4 text-xs font-mono">
+          <div className="text-right">
+            <span className="text-slate-500 uppercase tracking-wider text-[9px] font-bold block">Liquid Funds</span>
+            <span className="text-amber-500 font-bold">₽{gameState.stash.roubles.toLocaleString()}</span>
+          </div>
+          <div className="w-px h-6 bg-slate-800" />
+          <div className="text-right">
+            <span className="text-slate-500 uppercase tracking-wider text-[9px] font-bold block">Operator Skill</span>
+            <span className="text-slate-200 font-bold">{gameState.pmc.classType} (Lvl {gameState.pmc.level})</span>
+          </div>
+          <div className="w-px h-6 bg-slate-800" />
+          <button 
+            id="wipe-profile-btn"
+            onClick={handleResetProgress}
+            className="p-1.5 rounded bg-slate-950 hover:bg-red-950/40 border border-slate-800 hover:border-red-900 text-slate-500 hover:text-red-400 transition"
+            title="Reset profile progression"
+          >
+            <RotateCcw size={13} />
+          </button>
+        </div>
+      </header>
+
+      {/* PRIMARY VIEWS SWITCHER SUB-HEADER */}
+      <nav className="bg-slate-900/30 border-b border-slate-900 px-4 md:px-8 py-2 flex gap-1 overflow-x-auto">
+        <button
+          id="tab-raid-btn"
+          onClick={() => setActiveTab("raid")}
+          className={`px-4 py-1.5 rounded-md font-mono text-xs font-bold uppercase transition flex items-center gap-1.5 ${
+            activeTab === "raid" 
+              ? "bg-slate-800 text-amber-500 border border-slate-700" 
+              : "text-slate-500 hover:text-slate-300"
+          }`}
+        >
+          <MapPin size={13} />
+          {gameState.activeRaid.isActive ? (
+            <span className="flex items-center gap-1.5">
+              Raid Monitor 
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
+            </span>
+          ) : "Deploy Raid"}
+        </button>
+
+        <button
+          id="tab-stash-btn"
+          onClick={() => setActiveTab("stash")}
+          className={`px-4 py-1.5 rounded-md font-mono text-xs font-bold uppercase transition flex items-center gap-1.5 ${
+            activeTab === "stash" 
+              ? "bg-slate-800 text-amber-500 border border-slate-700" 
+              : "text-slate-500 hover:text-slate-300"
+          }`}
+        >
+          <PackageOpen size={13} /> Stash & Market
+        </button>
+
+        <button
+          id="tab-modding-btn"
+          onClick={() => setActiveTab("modding")}
+          className={`px-4 py-1.5 rounded-md font-mono text-xs font-bold uppercase transition flex items-center gap-1.5 ${
+            activeTab === "modding" 
+              ? "bg-slate-800 text-amber-500 border border-slate-700" 
+              : "text-slate-500 hover:text-slate-300"
+          }`}
+        >
+          <Hammer size={13} /> Mod Bench
+        </button>
+
+        <button
+          id="tab-progression-btn"
+          onClick={() => setActiveTab("progression")}
+          className={`px-4 py-1.5 rounded-md font-mono text-xs font-bold uppercase transition flex items-center gap-1.5 ${
+            activeTab === "progression" 
+              ? "bg-slate-800 text-amber-500 border border-slate-700" 
+              : "text-slate-500 hover:text-slate-300"
+          }`}
+        >
+          <TrendingUp size={13} /> Hideout & Skills
+        </button>
+      </nav>
+
+      {/* CENTRAL CORE CONTENT PORT */}
+      <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
+        {activeTab === "raid" && (
+          <RaidScreen
+            gameState={gameState}
+            onTick={handleTick}
+            onTogglePlay={handleTogglePlay}
+            onChangeSpeed={handleChangeSpeed}
+            onDeployRaid={handleDeployRaid}
+            onCancelRaid={handleCancelRaid}
+            isPlaying={isPlaying}
+          />
+        )}
+
+        {activeTab === "stash" && (
+          <StashScreen
+            gameState={gameState}
+            onSellItem={handleSellItem}
+            onBuyItem={handleBuyItem}
+            onConsumeItem={handleConsumeItem}
+            onEquipWeapon={handleEquipWeapon}
+          />
+        )}
+
+        {activeTab === "modding" && (
+          <WeaponModding
+            gameState={gameState}
+            onEquipMod={handleEquipMod}
+            onUnequipMod={handleUnequipMod}
+          />
+        )}
+
+        {activeTab === "progression" && (
+          <ProgressionScreen
+            gameState={gameState}
+            onUpgradeModule={handleUpgradeModule}
+            onChangeClass={handleChangeClass}
+          />
+        )}
+      </main>
+
+      {/* FOOTER ACCENTS */}
+      <footer className="bg-slate-950/80 border-t border-slate-900 py-3.5 px-4 md:px-8 text-center text-[10px] font-mono text-slate-600 flex flex-col md:flex-row items-center justify-between gap-2">
+        <span>Escape from Tarkov: Autonomous Zero-Player Roguelike Simulator © 2026</span>
+        <span className="flex items-center gap-1.5">
+          <Info size={11} /> Hideout passive healing is active in the background. Close window to return later.
+        </span>
+      </footer>
+
+    </div>
+  );
+}
