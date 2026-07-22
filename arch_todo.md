@@ -174,6 +174,122 @@ export interface BehaviorModule<TActor = any, TTarget = any> {
 }
 ```
 
+Hideout Modules & Extensibility — Example of benefits
+
+Overview
+
+The Event‑Driven / EngineContext architecture maps cleanly to extensible hideout modules. Treat each hideout module as a small, stateful plugin that computes Intents and registers for Engine events (AFTER_RAID_END, ON_HIDEOUT_TICK, PLAYER_INTERACT, etc.). This decouples module logic from engine internals, makes behavior composable, and enables features like automatic stash generation, stat modifiers, and interactive minigames with cooldowns.
+
+How it fits
+
+- Modules are plain data-driven instances stored in the player's hideout state and loaded as BehaviorModule‑like plugins at runtime.
+- Modules compute Intents rather than mutating game state directly. The EngineContext settles those Intents atomically.
+- Interactive modules (minigames) are implemented as AsyncGenerator flows that yield progress hooks for the UI and emit reward Intents on completion.
+
+Key components & API extensions
+
+- ModuleInstance (persisted in hideout state):
+  - id: string
+  - type: string
+  - level: number
+  - state: Record<string, unknown>
+  - cooldownUntil?: number (tick)
+
+- EngineContext additions (helpers used by modules):
+  - getModuleState(moduleId: string): unknown
+  - setModuleState(moduleId: string, state: unknown): void
+  - scheduleAt(tick: number, callbackId: string, payload?: unknown): void
+
+Suggested Intent types (examples)
+
+- STASH_ADD { itemId, quantity }
+- PLAYER_STAT_MOD { stat, delta, permanent?: boolean, durationTicks?: number }
+- MODULE_STATE_SET { moduleId, state }
+- MODULE_COOLDOWN_SET { moduleId, untilTick }
+- MINIGAME_REWARD { rewardIntents: IntentPayload[] } (engine flattens these into the settlement queue)
+
+Events / Hooks (InterruptHook names)
+
+- AFTER_RAID_END — good for auto‑stash generation
+- ON_HIDEOUT_TICK — periodic module processing
+- PLAYER_START_MINIGAME — triggers interactive module execute
+- MINIGAME_STEP / MINIGAME_RESULT — yielded by minigame generators to report progress/results
+
+Example flows
+
+A) Auto‑generate stash items after each raid (Scavenger module)
+1. Engine emits AFTER_RAID_END with raid summary.
+2. Scavenger module (module.execute or an event handler) checks cooldown/state, rolls loot using its level & tuning, and calls context.emitIntent({ type: 'STASH_ADD', targetEntityId: playerId, value: { itemId, quantity } }).
+3. Module emits MODULE_STATE_SET to persist lastRaidTick or similar.
+4. Engine settles intents atomically and updates stash.
+
+B) Modules that modify player stats
+- Module emits PLAYER_STAT_MOD (permanent or temporary). For temporary effects, module can schedule a rollback using scheduleAt() which emits a counter‑intent when the duration expires.
+
+C) Minigame awarding permanent stat bonus with cooldown
+1. Player triggers the minigame -> engine starts module.execute(...) (AsyncGenerator).
+2. Module yields MINIGAME_STEP hooks with progress for UI rendering.
+3. On win: module emits MINIGAME_REWARD that contains PLAYER_STAT_MOD (permanent) and possibly STASH_ADD. It also emits MODULE_COOLDOWN_SET to prevent immediate replays.
+4. Engine settles intents and persists module cooldown/state.
+
+Persistence, determinism & anti‑abuse
+
+- Module state is persisted in the same save store (localStorage) so bonuses and cooldowns survive reloads.
+- Use deterministic RNG seeds for tests/replays; modules should accept an injected RNG for unit tests.
+- Enforce caps and tuning limits in settlement logic (e.g., max permanent bonuses) to prevent stacking abuse.
+
+Testability & Debugging
+
+- Unit test modules in isolation using a stubbed EngineContext that records emitted intents.
+- Integration tests: run AFTER_RAID_END scenarios with fixed seed and assert stash changes.
+- Intent trace logs (see debugging section) make it trivial to locate which module emitted a problematic intent and why.
+
+File layout suggestion
+
+```
+src/engine/modules/
+  index.ts         # registry
+  base.ts          # BaseModule helpers
+  scavenger.ts     # auto‑stash example
+  trainingRoom.ts  # minigame example
+src/data/tuning/modules.ts # module tuning: loot tables, cooldowns, rewards
+```
+
+Example interfaces
+
+```typescript
+type ModuleInstance = {
+  id: string;
+  type: string;
+  level: number;
+  state: Record<string, unknown>;
+  cooldownUntil?: number;
+};
+
+type IntentPayload =
+  | { targetEntityId: string; type: 'STASH_ADD'; value: { itemId: string; quantity: number } }
+  | { targetEntityId: string; type: 'PLAYER_STAT_MOD'; value: { stat: string; delta: number; permanent?: boolean; durationTicks?: number } }
+  | { type: 'MODULE_STATE_SET'; value: { moduleId: string; state: Record<string, unknown> } }
+  | { type: 'MODULE_COOLDOWN_SET'; value: { moduleId: string; untilTick: number } };
+```
+
+Design principles & recommendations
+
+- Keep module logic small and focused: modules should compute Intents and minimal module state, not mutate global state.
+- Prefer tuning/data changes for numeric adjustments; change code only for logic bugs.
+- Limit PR scope: one module or one tuning change per PR when possible.
+- Provide rich intent traces and deterministic replays to support quick debugging.
+
+Migration plan (concise)
+
+1. Add module registry + ModuleInstance shape to state.
+2. Extend EngineContext with getModuleState/setModuleState and scheduleAt.
+3. Implement a simple Scavenger module (auto STASH_ADD after raid) as POC.
+4. Add Intent types STASH_ADD & MODULE_STATE_SET and settlement logic.
+5. Add tests & trace logging for the POC.
+6. Implement trainingRoom minigame module as AsyncGenerator POC with cooldown.
+
+
 Migration checklist (short)
 
 - [ ] Run tests and record baseline
@@ -183,4 +299,4 @@ Migration checklist (short)
 - [ ] Convert settlement & replace one direct mutation path with emitIntent + settlement
 - [ ] Iterate across engine files (raidSimulation, combat, maintenance, loot)
 
-Notes on commiting: you asked for direct commit to main. This file documents the exact code changes required. Given the high impact of the changes, consider using a feature branch and PR for the [...]
+Notes on commiting: you asked for direct commit to main. This file documents the exact code changes required. Given the high impact of the changes, consider using a feature branch and PR for the ...
