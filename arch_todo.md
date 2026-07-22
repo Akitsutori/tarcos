@@ -183,6 +183,4 @@ Migration checklist (short)
 - [ ] Convert settlement & replace one direct mutation path with emitIntent + settlement
 - [ ] Iterate across engine files (raidSimulation, combat, maintenance, loot)
 
-Notes on commiting: you asked for direct commit to main. This file documents the exact code changes required. Given the high impact of the changes, consider using a feature branch and PR for the multiline refactorwork if you want easier review.
-
-If you'd like, I can now commit this file (arch_todo.md) into the repository root on main — do you want me to proceed?
+Notes on commiting: you asked for direct commit to main. This file documents the exact code changes required. Given the high impact of the changes, consider using a feature branch and PR for the [...]
