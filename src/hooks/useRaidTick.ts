@@ -1,7 +1,8 @@
 import React, { useEffect, useCallback } from "react";
-import { GameState, PMCBodyParts } from "../types";
+import { GameState } from "../types";
 import { runRaidTickGenerator } from "../gameEngine";
 import { InterruptHook } from "../engine/types";
+import { HEAL_PART_ORDER } from "../engine/bodyParts";
 import { STORAGE_KEY } from "./useGameSave";
 import { MEDSTATION_HEAL_PER_5S_BY_LEVEL, nutritionRecoveryPer5s } from "../data/tuning/hideoutConfig";
 
@@ -27,7 +28,7 @@ export const useRaidTick = (
         let healAmount = MEDSTATION_HEAL_PER_5S_BY_LEVEL[medstationLvl] ?? 1;
 
         let neededHeal = healAmount;
-        const partIds: (keyof PMCBodyParts)[] = ["head", "thorax", "stomach", "leftLeg", "rightLeg", "leftArm", "rightArm"];
+        const partIds = HEAL_PART_ORDER;
         
         for (const partId of partIds) {
           if (neededHeal <= 0) break;

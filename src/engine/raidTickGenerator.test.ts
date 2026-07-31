@@ -4,9 +4,10 @@ import { mulberry32, makeGoldenState, makeEnemy } from './characterization/golde
 import { GameState } from '../types';
 import { EngineContext, InterruptHook, ModuleInstance } from './types';
 import { RAID_END_MODULES } from './behaviors/hideoutModules';
+import { BODY_PART_ORDER } from './bodyParts';
 
 const VALID_ACTIONS = ["reload", "cover", "flee", "fire", "wait"] as const;
-const VALID_BODY_PARTS = ["head", "thorax", "stomach", "leftArm", "rightArm", "leftLeg", "rightLeg"] as const;
+const VALID_BODY_PARTS = BODY_PART_ORDER;
 
 interface Scenario {
   seed: number;

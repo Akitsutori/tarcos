@@ -9,9 +9,10 @@ import { ClassType, RaidState, GameState, PMCCharacter, EnemyState, Weapon } fro
 import { createEngineContext } from './engineContext';
 import { EngineContext, InterruptHook } from './types';
 import { mulberry32, makeEnemy } from './characterization/goldenHarness';
+import { BODY_PART_ORDER } from './bodyParts';
 
 const VALID_ACTIONS = ["reload", "cover", "flee", "fire", "wait"] as const;
-const VALID_BODY_PARTS = ["head", "thorax", "stomach", "leftArm", "rightArm", "leftLeg", "rightLeg"] as const;
+const VALID_BODY_PARTS = BODY_PART_ORDER;
 
 const createTestContext = (pmc: PMCCharacter, enemy: EnemyState, weapon: Weapon, raid: RaidState): EngineContext => {
   const state: GameState = {

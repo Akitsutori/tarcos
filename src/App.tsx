@@ -4,11 +4,12 @@
  */
 
 import { useState } from "react";
-import { GameState, RaidState, ClassType, GameItem, WeaponModCategory, PMCBodyParts } from "./types";
+import { GameState, RaidState, ClassType, GameItem, WeaponModCategory } from "./types";
 import { ALL_MAPS, buildProceduralMap } from "./data/content/maps";
 import { ALL_ITEMS } from "./data/content/items";
 import { INITIAL_WEAPONS } from "./data/content/weapons";
 import { createInitialPMC } from "./data";
+import { HEAL_PART_ORDER, SURGICAL_TARGET_ORDER } from "./engine/bodyParts";
 import { RaidScreen } from "./components/RaidScreen";
 import { StashScreen } from "./components/StashScreen";
 import { WeaponModding } from "./components/WeaponModding";
@@ -197,7 +198,7 @@ export default function App() {
       const isProvision = item.type === "provision";
 
       if (isMedkit) {
-        const partIds: (keyof PMCBodyParts)[] = ["head", "thorax", "stomach", "leftLeg", "rightLeg", "leftArm", "rightArm"];
+        const partIds = HEAL_PART_ORDER;
         for (const partId of partIds) {
           const part = newState.pmc.bodyParts[partId];
           if (part.current <= 0 || part.current >= part.max) continue;
@@ -227,7 +228,7 @@ export default function App() {
       }
 
       if (isSurgicalKit) {
-        const surgicalTargetOrder: (keyof PMCBodyParts)[] = ["stomach", "leftLeg", "rightLeg", "leftArm", "rightArm"];
+        const surgicalTargetOrder = SURGICAL_TARGET_ORDER;
         for (const partId of surgicalTargetOrder) {
           const part = newState.pmc.bodyParts[partId];
           if (part.current !== 0) continue;

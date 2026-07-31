@@ -4,6 +4,7 @@ import { ALL_MAPS } from '../../data/content/maps';
 import { INITIAL_WEAPONS } from '../../data/content/weapons';
 import { createInitialPMC, createInitialHideout } from '../../data';
 import { runRaidTick } from '../raidSimulation';
+import { BODY_PART_ORDER } from '../bodyParts';
 
 /**
  * Golden Master test harness.
@@ -142,8 +143,6 @@ export const makeGoldenState = (): GameState => {
 // ---------------------------------------------------------------------------
 // Transcript
 // ---------------------------------------------------------------------------
-
-const BODY_PART_ORDER = ["head", "thorax", "stomach", "leftArm", "rightArm", "leftLeg", "rightLeg"] as const;
 
 const bodyHp = (bp: PMCBodyParts) => BODY_PART_ORDER.map(k => bp[k].current);
 

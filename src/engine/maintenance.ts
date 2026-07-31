@@ -1,6 +1,7 @@
-import { PMCCharacter, RaidState, Weapon, PMCBodyParts } from "../types";
+import { PMCCharacter, RaidState, Weapon } from "../types";
 import { INITIAL_WEAPONS } from "../data/content/weapons";
 import { createLog } from "./utils";
+import { HEAL_PART_ORDER, SURGICAL_TARGET_ORDER } from "./bodyParts";
 import { findBackupMedical, consumeFoundEntry, BLEED_STOP_COST, DEFAULT_HEAL_RESTORE, MAINTENANCE_HEAL_ATTEMPTS } from "../data/tuning/medicalConfig";
 import { MAINTENANCE_HYDRATION_DRAIN_MIN, MAINTENANCE_HYDRATION_DRAIN_MAX, PROVISION_DRINK_THRESHOLD } from "../data/tuning/raidConfig";
 
@@ -14,7 +15,7 @@ import { MAINTENANCE_HYDRATION_DRAIN_MIN, MAINTENANCE_HYDRATION_DRAIN_MAX, PROVI
  */
 export const executeMaintenancePhase = (pmc: PMCCharacter, raid: RaidState, equippedWeapon?: Weapon) => {
   // Step 1: Surgical Kit Repair
-  const surgicalTargetOrder: (keyof PMCBodyParts)[] = ["stomach", "leftLeg", "rightLeg", "leftArm", "rightArm"];
+  const surgicalTargetOrder = SURGICAL_TARGET_ORDER;
   
   for (const partId of surgicalTargetOrder) {
     const part = pmc.bodyParts[partId];
@@ -63,7 +64,7 @@ export const executeMaintenancePhase = (pmc: PMCCharacter, raid: RaidState, equi
   }
 
   // Step 3: Medkit Healing
-  const healOrder: (keyof PMCBodyParts)[] = ["head", "thorax", "stomach", "leftLeg", "rightLeg", "leftArm", "rightArm"];
+  const healOrder = HEAL_PART_ORDER;
   const healHPRestore = pmc.equippedMedkit?.hpHeal ?? DEFAULT_HEAL_RESTORE;
 
   let healAttemptsCount = MAINTENANCE_HEAL_ATTEMPTS;

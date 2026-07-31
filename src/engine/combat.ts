@@ -1,6 +1,7 @@
 import { PMCCharacter, EnemyState, Weapon, RaidState, RaidLog, BodyPart, PMCBodyParts, ClassType, GameItem, CombatantView } from "../types";
 import { getWeaponStats } from "../data";
 import { createLog } from "./utils";
+import { BODY_PART_ORDER, DAMAGE_SPILLOVER_ORDER } from "./bodyParts";
 import { EngineContext, InterruptHook } from "./types";
 import { isFreeReloader, isSmgPassive, getBurstRange, getSmgPenetration, getDodgeMultiplier, getDamageMultipliers, getFatalSurviveChance } from "./behaviors/classPassives";
 import {
@@ -252,7 +253,7 @@ export const simulateCombatRoundGenerator = function* (
           continue;
         }
 
-        const bodyPartsList: (keyof PMCBodyParts)[] = ["head", "thorax", "stomach", "leftArm", "rightArm", "leftLeg", "rightLeg"];
+        const bodyPartsList = BODY_PART_ORDER;
         const targetedPartId = bodyPartsList[Math.floor(Math.random() * bodyPartsList.length)];
         const targetedPart = defender.bodyParts[targetedPartId];
 
@@ -307,7 +308,7 @@ export const simulateCombatRoundGenerator = function* (
 
         if (targetedPartId === "thorax" && targetedPart.current <= 0 && bulletDmg > targetedPart.current) {
           let overflow = bulletDmg;
-          const spilloverOrder: (keyof PMCBodyParts)[] = ["stomach", "leftArm", "rightArm", "leftLeg", "rightLeg"];
+          const spilloverOrder = DAMAGE_SPILLOVER_ORDER;
           for (const spillId of spilloverOrder) {
             const spillPart = defender.bodyParts[spillId];
             if (spillPart.current > 0) {
