@@ -98,8 +98,6 @@ describe('Combat Diagnostics', () => {
       if (pmcDead || enemyDead) break;
     }
 
-    console.log(`[TEST] Over rounds: burst=${totalBurstLogs}, acc=${totalAccLogs}, dmg=${totalDmgLogs}, round=${totalRoundLogs}`);
-
     expect(totalBurstLogs).toBeGreaterThan(0);
     expect(totalAccLogs).toBeGreaterThan(0);
     expect(totalRoundLogs).toBeGreaterThan(0);
@@ -128,9 +126,6 @@ describe('Combat Diagnostics', () => {
     const pmcTotalAfter = Object.values(pmc.bodyParts).reduce((s, p) => s + p.current, 0);
     const enemyTotalAfter = Object.values(enemy.bodyParts).reduce((s, p) => s + p.current, 0);
 
-    console.log(`[TEST] PMC HP: ${pmcTotalBefore} -> ${pmcTotalAfter}`);
-    console.log(`[TEST] Enemy HP: ${enemyTotalBefore} -> ${enemyTotalAfter}`);
-
     const pmcTookDamage = pmcTotalAfter < pmcTotalBefore;
     const enemyTookDamage = enemyTotalAfter < enemyTotalBefore;
 
@@ -157,9 +152,6 @@ describe('Combat Diagnostics', () => {
       if (pmcDead || enemyDead) break;
     }
 
-    console.log(`[TEST] combat_round logs: ${roundLogs.length}`);
-    roundLogs.forEach(l => console.log(`  ${l}`));
-
     expect(roundLogs.length).toBeGreaterThanOrEqual(1);
   });
 
@@ -180,7 +172,6 @@ describe('Combat Diagnostics', () => {
       const enemyDead = enemy.bodyParts.head.current <= 0 || enemy.bodyParts.thorax.current <= 0;
 
       if (pmcDead || enemyDead) {
-        console.log(`[TEST] Combat resolved after ${tick + 1} ticks. PMC dead=${pmcDead}, enemy dead=${enemyDead}`);
         combatResolved = true;
         break;
       }
