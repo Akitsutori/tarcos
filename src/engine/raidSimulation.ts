@@ -3,6 +3,7 @@ import { getWeaponStats, ARCHETYPE_WEIGHTS, buildProceduralMap } from "../data";
 import { createLog } from "./utils";
 import { spawnEnemy } from "./spawning";
 import { executeLootPhase, rollLootItem, getBackpackCapacity } from "./loot";
+import { SECURE_CONTAINER_CAPACITY, sortLootIntoContainers } from "./lootManagement";
 import { executeMaintenancePhase } from "./maintenance";
 import { finalizeQuestsAndXP, refillQuests } from "./progression";
 import { simulateCombatRound } from "./combat";
@@ -189,31 +190,15 @@ export const runRaidTick = (state: GameState): GameState => {
         const uniqueBackpackCount = raid.lootFound.reduce((acc, e) => acc + e.quantity, 0);
 
         if (uniqueBackpackCount < capacity) {
-          const secureCap = newState.hideout.intelligenceCenter.level >= 3 ? 9 : newState.hideout.intelligenceCenter.level >= 2 ? 6 : 4;
+          const secureCap = SECURE_CONTAINER_CAPACITY(newState.hideout.intelligenceCenter.level);
           raid.lootFound.push({ item, quantity: 1 });
-          
-          const allLoot = [...raid.lootFound, ...raid.secureContainerSaved];
-          const singleItems: GameItem[] = [];
-          allLoot.forEach(e => {
-            for (let q = 0; q < e.quantity; q++) singleItems.push(e.item);
-          });
-          singleItems.sort((a, b) => b.value - a.value);
 
-          const secureSorted: { [id: string]: { item: GameItem; quantity: number } } = {};
-          const backpackSorted: { [id: string]: { item: GameItem; quantity: number } } = {};
-
-          singleItems.forEach((single, idx) => {
-            if (idx < secureCap) {
-              if (!secureSorted[single.id]) secureSorted[single.id] = { item: single, quantity: 0 };
-              secureSorted[single.id].quantity++;
-            } else {
-              if (!backpackSorted[single.id]) backpackSorted[single.id] = { item: single, quantity: 0 };
-              backpackSorted[single.id].quantity++;
-            }
-          });
-
-          raid.secureContainerSaved = Object.values(secureSorted);
-          raid.lootFound = Object.values(backpackSorted);
+          const { lootFound, secureContainerSaved } = sortLootIntoContainers(
+            [...raid.lootFound, ...raid.secureContainerSaved],
+            secureCap
+          );
+          raid.lootFound = lootFound;
+          raid.secureContainerSaved = secureContainerSaved;
 
           raid.logs.push(createLog(`Looted corpse: found ${item.name} (Value: ₽${item.value})`, "loot", raid.elapsedSeconds));
         } else {
@@ -234,7 +219,7 @@ export const runRaidTick = (state: GameState): GameState => {
         raid.reinforcementsSpawnedThisTile = 0;
         
         executeMaintenancePhase(pmc, raid, equippedWeapon);
-        executeLootPhase(pmc, raid, map);
+        executeLootPhase(pmc, raid, map, newState.hideout.intelligenceCenter.level);
 
         raid.currentStage++;
       }
@@ -326,7 +311,7 @@ export const runRaidTick = (state: GameState): GameState => {
     const armorStr = hostile.equippedArmor ? `${hostile.equippedArmor.name} (Class ${hostile.equippedArmor.armorClass})` : "None";
     raid.logs.push(createLog(`[ENCOUNTER] Spotted ${hostile.name} (${hostile.tier}) Lv.${hostile.level} in [${currentTile.name}] | Armor: ${armorStr} | Weapon: ${hostile.equippedWeapon.name}`, "warning", raid.elapsedSeconds));
   } else {
-    executeLootPhase(pmc, raid, map);
+    executeLootPhase(pmc, raid, map, newState.hideout.intelligenceCenter.level);
     executeMaintenancePhase(pmc, raid, equippedWeapon);
     raid.currentStage++;
   }

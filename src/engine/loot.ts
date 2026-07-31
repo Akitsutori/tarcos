@@ -1,6 +1,7 @@
 import { MapData, GameItem, PMCCharacter, RaidState } from "../types";
 import { ALL_ITEMS } from "../data";
 import { createLog } from "./utils";
+import { SECURE_CONTAINER_CAPACITY, sortLootIntoContainers } from "./lootManagement";
 
 // Zentrale Rarity-Gewichtung — alle Items mit dieser Gewichtung, keine individuellen Gewichte
 const RARITY_WEIGHT: Record<string, number> = {
@@ -54,7 +55,7 @@ export const getBackpackCapacity = (constitution: number): number => {
  * @param raid Active raid state (mutated with new loot/logs)
  * @param map Map context
  */
-export const executeLootPhase = (pmc: PMCCharacter, raid: RaidState, map: MapData) => {
+export const executeLootPhase = (pmc: PMCCharacter, raid: RaidState, map: MapData, intelligenceCenterLevel: number) => {
   const baseLootChance = 0.50;
   const perceptionLevel = pmc.skills.perception.level;
   const mapMult = map.lootMultiplier ?? 1.0;
@@ -73,32 +74,15 @@ export const executeLootPhase = (pmc: PMCCharacter, raid: RaidState, map: MapDat
       const currentLoad = raid.lootFound.reduce((acc, entry) => acc + entry.quantity, 0);
 
       if (currentLoad < backpackCap) {
-        const secureCap = 4; // base secure container size
+        const secureCap = SECURE_CONTAINER_CAPACITY(intelligenceCenterLevel);
         raid.lootFound.push({ item, quantity: 1 });
 
-        // Sort items into secure container by value
-        const allLoot = [...raid.lootFound, ...raid.secureContainerSaved];
-        const singleItems: GameItem[] = [];
-        allLoot.forEach(e => {
-          for (let q = 0; q < e.quantity; q++) singleItems.push(e.item);
-        });
-        singleItems.sort((a, b) => b.value - a.value);
-
-        const secureSorted: { [id: string]: { item: GameItem; quantity: number } } = {};
-        const backpackSorted: { [id: string]: { item: GameItem; quantity: number } } = {};
-
-        singleItems.forEach((single, idx) => {
-          if (idx < secureCap) {
-            if (!secureSorted[single.id]) secureSorted[single.id] = { item: single, quantity: 0 };
-            secureSorted[single.id].quantity++;
-          } else {
-            if (!backpackSorted[single.id]) backpackSorted[single.id] = { item: single, quantity: 0 };
-            backpackSorted[single.id].quantity++;
-          }
-        });
-
-        raid.secureContainerSaved = Object.values(secureSorted);
-        raid.lootFound = Object.values(backpackSorted);
+        const { lootFound, secureContainerSaved } = sortLootIntoContainers(
+          [...raid.lootFound, ...raid.secureContainerSaved],
+          secureCap
+        );
+        raid.lootFound = lootFound;
+        raid.secureContainerSaved = secureContainerSaved;
 
         raid.logs.push(createLog(`Found ${item.name} (Value: ₽${item.value})`, "loot", raid.elapsedSeconds));
         itemsFoundCount++;
