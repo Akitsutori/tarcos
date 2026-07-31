@@ -1,6 +1,7 @@
 import { GameState, GameItem } from "../types";
 import { ARCHETYPE_WEIGHTS } from "../data";
 import { createLog } from "./utils";
+import { KIAReason } from "./types";
 import { finalizeQuestsAndXP, refillQuests } from "./progression";
 import { XP_PER_LEVEL, PERCEPTION_XP_GAIN } from "../data/tuning/progressionConfig";
 
@@ -57,13 +58,28 @@ const levelUpLoop = (state: GameState) => {
 };
 
 /**
+ * Display messages per KIA cause. Reserved causes (not yet reachable by the
+ * engine) fall through to their dedicated strings; if a future death path is
+ * added without a message, the map is exhaustive so TypeScript flags it.
+ */
+const KIA_MESSAGES: Record<KIAReason, string> = {
+  COMBAT_BALLISTICS: "PMC KIA in combat!",
+  DEHYDRATION: "PMC KIA from dehydration/starvation!",
+  STARVATION: "PMC KIA from starvation!",
+  BLEED_OUT: "PMC KIA from bleeding out!",
+  OVERDOSE_TOXICITY: "PMC KIA from overdose/toxicity!",
+  ENVIRONMENTAL_HAZARD: "PMC KIA from environmental hazards!",
+  MIA_TIMEOUT: "PMC KIA — missing in action!",
+};
+
+/**
  * Resolves a fatal raid outcome: flags the raid as KIA, transfers secure
  * container contents to the stash, and runs the shared death XP pipeline.
  *
  * @param state The global GameState (mutated)
  * @param reason Which fatality triggered the death pipeline
  */
-export const handleKIA = (state: GameState, reason: "dehydration" | "combat"): void => {
+export const handleKIA = (state: GameState, reason: KIAReason): void => {
   const raid = state.activeRaid;
   const pmc = state.pmc;
 
@@ -83,10 +99,7 @@ export const handleKIA = (state: GameState, reason: "dehydration" | "combat"): v
   pmc.xp += earnedXp;
   raid.logs.push(...questLogs);
 
-  const deathMessage = reason === "dehydration"
-    ? "PMC KIA from dehydration/starvation!"
-    : "PMC KIA in combat!";
-  raid.logs.push(createLog(`${deathMessage} Earned +${earnedXp} cumulative XP in raid.`, "death", raid.elapsedSeconds));
+  raid.logs.push(createLog(`${KIA_MESSAGES[reason]} Earned +${earnedXp} cumulative XP in raid.`, "death", raid.elapsedSeconds));
 
   gainPerceptionXp(state);
   levelUpLoop(state);

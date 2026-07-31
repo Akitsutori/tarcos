@@ -75,7 +75,7 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
 
   // Dehydration KIA Handling
   if (pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0) {
-    handleKIA(newState, "dehydration");
+    handleKIA(newState, "DEHYDRATION");
     const hook: InterruptHook = { sourceEntityId: "raid", hookType: "AFTER_RAID_END", metadata: { status: raid.status } };
     yield hook;
     dispatchRaidEndModules(newState, hook, context);
@@ -89,7 +89,7 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
     raid.logs.push(...combatLogs);
 
     if (pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0) {
-      handleKIA(newState, "combat");
+      handleKIA(newState, "COMBAT_BALLISTICS");
       const hook: InterruptHook = { sourceEntityId: "raid", hookType: "AFTER_RAID_END", metadata: { status: raid.status } };
       yield hook;
       dispatchRaidEndModules(newState, hook, context);
