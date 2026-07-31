@@ -1,0 +1,2604 @@
+[
+  {
+    "tick": 1,
+    "elapsedSeconds": 18,
+    "stage": 1,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 100,
+      "hydration": 97,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:50/50",
+      "helmet": "ssh68:30/30",
+      "weaponRounds": "30/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [],
+    "secureContainerSaved": [
+      "nutsx1",
+      "ammo_762x39_psx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 100/100 | Energy: 100/100 | Tile: 1/0"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Factory Floor]: An abandoned factory floor with conveyor belts and industrial machinery."
+      },
+      {
+        "t": "loot",
+        "m": "Found 7.62x39mm PS Box (Value: ₽15)"
+      },
+      {
+        "t": "loot",
+        "m": "Found Pack of Nuts (Value: ₽14500)"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 54/54 | Thorax 54/54 | Stomach 28/28 | L.Arm 28/28 | R.Arm 28/28 | L.Leg 28/28 | R.Leg 28/28"
+      }
+    ]
+  },
+  {
+    "tick": 2,
+    "elapsedSeconds": 37,
+    "stage": 2,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 100,
+      "hydration": 90,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:50/50",
+      "helmet": "ssh68:30/30",
+      "weaponRounds": "30/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [],
+    "secureContainerSaved": [
+      "nutsx1",
+      "canned_foodx1",
+      "ammo_762x39_psx1",
+      "ammo_556x45_m855x1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 97/100 | Energy: 100/100 | Tile: 2/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Garage]: A vehicle garage with oil stains and tool benches."
+      },
+      {
+        "t": "loot",
+        "m": "Found Canned Food (Value: ₽3500)"
+      },
+      {
+        "t": "loot",
+        "m": "Found 5.56x45mm M855 Box (Value: ₽12)"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 54/54 | Thorax 54/54 | Stomach 28/28 | L.Arm 28/28 | R.Arm 28/28 | L.Leg 28/28 | R.Leg 28/28"
+      }
+    ]
+  },
+  {
+    "tick": 3,
+    "elapsedSeconds": 52,
+    "stage": 3,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 100,
+      "hydration": 83,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:50/50",
+      "helmet": "ssh68:30/30",
+      "weaponRounds": "30/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "ammo_762x39_psx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "tor_teamx1",
+      "ulachx1",
+      "nutsx1",
+      "canned_foodx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 90/100 | Energy: 100/100 | Tile: 3/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Cafeteria]: A large cafeteria with overturned tables and scattered trays."
+      },
+      {
+        "t": "loot",
+        "m": "Found UlACH (Value: ₽25000)"
+      },
+      {
+        "t": "loot",
+        "m": "Found TOR Team (Value: ₽38000)"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 54/54 | Thorax 54/54 | Stomach 28/28 | L.Arm 28/28 | R.Arm 28/28 | L.Leg 28/28 | R.Leg 28/28"
+      }
+    ]
+  },
+  {
+    "tick": 4,
+    "elapsedSeconds": 67,
+    "stage": 4,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 99,
+      "hydration": 75,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:50/50",
+      "helmet": "ssh68:30/30",
+      "weaponRounds": "30/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "water_bottlex1",
+      "canned_foodx1",
+      "ammo_762x39_psx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "tor_teamx1",
+      "ulachx1",
+      "nutsx1",
+      "untarx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 82/100 | Energy: 99/100 | Tile: 4/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Server Room]: A cooled server room with blinking equipment racks."
+      },
+      {
+        "t": "loot",
+        "m": "Found UNTAR (Value: ₽12000)"
+      },
+      {
+        "t": "loot",
+        "m": "Found Water Bottle (Value: ₽4000)"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 54/54 | Thorax 54/54 | Stomach 28/28 | L.Arm 28/28 | R.Arm 28/28 | L.Leg 28/28 | R.Leg 28/28"
+      }
+    ]
+  },
+  {
+    "tick": 5,
+    "elapsedSeconds": 84,
+    "stage": 5,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 99,
+      "hydration": 72,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:50/50",
+      "helmet": "ssh68:30/30",
+      "weaponRounds": "30/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "untarx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "ammo_762x39_psx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx1",
+      "tor_teamx1",
+      "ulachx1",
+      "nutsx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 75/100 | Energy: 99/100 | Tile: 5/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Factory Floor]: An abandoned factory floor with conveyor belts and industrial machinery."
+      },
+      {
+        "t": "loot",
+        "m": "Found Light Stock (Value: ₽6000)"
+      },
+      {
+        "t": "loot",
+        "m": "Found 7.62x54mm SNB Box (Value: ₽15)"
+      },
+      {
+        "t": "loot",
+        "m": "Found Altyn (Value: ₽65000)"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 54/54 | Thorax 54/54 | Stomach 28/28 | L.Arm 28/28 | R.Arm 28/28 | L.Leg 28/28 | R.Leg 28/28"
+      }
+    ]
+  },
+  {
+    "tick": 6,
+    "elapsedSeconds": 99,
+    "stage": 5,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 99,
+      "hydration": 72,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:50/50",
+      "helmet": "ssh68:30/30",
+      "weaponRounds": "30/30+3"
+    },
+    "combatTarget": {
+      "name": "Breeki (Scav)",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        21,
+        21,
+        17,
+        17,
+        17,
+        17,
+        17
+      ]
+    },
+    "lootFound": [
+      "untarx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "ammo_762x39_psx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx1",
+      "tor_teamx1",
+      "ulachx1",
+      "nutsx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 72/100 | Energy: 99/100 | Tile: 6/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Server Room]: A cooled server room with blinking equipment racks."
+      },
+      {
+        "t": "warning",
+        "m": "[ENCOUNTER] Spotted Breeki (Scav) (Scav) Lv.1 in [Server Room] | Armor: None | Weapon: Pistol (9x18mm)"
+      }
+    ]
+  },
+  {
+    "tick": 7,
+    "elapsedSeconds": 111,
+    "stage": 5,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 99,
+      "hydration": 72,
+      "hp": [
+        50,
+        54,
+        24,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:45/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "26/30+3"
+    },
+    "combatTarget": {
+      "name": "Breeki (Scav)",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        21,
+        21,
+        0,
+        0,
+        0,
+        17,
+        0
+      ]
+    },
+    "lootFound": [
+      "untarx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "ammo_762x39_psx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx1",
+      "tor_teamx1",
+      "ulachx1",
+      "nutsx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 72/100 | Energy: 99/100 | Tile: 6/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Breeki (Scav) Lv.1 | HP: 127/127 | Armor: None | Weapon: Pistol (9x18mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 22 vs Breeki (Scav) rolled 11 → PMC acts first"
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 4 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 70.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Breeki (Scav) [LEFT ARM]: 60 dmg | Part HP: 0/17"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 67.5%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Breeki (Scav) [RIGHT ARM]: 60 dmg | Part HP: 0/17"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 65.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Breeki (Scav) [RIGHT LEG]: 60 dmg | Part HP: 0/17"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 62.5%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Breeki (Scav) [STOMACH]: 60 dmg | Part HP: 0/17"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 4 rounds | PMC: 248 HP | Breeki (Scav): 59 HP"
+      },
+      {
+        "t": "info",
+        "m": "Breeki (Scav) initiated burst spray of 3 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Breeki (Scav) Accuracy: 59.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Breeki (Scav) Accuracy: 56.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[PEN] BLOCKED by SSh-68 (20% dmg) | Armor Dur: 25/30"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Breeki (Scav) → PMC [HEAD]: 4 dmg | Part HP: 50/54"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Breeki (Scav) Accuracy: 53.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[PEN] BLOCKED by 6B13 M (20% dmg) | Armor Dur: 45/50"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Breeki (Scav) → PMC [STOMACH]: 4 dmg | Part HP: 24/28"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Breeki (Scav) fired 3 rounds | PMC: 240 HP | Breeki (Scav): 59 HP"
+      }
+    ]
+  },
+  {
+    "tick": 8,
+    "elapsedSeconds": 128,
+    "stage": 5,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 98,
+      "hydration": 71,
+      "hp": [
+        50,
+        50,
+        24,
+        28,
+        28,
+        28,
+        7
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:40/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "22/30+3"
+    },
+    "combatTarget": {
+      "name": "Breeki (Scav)",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        21,
+        21,
+        0,
+        0,
+        0,
+        17,
+        0
+      ]
+    },
+    "lootFound": [
+      "untarx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "ammo_762x39_psx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx1",
+      "tor_teamx1",
+      "ulachx1",
+      "nutsx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 71/100 | Energy: 98/100 | Tile: 6/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Breeki (Scav) Lv.1 | HP: 59/127 | Armor: None | Weapon: Pistol (9x18mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 28 vs Breeki (Scav) rolled 20 → PMC acts first"
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 4 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 70.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 67.5%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 65.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 62.5%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Breeki (Scav) [RIGHT LEG]: 60 dmg | Part HP: 0/17"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 4 rounds | PMC: 240 HP | Breeki (Scav): 59 HP"
+      },
+      {
+        "t": "info",
+        "m": "Breeki (Scav) initiated burst spray of 5 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Breeki (Scav) Accuracy: 59.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Breeki (Scav) Accuracy: 56.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Breeki (Scav) Accuracy: 53.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[PEN] BLOCKED by 6B13 M (20% dmg) | Armor Dur: 40/50"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Breeki (Scav) → PMC [THORAX]: 4 dmg | Part HP: 50/54"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Breeki (Scav) Accuracy: 50.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Breeki (Scav) Accuracy: 47.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Breeki (Scav) → PMC [RIGHT LEG]: 21 dmg | Part HP: 7/28"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Breeki (Scav) fired 5 rounds | PMC: 215 HP | Breeki (Scav): 59 HP"
+      }
+    ]
+  },
+  {
+    "tick": 9,
+    "elapsedSeconds": 146,
+    "stage": 5,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 98,
+      "hydration": 71,
+      "hp": [
+        50,
+        50,
+        24,
+        28,
+        28,
+        28,
+        7
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:40/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "22/30+3"
+    },
+    "combatTarget": {
+      "name": "Breeki (Scav)",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        21,
+        21,
+        0,
+        0,
+        0,
+        17,
+        0
+      ]
+    },
+    "lootFound": [
+      "untarx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "ammo_762x39_psx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx1",
+      "tor_teamx1",
+      "ulachx1",
+      "nutsx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 71/100 | Energy: 98/100 | Tile: 6/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Breeki (Scav) Lv.1 | HP: 59/127 | Armor: None | Weapon: Pistol (9x18mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 24 vs Breeki (Scav) rolled 9 → PMC acts first"
+      },
+      {
+        "t": "info",
+        "m": "PMC ducked into COVER. Attacker accuracy reduced by 20."
+      },
+      {
+        "t": "info",
+        "m": "Breeki (Scav) reloaded. Mag: 8, Reserves: 1."
+      }
+    ]
+  },
+  {
+    "tick": 10,
+    "elapsedSeconds": 160,
+    "stage": 6,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 1,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 20,
+      "energy": 98,
+      "hydration": 66,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 1,
+      "medkit": "ai2:67/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:35/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "30/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "nutsx1",
+      "untarx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx1",
+      "tor_teamx1",
+      "afakx1",
+      "ulachx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 71/100 | Energy: 98/100 | Tile: 6/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Breeki (Scav) Lv.1 | HP: 59/127 | Armor: None | Weapon: Pistol (9x18mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 25 vs Breeki (Scav) rolled 27 → Enemy acts first"
+      },
+      {
+        "t": "info",
+        "m": "Breeki (Scav) initiated burst spray of 5 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Breeki (Scav) Accuracy: 39.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Breeki (Scav) Accuracy: 36.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[PEN] BLOCKED by 6B13 M (20% dmg) | Armor Dur: 35/50"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Breeki (Scav) → PMC [THORAX]: 4 dmg | Part HP: 46/54"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Breeki (Scav) Accuracy: 33.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Breeki (Scav) → PMC [RIGHT ARM]: 21 dmg | Part HP: 7/28"
+      },
+      {
+        "t": "warning",
+        "m": "[BLEED] Breeki (Scav) → PMC: HIT! Target is now BLEEDING!"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Breeki (Scav) Accuracy: 30.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Breeki (Scav) Accuracy: 27.0%"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Breeki (Scav) fired 5 rounds | PMC: 190 HP | Breeki (Scav): 59 HP"
+      },
+      {
+        "t": "combat_hit",
+        "m": "PMC bled on [Head] for 5 damage."
+      },
+      {
+        "t": "info",
+        "m": "PMC broke cover to engage."
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 5 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 70.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Breeki (Scav) [HEAD]: 60 dmg | Part HP: 0/21"
+      },
+      {
+        "t": "combat_kill",
+        "m": "PMC neutralized Breeki (Scav) with a fatal shot!"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 5 rounds | PMC: 185 HP | Breeki (Scav): 38 HP"
+      },
+      {
+        "t": "info",
+        "m": "Neutralized target of tier Scav. Earned +20 XP."
+      },
+      {
+        "t": "loot",
+        "m": "Looted corpse: found AFAK First Aid Kit (Value: ₽32000)"
+      },
+      {
+        "t": "heal",
+        "m": "Stopped active arterial bleeding. Consumed 20 resource points of AI-2 Medkit. Capacity: 130/150."
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Head] for +9 HP. Durability: 121/150."
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Thorax] for +8 HP. Durability: 113/150."
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Stomach] for +4 HP. Durability: 109/150."
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Right Leg] for +21 HP. Durability: 88/150."
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Right Arm] for +21 HP. Durability: 67/150."
+      },
+      {
+        "t": "info",
+        "m": "Unpacked matching ammunition box 7.62x39mm PS Box from backpack. Magazines and reserve munitions fully replenished."
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 54/54 | Thorax 54/54 | Stomach 28/28 | L.Arm 28/28 | R.Arm 28/28 | L.Leg 28/28 | R.Leg 28/28"
+      },
+      {
+        "t": "info",
+        "m": "Searched surrounding areas but found no valuable items."
+      }
+    ]
+  },
+  {
+    "tick": 11,
+    "elapsedSeconds": 179,
+    "stage": 7,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 1,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 20,
+      "energy": 98,
+      "hydration": 62,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 1,
+      "medkit": "ai2:67/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:35/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "30/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "nutsx1",
+      "untarx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx1",
+      "tor_teamx1",
+      "afakx1",
+      "ulachx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 66/100 | Energy: 98/100 | Tile: 7/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Garage]: A vehicle garage with oil stains and tool benches."
+      },
+      {
+        "t": "info",
+        "m": "Searched surrounding areas but found no valuable items."
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 54/54 | Thorax 54/54 | Stomach 28/28 | L.Arm 28/28 | R.Arm 28/28 | L.Leg 28/28 | R.Leg 28/28"
+      }
+    ]
+  },
+  {
+    "tick": 12,
+    "elapsedSeconds": 196,
+    "stage": 8,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 1,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 20,
+      "energy": 98,
+      "hydration": 55,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 1,
+      "medkit": "ai2:67/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:35/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "30/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "nutsx1",
+      "untarx1",
+      "cpu_fanx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "crackersx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx1",
+      "tor_teamx1",
+      "afakx1",
+      "ulachx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 62/100 | Energy: 98/100 | Tile: 8/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Offices]: A set of offices with overturned desks and filing cabinets."
+      },
+      {
+        "t": "loot",
+        "m": "Found Crackers (Value: ₽2000)"
+      },
+      {
+        "t": "loot",
+        "m": "Found CPU Fan (Value: ₽8500)"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 54/54 | Thorax 54/54 | Stomach 28/28 | L.Arm 28/28 | R.Arm 28/28 | L.Leg 28/28 | R.Leg 28/28"
+      }
+    ]
+  },
+  {
+    "tick": 13,
+    "elapsedSeconds": 212,
+    "stage": 8,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 1,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 20,
+      "energy": 98,
+      "hydration": 55,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 1,
+      "medkit": "ai2:67/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:35/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "30/30+3"
+    },
+    "combatTarget": {
+      "name": "Tushonka (Scav)",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        21,
+        21,
+        17,
+        17,
+        17,
+        17,
+        17
+      ]
+    },
+    "lootFound": [
+      "nutsx1",
+      "untarx1",
+      "cpu_fanx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "crackersx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx1",
+      "tor_teamx1",
+      "afakx1",
+      "ulachx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 55/100 | Energy: 98/100 | Tile: 9/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Cafeteria]: A large cafeteria with overturned tables and scattered trays."
+      },
+      {
+        "t": "warning",
+        "m": "[ENCOUNTER] Spotted Tushonka (Scav) (Scav) Lv.1 in [Cafeteria] | Armor: PACA (Class 2) | Weapon: Pistol (9x18mm)"
+      }
+    ]
+  },
+  {
+    "tick": 14,
+    "elapsedSeconds": 230,
+    "stage": 8,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 2,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 40,
+      "energy": 98,
+      "hydration": 55,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 2,
+      "medkit": "ai2:67/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:35/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "29/30+3"
+    },
+    "combatTarget": {
+      "name": "Serega (Scav)",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        24,
+        24,
+        18,
+        18,
+        18,
+        18,
+        18
+      ]
+    },
+    "lootFound": [
+      "ulachx1",
+      "nutsx1",
+      "untarx1",
+      "cpu_fanx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "crackersx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx1",
+      "tor_teamx1",
+      "fast_mtx1",
+      "afakx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 55/100 | Energy: 98/100 | Tile: 9/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Tushonka (Scav) Lv.1 | HP: 127/127 | Armor: PACA (Class 2) | Weapon: Pistol (9x18mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 11 vs Tushonka (Scav) rolled 25 → Enemy acts first"
+      },
+      {
+        "t": "info",
+        "m": "Tushonka (Scav) initiated burst spray of 1 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tushonka (Scav) Accuracy: 57.0%"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Tushonka (Scav) fired 1 rounds | PMC: 248 HP | Tushonka (Scav): 127 HP"
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 2 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 70.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[PEN] PENETRATED UNTAR (60% dmg) | Armor Dur: 15/25"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Tushonka (Scav) [HEAD]: 36 dmg | Part HP: 0/21"
+      },
+      {
+        "t": "combat_kill",
+        "m": "PMC neutralized Tushonka (Scav) with a fatal shot!"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 2 rounds | PMC: 248 HP | Tushonka (Scav): 106 HP"
+      },
+      {
+        "t": "info",
+        "m": "Neutralized target of tier Scav. Earned +20 XP."
+      },
+      {
+        "t": "loot",
+        "m": "Looted corpse: found FAST MT (Value: ₽32000)"
+      },
+      {
+        "t": "warning",
+        "m": "[REINFORCE] 1/3 reinforcements on tile. Serega (Scav) (Scav) Lv.1 | Armor: PACA (Class 2) | Weapon: Assault Rifle (7.62x39mm)"
+      }
+    ]
+  },
+  {
+    "tick": 15,
+    "elapsedSeconds": 247,
+    "stage": 8,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 2,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 40,
+      "energy": 98,
+      "hydration": 55,
+      "hp": [
+        54,
+        29,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 2,
+      "medkit": "ai2:67/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:25/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "27/30+3"
+    },
+    "combatTarget": {
+      "name": "Serega (Scav)",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        24,
+        24,
+        18,
+        0,
+        18,
+        18,
+        0
+      ]
+    },
+    "lootFound": [
+      "ulachx1",
+      "nutsx1",
+      "untarx1",
+      "cpu_fanx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "crackersx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx1",
+      "tor_teamx1",
+      "fast_mtx1",
+      "afakx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 55/100 | Energy: 98/100 | Tile: 9/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Serega (Scav) Lv.1 | HP: 138/138 | Armor: PACA (Class 2) | Weapon: Assault Rifle (7.62x39mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 26 vs Serega (Scav) rolled 13 → PMC acts first"
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 2 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 70.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Serega (Scav) [LEFT ARM]: 60 dmg | Part HP: 0/18"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 67.5%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Serega (Scav) [RIGHT LEG]: 60 dmg | Part HP: 0/18"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 2 rounds | PMC: 248 HP | Serega (Scav): 102 HP"
+      },
+      {
+        "t": "info",
+        "m": "Serega (Scav) initiated burst spray of 3 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Serega (Scav) Accuracy: 62.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[PEN] PENETRATED 6B13 M (60% dmg) | Armor Dur: 25/50"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Serega (Scav) → PMC [THORAX]: 25 dmg | Part HP: 29/54"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Serega (Scav) Accuracy: 59.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Serega (Scav) Accuracy: 56.0%"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Serega (Scav) fired 3 rounds | PMC: 223 HP | Serega (Scav): 102 HP"
+      }
+    ]
+  },
+  {
+    "tick": 16,
+    "elapsedSeconds": 265,
+    "stage": 9,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 3,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 60,
+      "energy": 98,
+      "hydration": 50,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 3,
+      "medkit": "ai2:42/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:25/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "26/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "ulachx1",
+      "helmet_6b47x1",
+      "circuit_boardx1",
+      "nutsx1",
+      "untarx1",
+      "cpu_fanx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "crackersx1",
+      "gp_coinx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx1",
+      "tor_teamx1",
+      "fast_mtx1",
+      "afakx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 55/100 | Energy: 98/100 | Tile: 9/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Serega (Scav) Lv.1 | HP: 102/138 | Armor: PACA (Class 2) | Weapon: Assault Rifle (7.62x39mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 19 vs Serega (Scav) rolled 26 → Enemy acts first"
+      },
+      {
+        "t": "info",
+        "m": "Serega (Scav) ducked into COVER. Attacker accuracy reduced by 20."
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 5 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 50.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[PEN] PENETRATED PACA (60% dmg) | Armor Dur: 20/30"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Serega (Scav) [THORAX]: 36 dmg | Part HP: 0/24"
+      },
+      {
+        "t": "combat_kill",
+        "m": "PMC neutralized Serega (Scav) with a fatal shot!"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 5 rounds | PMC: 223 HP | Serega (Scav): 42 HP"
+      },
+      {
+        "t": "info",
+        "m": "Neutralized target of tier Scav. Earned +20 XP."
+      },
+      {
+        "t": "loot",
+        "m": "Looted corpse: found 6B47 (Value: ₽22000)"
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Thorax] for +25 HP. Durability: 42/150."
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 54/54 | Thorax 54/54 | Stomach 28/28 | L.Arm 28/28 | R.Arm 28/28 | L.Leg 28/28 | R.Leg 28/28"
+      },
+      {
+        "t": "loot",
+        "m": "Found Printed Circuit Board (Value: ₽18000)"
+      },
+      {
+        "t": "loot",
+        "m": "Found GP Coin (Value: ₽20)"
+      }
+    ]
+  },
+  {
+    "tick": 17,
+    "elapsedSeconds": 277,
+    "stage": 9,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 3,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 60,
+      "energy": 97,
+      "hydration": 50,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 3,
+      "medkit": "ai2:42/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:25/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "26/30+3"
+    },
+    "combatTarget": {
+      "name": "Kolya (Scav)",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        24,
+        24,
+        18,
+        18,
+        18,
+        18,
+        18
+      ]
+    },
+    "lootFound": [
+      "ulachx1",
+      "helmet_6b47x1",
+      "circuit_boardx1",
+      "nutsx1",
+      "untarx1",
+      "cpu_fanx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "crackersx1",
+      "gp_coinx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx1",
+      "tor_teamx1",
+      "fast_mtx1",
+      "afakx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 50/100 | Energy: 97/100 | Tile: 10/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Factory Floor]: An abandoned factory floor with conveyor belts and industrial machinery."
+      },
+      {
+        "t": "warning",
+        "m": "[ENCOUNTER] Spotted Kolya (Scav) (Scav) Lv.1 in [Factory Floor] | Armor: PACA (Class 2) | Weapon: Pistol (9x18mm)"
+      }
+    ]
+  },
+  {
+    "tick": 18,
+    "elapsedSeconds": 290,
+    "stage": 9,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 3,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 60,
+      "energy": 97,
+      "hydration": 50,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 3,
+      "medkit": "ai2:42/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:25/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "25/30+3"
+    },
+    "combatTarget": {
+      "name": "Kolya (Scav)",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        24,
+        24,
+        18,
+        18,
+        18,
+        18,
+        18
+      ]
+    },
+    "lootFound": [
+      "ulachx1",
+      "helmet_6b47x1",
+      "circuit_boardx1",
+      "nutsx1",
+      "untarx1",
+      "cpu_fanx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "crackersx1",
+      "gp_coinx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx1",
+      "tor_teamx1",
+      "fast_mtx1",
+      "afakx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 50/100 | Energy: 97/100 | Tile: 10/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Kolya (Scav) Lv.1 | HP: 138/138 | Armor: PACA (Class 2) | Weapon: Pistol (9x18mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 16 vs Kolya (Scav) rolled 29 → Enemy acts first"
+      },
+      {
+        "t": "info",
+        "m": "Kolya (Scav) ducked into COVER. Attacker accuracy reduced by 20."
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 1 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 50.0%"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 1 rounds | PMC: 248 HP | Kolya (Scav): 138 HP"
+      }
+    ]
+  },
+  {
+    "tick": 19,
+    "elapsedSeconds": 302,
+    "stage": 10,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 4,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 80,
+      "energy": 97,
+      "hydration": 100,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 4,
+      "medkit": "ai2:21/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:4/60",
+      "armor": "armor_6b13:25/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "23/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "afakx1",
+      "ulachx1",
+      "helmet_6b47x1",
+      "circuit_boardx1",
+      "nutsx1",
+      "untarx2",
+      "cpu_fanx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "crackersx1",
+      "gp_coinx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx2",
+      "tor_teamx1",
+      "fast_mtx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 49/100 | Energy: 97/100 | Tile: 10/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Kolya (Scav) Lv.1 | HP: 138/138 | Armor: PACA (Class 2) | Weapon: Pistol (9x18mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 17 vs Kolya (Scav) rolled 29 → Enemy acts first"
+      },
+      {
+        "t": "info",
+        "m": "Kolya (Scav) broke cover to engage."
+      },
+      {
+        "t": "info",
+        "m": "Kolya (Scav) initiated burst spray of 4 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Kolya (Scav) Accuracy: 56.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Kolya (Scav) Accuracy: 53.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Kolya (Scav) Accuracy: 50.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Kolya (Scav) → PMC [LEFT LEG]: 21 dmg | Part HP: 7/28"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Kolya (Scav) Accuracy: 47.0%"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Kolya (Scav) fired 4 rounds | PMC: 227 HP | Kolya (Scav): 138 HP"
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 4 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 65.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Kolya (Scav) [RIGHT ARM]: 60 dmg | Part HP: 0/18"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 62.5%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[PEN] PENETRATED PACA (60% dmg) | Armor Dur: 20/30"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Kolya (Scav) [THORAX]: 36 dmg | Part HP: 0/24"
+      },
+      {
+        "t": "combat_kill",
+        "m": "PMC neutralized Kolya (Scav) with a fatal shot!"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 4 rounds | PMC: 227 HP | Kolya (Scav): 60 HP"
+      },
+      {
+        "t": "info",
+        "m": "Neutralized target of tier Scav. Earned +20 XP."
+      },
+      {
+        "t": "loot",
+        "m": "Looted corpse: found UNTAR (Value: ₽12000)"
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Left Leg] for +21 HP. Durability: 21/150."
+      },
+      {
+        "t": "heal",
+        "m": "PMC is thirsty. Consumed equipped provision. Restored +56 Hydration."
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 54/54 | Thorax 54/54 | Stomach 28/28 | L.Arm 28/28 | R.Arm 28/28 | L.Leg 28/28 | R.Leg 28/28"
+      },
+      {
+        "t": "loot",
+        "m": "Found Altyn (Value: ₽65000)"
+      }
+    ]
+  },
+  {
+    "tick": 20,
+    "elapsedSeconds": 314,
+    "stage": 11,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 4,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 80,
+      "energy": 96,
+      "hydration": 92,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 4,
+      "medkit": "ai2:21/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:4/60",
+      "armor": "armor_6b13:25/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "23/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "afakx1",
+      "ulachx1",
+      "helmet_6b47x1",
+      "circuit_boardx1",
+      "nutsx1",
+      "untarx2",
+      "cpu_fanx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "juicex1",
+      "crackersx2",
+      "gp_coinx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx2",
+      "tor_teamx1",
+      "fast_mtx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 99/100 | Energy: 96/100 | Tile: 11/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Cafeteria]: A large cafeteria with overturned tables and scattered trays."
+      },
+      {
+        "t": "loot",
+        "m": "Found Juice Box (Value: ₽3000)"
+      },
+      {
+        "t": "loot",
+        "m": "Found Crackers (Value: ₽2000)"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 54/54 | Thorax 54/54 | Stomach 28/28 | L.Arm 28/28 | R.Arm 28/28 | L.Leg 28/28 | R.Leg 28/28"
+      }
+    ]
+  },
+  {
+    "tick": 21,
+    "elapsedSeconds": 333,
+    "stage": 12,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 4,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 80,
+      "energy": 96,
+      "hydration": 88,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 4,
+      "medkit": "ai2:21/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:4/60",
+      "armor": "armor_6b13:25/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "23/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "afakx1",
+      "ulachx1",
+      "helmet_6b47x1",
+      "circuit_boardx1",
+      "rotor43x1",
+      "boltsx1",
+      "nutsx1",
+      "untarx2",
+      "cpu_fanx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "juicex1",
+      "crackersx2",
+      "gp_coinx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx2",
+      "tor_teamx1",
+      "fast_mtx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 92/100 | Energy: 96/100 | Tile: 12/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Offices]: A set of offices with overturned desks and filing cabinets."
+      },
+      {
+        "t": "loot",
+        "m": "Found Suppressor (Value: ₽15000)"
+      },
+      {
+        "t": "loot",
+        "m": "Found Pack of Bolts (Value: ₽15000)"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 54/54 | Thorax 54/54 | Stomach 28/28 | L.Arm 28/28 | R.Arm 28/28 | L.Leg 28/28 | R.Leg 28/28"
+      }
+    ]
+  },
+  {
+    "tick": 22,
+    "elapsedSeconds": 350,
+    "stage": 13,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 4,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 80,
+      "energy": 96,
+      "hydration": 83,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 4,
+      "medkit": "ai2:21/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:4/60",
+      "armor": "armor_6b13:25/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "23/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "fast_mtx1",
+      "afakx1",
+      "ulachx1",
+      "helmet_6b47x1",
+      "circuit_boardx2",
+      "rotor43x1",
+      "boltsx1",
+      "nutsx1",
+      "untarx2",
+      "cpu_fanx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "juicex1",
+      "crackersx2",
+      "gp_coinx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1"
+    ],
+    "secureContainerSaved": [
+      "altynx2",
+      "tor_teamx1",
+      "armor_6b13x1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 88/100 | Energy: 96/100 | Tile: 13/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Cafeteria]: A large cafeteria with overturned tables and scattered trays."
+      },
+      {
+        "t": "loot",
+        "m": "Found Printed Circuit Board (Value: ₽18000)"
+      },
+      {
+        "t": "loot",
+        "m": "Found 6B13 M (Value: ₽35000)"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 54/54 | Thorax 54/54 | Stomach 28/28 | L.Arm 28/28 | R.Arm 28/28 | L.Leg 28/28 | R.Leg 28/28"
+      }
+    ]
+  },
+  {
+    "tick": 23,
+    "elapsedSeconds": 368,
+    "stage": 14,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 4,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 80,
+      "energy": 96,
+      "hydration": 80,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 4,
+      "medkit": "ai2:21/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:4/60",
+      "armor": "armor_6b13:25/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "23/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "fast_mtx1",
+      "afakx1",
+      "ulachx1",
+      "helmet_6b47x1",
+      "wd40x1",
+      "circuit_boardx2",
+      "rotor43x1",
+      "boltsx1",
+      "nutsx1",
+      "untarx2",
+      "cpu_fanx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "juicex1",
+      "crackersx2",
+      "gp_coinx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1",
+      "church_keyx1"
+    ],
+    "secureContainerSaved": [
+      "altynx2",
+      "tor_teamx1",
+      "armor_6b13x1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 83/100 | Energy: 96/100 | Tile: 14/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Factory Floor]: An abandoned factory floor with conveyor belts and industrial machinery."
+      },
+      {
+        "t": "loot",
+        "m": "Found WD-40 (100ml) (Value: ₽19000)"
+      },
+      {
+        "t": "loot",
+        "m": "Found Church Key (Value: ₽0)"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 54/54 | Thorax 54/54 | Stomach 28/28 | L.Arm 28/28 | R.Arm 28/28 | L.Leg 28/28 | R.Leg 28/28"
+      }
+    ]
+  },
+  {
+    "tick": 24,
+    "elapsedSeconds": 384,
+    "stage": 15,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 4,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 80,
+      "energy": 96,
+      "hydration": 73,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 4,
+      "medkit": "ai2:21/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:4/60",
+      "armor": "armor_6b13:25/50",
+      "helmet": "ssh68:25/30",
+      "weaponRounds": "23/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "fast_mtx1",
+      "afakx1",
+      "ulachx1",
+      "helmet_6b47x1",
+      "wd40x1",
+      "circuit_boardx2",
+      "rotor43x1",
+      "boltsx1",
+      "nutsx1",
+      "untarx2",
+      "cpu_fanx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "juicex1",
+      "crackersx2",
+      "gp_coinx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1",
+      "church_keyx1"
+    ],
+    "secureContainerSaved": [
+      "altynx2",
+      "tor_teamx1",
+      "armor_6b13x1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 80/100 | Energy: 96/100 | Tile: 15/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Armory]: A weapons storage room with empty weapon racks."
+      },
+      {
+        "t": "info",
+        "m": "Searched surrounding areas but found no valuable items."
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 54/54 | Thorax 54/54 | Stomach 28/28 | L.Arm 28/28 | R.Arm 28/28 | L.Leg 28/28 | R.Leg 28/28"
+      }
+    ]
+  },
+  {
+    "tick": 25,
+    "elapsedSeconds": 398,
+    "stage": 15,
+    "status": "extracted",
+    "killsByTier": {
+      "Scav": 4,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 18,
+      "xp": 2472,
+      "energy": 96,
+      "hydration": 73,
+      "hp": [
+        54,
+        54,
+        28,
+        28,
+        28,
+        28,
+        28
+      ],
+      "isBleeding": false,
+      "killsCount": 4,
+      "medkit": "ai2:21/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:4/60",
+      "armor": "armor_6b13:50/50",
+      "helmet": "ssh68:30/30",
+      "weaponRounds": "23/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "fast_mtx1",
+      "afakx1",
+      "ulachx1",
+      "helmet_6b47x1",
+      "wd40x1",
+      "circuit_boardx2",
+      "rotor43x1",
+      "boltsx1",
+      "nutsx1",
+      "untarx2",
+      "cpu_fanx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "juicex1",
+      "crackersx2",
+      "gp_coinx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1",
+      "church_keyx1"
+    ],
+    "secureContainerSaved": [
+      "altynx2",
+      "tor_teamx1",
+      "armor_6b13x1"
+    ],
+    "stashItems": [
+      "fast_mtx1",
+      "afakx1",
+      "ulachx1",
+      "helmet_6b47x1",
+      "wd40x1",
+      "circuit_boardx2",
+      "rotor43x1",
+      "boltsx1",
+      "nutsx1",
+      "untarx2",
+      "cpu_fanx1",
+      "light_stockx1",
+      "water_bottlex1",
+      "canned_foodx1",
+      "juicex1",
+      "crackersx2",
+      "gp_coinx1",
+      "ammo_762x54_snbx1",
+      "ammo_556x45_m855x1",
+      "church_keyx1",
+      "altynx2",
+      "tor_teamx1",
+      "armor_6b13x1"
+    ],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 73/100 | Energy: 96/100 | Tile: 16/16"
+      },
+      {
+        "t": "extract",
+        "m": "PMC extracted successfully! Earned +32992 cumulative XP in raid."
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 2!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Initiative upgraded to Level 11!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 3!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Constitution upgraded to Level 14!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 4!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Agility upgraded to Level 11!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 5!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Weapon Skill upgraded to Level 11!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 6!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Initiative upgraded to Level 12!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 7!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Constitution upgraded to Level 15!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 8!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Constitution upgraded to Level 16!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 9!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Initiative upgraded to Level 13!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 10!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Constitution upgraded to Level 17!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 11!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Perception upgraded to Level 8!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 12!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Weapon Skill upgraded to Level 12!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 13!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Weapon Skill upgraded to Level 13!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 14!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Constitution upgraded to Level 18!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 15!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Perception upgraded to Level 9!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 16!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Perception upgraded to Level 10!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 17!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Perception upgraded to Level 11!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 18!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Constitution upgraded to Level 19!"
+      }
+    ]
+  }
+]

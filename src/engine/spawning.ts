@@ -15,6 +15,15 @@ const rollEquipment = (cfg: EquipmentConfig): GameItem | null => {
 };
 
 /**
+ * Deep-clones a rolled equipment item so combat never mutates the shared
+ * ALL_ITEMS / profile templates (durability/bleed state must be per-enemy).
+ * Mirrors the existing weapon clone pattern in spawnEnemy.
+ */
+const cloneEquipment = (item: GameItem | null): GameItem | null => {
+  return item ? JSON.parse(JSON.stringify(item)) as GameItem : null;
+};
+
+/**
  * Generates an enemy based on the map's difficulty and spawn chances.
  * Handles Boss, PMC, and Scav tiers, including their randomized stats and equipment.
  * All values are sourced from ENEMY_SPAWN_PROFILES (data/tuning/enemySpawning.ts).
@@ -46,8 +55,8 @@ export const spawnEnemy = (map: MapData, pmcLevel: number): EnemyState => {
     const chosenW = wpn.pool[Math.floor(Math.random() * wpn.pool.length)];
     equippedWeapon = JSON.parse(JSON.stringify(INITIAL_WEAPONS[chosenW])) as Weapon;
 
-    equippedArmor = rollEquipment(profile.armor);
-    equippedHelmet = rollEquipment(profile.helmet);
+    equippedArmor = cloneEquipment(rollEquipment(profile.armor));
+    equippedHelmet = cloneEquipment(rollEquipment(profile.helmet));
   } else if (isPMC) {
     const profile = ENEMY_SPAWN_PROFILES.PMC;
     tier = "PMC";
@@ -64,8 +73,8 @@ export const spawnEnemy = (map: MapData, pmcLevel: number): EnemyState => {
       ? JSON.parse(JSON.stringify(INITIAL_WEAPONS[wpn.chosen])) as Weapon
       : JSON.parse(JSON.stringify(INITIAL_WEAPONS[wpn.fallback])) as Weapon;
 
-    equippedArmor = rollEquipment(profile.armor);
-    equippedHelmet = rollEquipment(profile.helmet);
+    equippedArmor = cloneEquipment(rollEquipment(profile.armor));
+    equippedHelmet = cloneEquipment(rollEquipment(profile.helmet));
   } else {
     const profile = ENEMY_SPAWN_PROFILES.Scav;
     tier = "Scav";

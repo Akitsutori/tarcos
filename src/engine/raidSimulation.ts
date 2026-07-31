@@ -5,20 +5,26 @@ import { spawnEnemy } from "./spawning";
 import { executeLootPhase, rollLootItem, getBackpackCapacity } from "./loot";
 import { SECURE_CONTAINER_CAPACITY, sortLootIntoContainers } from "./lootManagement";
 import { executeMaintenancePhase } from "./maintenance";
-import { simulateCombatRound } from "./combat";
+import { simulateCombatRoundGenerator } from "./combat";
 import { handleKIA, handleExtraction } from "./raidResolution";
 import { createEngineContext } from "./engineContext";
+import { InterruptHook } from "./types";
 import { TICK_SECONDS_MIN, TICK_SECONDS_MAX, ENERGY_DECAY_CHANCE, HYDRATION_DECAY_CHANCE, NUTRITION_UNIT_DECAY_RATE, SKILL_DECAY_REDUCTION_PER_LEVEL, SKILL_DECAY_REDUCTION_MIN, HYDRATION_STATUS, STATUS_WARNING_CHANCE } from "../data/tuning/raidConfig";
 import { ENCOUNTER_CHANCE, REINFORCEMENT_MAX_PER_TILE, REINFORCEMENT_CHANCE } from "../data/tuning/enemySpawning";
 
 /**
- * Executes a single simulation tick for the active raid.
- * Coordinates all sub-systems: Combat, Discovery, Looting, and Maintenance.
- * 
+ * Executes a single simulation tick for the active raid as a synchronous
+ * generator. Yields `InterruptHook`s for observable sub-phase boundaries:
+ * combat hooks are forwarded from `simulateCombatRoundGenerator`, and an
+ * `AFTER_RAID_END` hook is emitted whenever the tick resolves the raid
+ * (KIA / extraction). Yield points consume no RNG and mutate no state, so
+ * draining the generator and taking its return value reproduces the original
+ * synchronous tick byte-for-byte.
+ *
  * @param state The current global GameState
  * @returns A fresh GameState object representing the next simulation state
  */
-export const runRaidTick = (state: GameState): GameState => {
+export const runRaidTickGenerator = function* (state: GameState): Generator<InterruptHook, GameState, unknown> {
   if (!state.activeRaid.isActive || !state.activeRaid.map) return state;
 
   const newState = JSON.parse(JSON.stringify(state)) as GameState;
@@ -60,17 +66,19 @@ export const runRaidTick = (state: GameState): GameState => {
   // Dehydration KIA Handling
   if (pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0) {
     handleKIA(newState, "dehydration");
+    yield { sourceEntityId: "raid", hookType: "AFTER_RAID_END", metadata: { status: raid.status } };
     return newState;
   }
 
   // Combat State
   if (raid.status === "combat" && raid.combatTarget) {
     const enemy = raid.combatTarget;
-    const combatLogs = simulateCombatRound(pmc, enemy, equippedWeapon, weaponStats, raid.elapsedSeconds, raid, newState.hideout.shootingRange.level, context);
+    const combatLogs = yield* simulateCombatRoundGenerator(pmc, enemy, equippedWeapon, weaponStats, raid.elapsedSeconds, raid, newState.hideout.shootingRange.level, context);
     raid.logs.push(...combatLogs);
 
     if (pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0) {
       handleKIA(newState, "combat");
+      yield { sourceEntityId: "raid", hookType: "AFTER_RAID_END", metadata: { status: raid.status } };
       return newState;
     }
 
@@ -156,6 +164,7 @@ export const runRaidTick = (state: GameState): GameState => {
 
   if (!currentTile || currentTile.type === "extraction" || raid.currentStage >= raid.tiles.length) {
     handleExtraction(newState);
+    yield { sourceEntityId: "raid", hookType: "AFTER_RAID_END", metadata: { status: raid.status } };
     return newState;
   }
 
@@ -175,4 +184,22 @@ export const runRaidTick = (state: GameState): GameState => {
   }
 
   return newState;
+};
+
+/** Synchronously drains the raid-tick generator and returns the next state. */
+export const runRaidTick = (state: GameState): GameState => {
+  const gen = runRaidTickGenerator(state);
+  let result = gen.next();
+  while (!result.done) result = gen.next();
+  return result.value;
+};
+
+/**
+ * AsyncGenerator variant of a single raid tick, delegating to the sync
+ * generator. Future async consumers (UI tick loop, Phase 4 interceptors)
+ * advance this generator to observe `InterruptHook`s without changing the
+ * simulation outcome.
+ */
+export const runRaidTickAsync = async function* (state: GameState): AsyncGenerator<InterruptHook, GameState, unknown> {
+  return yield* runRaidTickGenerator(state);
 };

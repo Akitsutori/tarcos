@@ -1,0 +1,54 @@
+[
+  {
+    "tick": 1,
+    "elapsedSeconds": 14,
+    "stage": 0,
+    "status": "kia",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 100,
+      "hydration": 0,
+      "hp": [
+        0,
+        0,
+        26,
+        26,
+        26,
+        26,
+        26
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:50/50",
+      "helmet": "ssh68:30/30",
+      "weaponRounds": "30/30+3"
+    },
+    "combatTarget": null,
+    "lootFound": [],
+    "secureContainerSaved": [],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 0/100 | Energy: 100/100 | Tile: 1/0"
+      },
+      {
+        "t": "death",
+        "m": "PMC collapsed from fatal dehydration and died!"
+      },
+      {
+        "t": "death",
+        "m": "PMC KIA from dehydration/starvation! Earned +0 cumulative XP in raid."
+      }
+    ]
+  }
+]

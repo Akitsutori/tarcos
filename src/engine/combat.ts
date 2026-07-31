@@ -1,7 +1,7 @@
 import { PMCCharacter, EnemyState, Weapon, RaidState, RaidLog, BodyPart, PMCBodyParts, ClassType, GameItem, CombatantView } from "../types";
 import { getWeaponStats } from "../data";
 import { createLog } from "./utils";
-import { EngineContext } from "./types";
+import { EngineContext, InterruptHook } from "./types";
 
 const createDefaultWeapon = (): Weapon => ({
   id: "assault_rifle",
@@ -57,9 +57,15 @@ const resolveBleeding = (actor: CombatantView, logs: RaidLog[], elapsedSeconds: 
 };
 
 /**
- * Simulates a single round of combat using functional structural typing (CombatantView).
+ * Core combat round as a synchronous generator. Yields an `InterruptHook` at
+ * `BEFORE_ACTION` (action decided, before execution) and `AFTER_DAMAGE` (after
+ * each landed bullet's damage intent). The yield points consume no RNG and
+ * mutate no state, so draining the generator and taking its return value
+ * reproduces the original synchronous combat round byte-for-byte.
  */
-export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon: Weapon, weaponStats: any, elapsedSeconds: number, raid: RaidState, shootingRangeLevel: number, context: EngineContext): RaidLog[] => {
+export const simulateCombatRoundGenerator = function* (
+  pmc: PMCCharacter, enemy: EnemyState, weapon: Weapon, weaponStats: any, elapsedSeconds: number, raid: RaidState, shootingRangeLevel: number, context: EngineContext
+): Generator<InterruptHook, RaidLog[], unknown> {
   const roundLogs: RaidLog[] = [];
 
   // 1. Compose Views (Lenses)
@@ -133,6 +139,12 @@ export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon
     } else if (!attacker.isCovered && Math.random() < 0.40) {
       actionChosen = "cover";
     }
+
+    yield {
+      sourceEntityId: attacker.type === "pmc" ? "pmc" : "enemy",
+      hookType: "BEFORE_ACTION",
+      metadata: { attacker: attacker.name, defender: defender.name, action: actionChosen },
+    };
 
     // Execute Actions
     if (actionChosen === "reload") {
@@ -248,6 +260,18 @@ export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon
         });
         roundLogs.push(createLog(`[DMG] ${attacker.name} → ${defender.name} [${targetedPart.name.toUpperCase()}]: ${bulletDmg} dmg | Part HP: ${targetedPart.current}/${targetedPart.max}`, "combat_damage", elapsedSeconds));
 
+        yield {
+          sourceEntityId: attacker.type === "pmc" ? "pmc" : "enemy",
+          hookType: "AFTER_DAMAGE",
+          metadata: {
+            attacker: attacker.name,
+            defender: defender.name,
+            bodyPart: targetedPartId,
+            amount: bulletDmg,
+            partHp: targetedPart.current,
+          },
+        };
+
         if (targetedPartId === "thorax" && targetedPart.current <= 0 && bulletDmg > targetedPart.current) {
           let overflow = bulletDmg;
           const spilloverOrder: (keyof PMCBodyParts)[] = ["stomach", "leftArm", "rightArm", "leftLeg", "rightLeg"];
@@ -310,4 +334,26 @@ export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon
   enemy.isDead = enemyView.isDead;
 
   return roundLogs;
+};
+
+/** Synchronously drains the combat generator and returns the round logs. */
+export const simulateCombatRound = (
+  pmc: PMCCharacter, enemy: EnemyState, weapon: Weapon, weaponStats: any, elapsedSeconds: number, raid: RaidState, shootingRangeLevel: number, context: EngineContext
+): RaidLog[] => {
+  const gen = simulateCombatRoundGenerator(pmc, enemy, weapon, weaponStats, elapsedSeconds, raid, shootingRangeLevel, context);
+  let result = gen.next();
+  while (!result.done) result = gen.next();
+  return result.value;
+};
+
+/**
+ * AsyncGenerator variant of the combat round, delegating to the sync
+ * generator. Future async consumers (UI tick loop, Phase 4 interceptors)
+ * advance this generator to observe `InterruptHook`s without changing the
+ * simulation outcome.
+ */
+export const simulateCombatRoundAsync = async function* (
+  pmc: PMCCharacter, enemy: EnemyState, weapon: Weapon, weaponStats: any, elapsedSeconds: number, raid: RaidState, shootingRangeLevel: number, context: EngineContext
+): AsyncGenerator<InterruptHook, RaidLog[], unknown> {
+  return yield* simulateCombatRoundGenerator(pmc, enemy, weapon, weaponStats, elapsedSeconds, raid, shootingRangeLevel, context);
 };

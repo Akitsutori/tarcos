@@ -473,16 +473,49 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 - **Verification**: `npm test` — 51/51 pass (21 new data-contract tests across the 3 tuning files); `npm run lint` (`tsc --noEmit`) — clean.
 - **Residual**: `combat.ts` hydration penalty bands + burst accuracy decay remain local — owned by the future `combatBalance.ts` slice. Remaining roadmap work is Phase 3+.
 
+#### 2026-07-31 — Phase 3 Prerequisite: Golden Master Characterization Baseline
+- **Intent**: Freeze the current `runRaidTick` behavior as committed, deterministic JSON transcripts so the Phase 3 AsyncGenerator conversion can be validated for byte-for-byte behavioral parity — satisfying Guardrail 5's "characterization tests BEFORE modifying code" rule.
+- **Changes**:
+  - Added `src/engine/characterization/goldenHarness.ts` — self-contained harness: `mulberry32` PRNG + `installSeed(seed)` driving `Math.random()` (single spy; `vi.restoreAllMocks()` in `afterEach`), a fresh-deploy state factory (`createInitialPMC(SOLDIER)` under the seeded RNG so skill distribution is deterministic, loaded signature weapon, default hideout), an explicit-field transcript serializer (elapsedSeconds, stage, status, killsByTier, PMC vitals/equipment/ammo, combatTarget HP array, loot/secure-container/stash items, per-tick log messages+types), and `runScenario(seed, configure, maxTicks=300)`.
+  - Added `src/engine/characterization/goldenMaster.test.ts` — 3 scenarios via `toMatchFileSnapshot` into `src/engine/__golden__/scenario-*.json` (regenerated with `vitest run -u`): extraction run (seed 4 → extracted in 24 ticks), preset combat vs a hand-built deterministic Scav (seed 1337 → extracted in 45 ticks), dehydration KIA (seed 7 → 1 tick). Plus transcript invariants: non-negative HP/kills/energy/hydration bounds and exactly one terminal status matching the final tick.
+- **Notable findings**:
+  - The harness exposed a subtle determinism hazard of its own — ticks must compound (`state = next`), not re-clone the pristine original, or the map rebuilds and combat re-simulates identically every tick.
+  - Fresh SOLDIER PMCs KIA ~2/3 of the time on Factory (seeds 1–60 probe: 36 kia / 24 extracted) — the extraction scenario uses seed 4 deliberately.
+- **Verification**: `npm test` — 54/54 pass (3 new golden tests); `npm run lint` (`tsc --noEmit`) — clean. Snapshot stability confirmed via un-updated re-run.
+- **Bridge to Phase 3**: `goldenHarness.ts` exercises the full `runRaidTick` → `createEngineContext` → combat/loot/maintenance/raidResolution flow under a fixed seed; an AsyncGenerator-converted `runRaidTick` must reproduce these transcripts unchanged.
+
+#### 2026-07-31 — Phase 3 Slice: `simulateCombatRound` AsyncGenerator Conversion
+- **Intent**: First control-flow conversion — make the combat round yieldable (prerequisite for the raid tick pipeline and Phase 4 interceptors) while preserving byte-for-byte transcript parity.
+- **Changes**:
+  - Renamed the sync function body to `simulateCombatRoundGenerator` (`Generator<InterruptHook, RaidLog[], unknown>`) in `combat.ts`; added `BEFORE_ACTION` (action decided, pre-execution) and `AFTER_DAMAGE` (per landed bullet) `InterruptHook` yields. Yield points consume no RNG and mutate no state.
+  - Sync wrapper `simulateCombatRound` drains the generator; async wrapper `simulateCombatRoundAsync` uses `return yield* simulateCombatRoundGenerator(...)` (bare `yield*` drops the inner return value).
+  - **Root-cause fix**: `spawnEnemy`/`rollEquipment` handed out direct `ALL_ITEMS` armor/helmet template references (unlike `createInitialPMC`'s shallow copy at `data.ts:353`), so combat armor-durability mutations leaked into the shared templates and poisoned later runs at identical seeds. Fixed with an RNG-neutral `cloneEquipment` (deep clone) at all three `rollEquipment` armor/helmet call sites in `spawning.ts`.
+  - Added `combatGenerator.test.ts` (3 tests): sync-vs-async parity under seed 4242, hook-shape/domain validation, `AFTER_DAMAGE` count === landed `[DMG]` log count (`[PEN]` logs are also `combat_damage`-typed, so the assertion counts only `[DMG]`).
+- **Behavior**: Sync path byte-identical (parity test + goldens); the spawnEnemy fix changes armored-enemy starting durability (full instead of previously-mutated values) — goldens regenerated with `-u` and stable on re-run.
+- **Verification**: `npm test` — 57/57 pass; `npm run lint` (`tsc --noEmit`) — clean. Debug artifacts (`debug.test.ts`, `debug.txt`) deleted.
+- **Residual**: `runRaidTick` (raidSimulation.ts) is the next AsyncGenerator conversion target, verified against the same committed goldens.
+
+#### 2026-07-31 — Phase 3 Slice: `runRaidTick` AsyncGenerator Conversion
+- **Intent**: Complete the Phase 3 primary-tick conversion — make the full raid tick yieldable (combat + raid resolution) while preserving byte-for-byte parity with the committed Golden Master transcripts.
+- **Changes**:
+  - Renamed the sync body to `runRaidTickGenerator` (`Generator<InterruptHook, GameState, unknown>`) in `raidSimulation.ts`; sync wrapper `runRaidTick` drains it; async wrapper `runRaidTickAsync` uses `return yield* runRaidTickGenerator(...)`.
+  - Combat delegation changed from `simulateCombatRound(...)` to `yield* simulateCombatRoundGenerator(...)` — the tick generator now **forwards** combat `BEFORE_ACTION`/`AFTER_DAMAGE` hooks into the tick hook stream while capturing the round logs via the inner return value.
+  - Added `AFTER_RAID_END` yields (metadata `{ status }`, "kia"/"extracted") at all three raid-ending return sites: dehydration KIA, combat KIA, and extraction.
+  - Added `raidTickGenerator.test.ts` (5 tests): sync-vs-async full-run parity for extraction/combat/dehydration seeds (4, 1337, 7), wrapper-vs-drainer identity, single `AFTER_RAID_END` with resolved status, forwarded combat hook validation (present in combat/extraction runs — extraction legitimately fights encounters; absent in the 1-tick dehydration run), and inactive-raid pass-through (input state returned unchanged, no hooks).
+- **Behavior**: Byte-for-byte parity — goldens were NOT regenerated and still pass against the committed transcripts (62/62 suite green). Yield points consume no RNG and mutate no state.
+- **Verification**: `npm test` — 62/62 pass; `npm run lint` (`tsc --noEmit`) — clean.
+- **Bridge to Phase 4**: `runRaidTickGenerator` is now the single observable tick stream (`BEFORE_ACTION` / `AFTER_DAMAGE` / `AFTER_RAID_END`); `BehaviorModule.execute` (`types.ts`) already matches this contract for hideout/class interceptor plugins.
+
 ### Phase 3: Async Generator Action Pipeline & Interceptors (HIGH-RISK PHASE)
 
 > [!WARNING]
 > **High-Risk Phase**: Converting synchronous `while` loops (`simulateCombatRound`, `runRaidTick`) into yieldable `AsyncGenerator` flows touches every call site across the UI and test suites. Strict risk mitigation is required.
 
-- [ ] **PREREQUISITE — Characterization Testing Baseline**:
+- [x] **PREREQUISITE — Characterization Testing Baseline**:
   - Before modifying control flow, write deterministic **Characterization Tests** (Golden Master snapshot tests using fixed RNG seeds).
   - Record the exact tick-by-tick state transitions, inventory outcomes, and log outputs of the current engine across combat, scavenging, and extraction scenarios.
   - *Purpose*: This baseline allows developers to clearly distinguish **intentional bug fixes** (e.g., container cap fix, unified KIA processing) from **unintended regressions** in tick timing or state mutation ordering.
-- [ ] Convert primary simulation ticks (`runRaidTick` and `simulateCombatRound`) into `AsyncGenerator` flows yielding `InterruptHook` objects at `BEFORE_ACTION` and `AFTER_DAMAGE`.
+- [x] Convert primary simulation ticks (`runRaidTick` and `simulateCombatRound`) into `AsyncGenerator` flows yielding `InterruptHook` objects at `BEFORE_ACTION` and `AFTER_DAMAGE`.
 - [ ] Update engine callers (UI loop / test harness) to consume generator flows.
 - [ ] **State Mutation Semantics Audit & Immutable Settlement Transition**:
   - *Audit*: Before removing `JSON.parse(JSON.stringify(state))` at `raidSimulation.ts:L20`, audit all UI state handlers, log previewers, and test harnesses that rely on `runRaidTick` treating input state as an immutable reference.
@@ -501,7 +534,7 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 
 ## Metrics & Impact Summary
 
-> **Progress as of 2026-07-31**: **Phase 1 complete** — `raidSimulation.ts` 336 → 173 lines, `loot.ts` 115 → 98 lines, duplicated container-sort code 44 → 0 lines, duplicated KIA/extraction pipeline ~170 → 0 lines (centralized in `raidResolution.ts`); all raid/nutrition/enemy-spawn/medical balance values moved into `src/data/tuning/` (`raidConfig.ts`, `enemySpawning.ts`, `medicalConfig.ts`). **Phase 2 core complete** — engine contract layer (`engineContext.ts` + `types.ts`, 12 tests) added; simulation results unchanged. 51/51 tests green. Remaining targets below are unchanged.
+> **Progress as of 2026-07-31**: **Phase 1 complete** — `raidSimulation.ts` 336 → 173 lines, `loot.ts` 115 → 98 lines, duplicated container-sort code 44 → 0 lines, duplicated KIA/extraction pipeline ~170 → 0 lines (centralized in `raidResolution.ts`); all raid/nutrition/enemy-spawn/medical balance values moved into `src/data/tuning/` (`raidConfig.ts`, `enemySpawning.ts`, `medicalConfig.ts`). **Phase 2 core complete** — engine contract layer (`engineContext.ts` + `types.ts`, 12 tests) added; simulation results unchanged. **Phase 3 prerequisite complete** — Golden Master characterization baseline (`goldenHarness.ts` + `goldenMaster.test.ts`, 3 committed transcripts under `src/engine/__golden__/`) freezes `runRaidTick` behavior for extraction/combat/dehydration scenarios. **Phase 3 control-flow conversion complete** — `simulateCombatRound` and `runRaidTick` are both yieldable generators (sync drainer + `return yield*` async variant); the tick generator forwards combat hooks and emits `AFTER_RAID_END` on KIA/extraction, verified byte-for-byte against the un-regenerated goldens; also fixed a shared-`ALL_ITEMS` armor/helmet template mutation leak in `spawnEnemy` (armored enemies now start with full durability). 62/62 tests green. Remaining targets below are unchanged.
 
 | Metric | Baseline | Target | Improvement |
 | :--- | :--- | :--- | :--- |

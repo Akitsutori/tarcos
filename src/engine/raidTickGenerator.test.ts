@@ -1,0 +1,164 @@
+import { describe, it, expect, vi } from 'vitest';
+import { runRaidTick, runRaidTickAsync, runRaidTickGenerator } from './raidSimulation';
+import { mulberry32, makeGoldenState, makeEnemy } from './characterization/goldenHarness';
+import { GameState } from '../types';
+import { InterruptHook } from './types';
+
+const VALID_ACTIONS = ["reload", "cover", "flee", "fire", "wait"] as const;
+const VALID_BODY_PARTS = ["head", "thorax", "stomach", "leftArm", "rightArm", "leftLeg", "rightLeg"] as const;
+
+interface Scenario {
+  seed: number;
+  maxTicks: number;
+  expectedStatus: "kia" | "extracted";
+  configure: (state: GameState) => void;
+}
+
+const SCENARIOS: Record<string, Scenario> = {
+  extraction: {
+    seed: 4,
+    maxTicks: 300,
+    expectedStatus: "extracted",
+    configure: () => {},
+  },
+  combat: {
+    seed: 1337,
+    maxTicks: 300,
+    expectedStatus: "extracted",
+    configure: (state) => {
+      state.activeRaid.status = "combat";
+      state.activeRaid.combatTarget = makeEnemy();
+    },
+  },
+  dehydration: {
+    seed: 7,
+    maxTicks: 300,
+    expectedStatus: "kia",
+    configure: (state) => {
+      state.pmc.hydration = 0;
+    },
+  },
+};
+
+const withSeed = async <T>(seed: number, fn: () => T | Promise<T>): Promise<T> => {
+  const rng = mulberry32(seed);
+  const spy = vi.spyOn(Math, 'random').mockImplementation(() => rng());
+  try {
+    return await fn();
+  } finally {
+    spy.mockRestore();
+  }
+};
+
+const drainAsyncTick = async (gen: AsyncGenerator<InterruptHook, GameState, unknown>) => {
+  const hooks: InterruptHook[] = [];
+  let result = await gen.next();
+  while (!result.done) {
+    hooks.push(result.value as InterruptHook);
+    result = await gen.next();
+  }
+  return { hooks, state: result.value };
+};
+
+const runSyncTicks = (scenario: Scenario): GameState => {
+  let state = makeGoldenState();
+  scenario.configure(state);
+  let ticks = 0;
+  while (ticks < scenario.maxTicks) {
+    const next = runRaidTick(state);
+    state = next;
+    ticks++;
+    if (!state.activeRaid.isActive) break;
+  }
+  return state;
+};
+
+const runAsyncTicks = async (scenario: Scenario) => {
+  let state = makeGoldenState();
+  scenario.configure(state);
+  const hooks: InterruptHook[] = [];
+  let ticks = 0;
+  while (ticks < scenario.maxTicks) {
+    const result = await drainAsyncTick(runRaidTickAsync(state));
+    state = result.state;
+    hooks.push(...result.hooks);
+    ticks++;
+    if (!state.activeRaid.isActive) break;
+  }
+  return { state, hooks, ticks };
+};
+
+describe('runRaidTick Generator conversion', () => {
+  it('sync wrapper and async generator produce identical final states for every scenario', async () => {
+    for (const [name, scenario] of Object.entries(SCENARIOS)) {
+      const syncState = await withSeed(scenario.seed, () => runSyncTicks(scenario));
+      const { state: asyncState } = await withSeed(scenario.seed, async () => runAsyncTicks(scenario));
+      expect(asyncState).toEqual(syncState);
+      expect(asyncState.activeRaid.status).toBe(scenario.expectedStatus);
+      expect(syncState.activeRaid.status).toBe(scenario.expectedStatus);
+      expect(name).toBeTruthy();
+    }
+  });
+
+  it('sync drainer of runRaidTickGenerator matches the runRaidTick wrapper', async () => {
+    const scenario = SCENARIOS.combat;
+    const viaWrapper = await withSeed(scenario.seed, () => {
+      let state = makeGoldenState();
+      scenario.configure(state);
+      return runRaidTick(state);
+    });
+
+    const viaDrain = await withSeed(scenario.seed, () => {
+      let state = makeGoldenState();
+      scenario.configure(state);
+      const gen = runRaidTickGenerator(state);
+      let result = gen.next();
+      while (!result.done) result = gen.next();
+      return result.value;
+    });
+
+    expect(viaDrain).toEqual(viaWrapper);
+  });
+
+  it('emits AFTER_RAID_END with the resolved status exactly once at the terminal tick', async () => {
+    for (const [name, scenario] of Object.entries(SCENARIOS)) {
+      const { hooks, ticks } = await withSeed(scenario.seed, async () => runAsyncTicks(scenario));
+      const endHooks = hooks.filter(h => h.hookType === "AFTER_RAID_END");
+      expect(endHooks.length).toBe(1);
+      expect(endHooks[0].sourceEntityId).toBe("raid");
+      expect(endHooks[0].metadata.status).toBe(scenario.expectedStatus);
+      expect(name).toBeTruthy();
+      expect(ticks).toBeGreaterThanOrEqual(1);
+    }
+  });
+
+  it('forwards combat BEFORE_ACTION/AFTER_DAMAGE hooks only during combat scenarios', async () => {
+    const { hooks: combatHooks } = await withSeed(SCENARIOS.combat.seed, async () => runAsyncTicks(SCENARIOS.combat));
+    const beforeActions = combatHooks.filter(h => h.hookType === "BEFORE_ACTION");
+    const afterDamages = combatHooks.filter(h => h.hookType === "AFTER_DAMAGE");
+
+    expect(beforeActions.length).toBeGreaterThan(0);
+    expect(afterDamages.length).toBeGreaterThan(0);
+    expect(beforeActions.every(h => VALID_ACTIONS.includes(h.metadata.action as (typeof VALID_ACTIONS)[number]))).toBe(true);
+    expect(afterDamages.every(h => VALID_BODY_PARTS.includes(h.metadata.bodyPart as (typeof VALID_BODY_PARTS)[number]))).toBe(true);
+    expect(afterDamages.every(h => (h.metadata.amount as number) > 0)).toBe(true);
+
+    const { hooks: dehydrationHooks } = await withSeed(SCENARIOS.dehydration.seed, async () => runAsyncTicks(SCENARIOS.dehydration));
+    expect(dehydrationHooks.filter(h => h.hookType === "BEFORE_ACTION").length).toBe(0);
+    expect(dehydrationHooks.filter(h => h.hookType === "AFTER_DAMAGE").length).toBe(0);
+  });
+
+  it('returns the input state unchanged and yields no hooks when the raid is inactive', async () => {
+    const scenario = SCENARIOS.extraction;
+    const result = await withSeed(scenario.seed, async () => {
+      const state = makeGoldenState();
+      state.activeRaid.isActive = false;
+      scenario.configure(state);
+      const snapshot = JSON.parse(JSON.stringify(state)) as GameState;
+      const drained = await drainAsyncTick(runRaidTickAsync(state));
+      return { drained, snapshot };
+    });
+    expect(result.drained.hooks).toHaveLength(0);
+    expect(result.drained.state).toEqual(result.snapshot);
+  });
+});
