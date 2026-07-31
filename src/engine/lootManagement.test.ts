@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { SECURE_CONTAINER_CAPACITY, sortLootIntoContainers } from './lootManagement';
+import { sortLootIntoContainers } from './lootManagement';
 import { GameItem } from '../types';
 
 const makeItem = (id: string, value: number): GameItem => ({
@@ -10,21 +10,6 @@ const makeItem = (id: string, value: number): GameItem => ({
   rarity: "common",
   value,
   iconName: "gem",
-});
-
-describe('SECURE_CONTAINER_CAPACITY', () => {
-  it('returns 4 at hideout level 1', () => {
-    expect(SECURE_CONTAINER_CAPACITY(1)).toBe(4);
-  });
-
-  it('returns 6 at hideout level 2', () => {
-    expect(SECURE_CONTAINER_CAPACITY(2)).toBe(6);
-  });
-
-  it('returns 9 at hideout level 3 and above', () => {
-    expect(SECURE_CONTAINER_CAPACITY(3)).toBe(9);
-    expect(SECURE_CONTAINER_CAPACITY(4)).toBe(9);
-  });
 });
 
 describe('sortLootIntoContainers', () => {

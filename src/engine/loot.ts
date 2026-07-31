@@ -1,7 +1,8 @@
 import { MapData, GameItem, PMCCharacter, RaidState } from "../types";
 import { ALL_ITEMS } from "../data/content/items";
 import { createLog } from "./utils";
-import { SECURE_CONTAINER_CAPACITY, sortLootIntoContainers } from "./lootManagement";
+import { sortLootIntoContainers } from "./lootManagement";
+import { secureContainerCapacity } from "../data/tuning/hideoutConfig";
 import { getLuckyLootRolls } from "./behaviors/classPassives";
 import {
   LOOT_RARITY_WEIGHT,
@@ -74,7 +75,7 @@ export const executeLootPhase = (pmc: PMCCharacter, raid: RaidState, map: MapDat
       const currentLoad = raid.lootFound.reduce((acc, entry) => acc + entry.quantity, 0);
 
       if (currentLoad < backpackCap) {
-        const secureCap = SECURE_CONTAINER_CAPACITY(intelligenceCenterLevel);
+        const secureCap = secureContainerCapacity(intelligenceCenterLevel);
         raid.lootFound.push({ item, quantity: 1 });
 
         const { lootFound, secureContainerSaved } = sortLootIntoContainers(

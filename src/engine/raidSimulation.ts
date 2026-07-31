@@ -5,14 +5,14 @@ import { buildProceduralMap } from "../data/content/maps";
 import { createLog } from "./utils";
 import { spawnEnemy } from "./spawning";
 import { executeLootPhase, rollLootItem, getBackpackCapacity } from "./loot";
-import { SECURE_CONTAINER_CAPACITY, sortLootIntoContainers } from "./lootManagement";
+import { sortLootIntoContainers } from "./lootManagement";
 import { executeMaintenancePhase } from "./maintenance";
 import { simulateCombatRoundGenerator } from "./combat";
 import { handleKIA, handleExtraction } from "./raidResolution";
 import { createEngineContext } from "./engineContext";
 import { InterruptHook } from "./types";
 import { TICK_SECONDS_MIN, TICK_SECONDS_MAX, ENERGY_DECAY_CHANCE, HYDRATION_DECAY_CHANCE, SKILL_DECAY_REDUCTION_PER_LEVEL, SKILL_DECAY_REDUCTION_MIN, HYDRATION_STATUS, STATUS_WARNING_CHANCE } from "../data/tuning/raidConfig";
-import { NUTRITION_UNIT_DECAY_RATE, NUTRITION_UNIT_DECAY_ACTIVE_FROM_LEVEL } from "../data/tuning/hideoutConfig";
+import { NUTRITION_UNIT_DECAY_RATE, NUTRITION_UNIT_DECAY_ACTIVE_FROM_LEVEL, secureContainerCapacity } from "../data/tuning/hideoutConfig";
 import { ENCOUNTER_CHANCE, REINFORCEMENT_MAX_PER_TILE, REINFORCEMENT_CHANCE } from "../data/tuning/enemySpawning";
 import { getLuckyLootRolls } from "./behaviors/classPassives";
 import { dispatchRaidEndModules } from "./behaviors/hideoutModules";
@@ -127,7 +127,7 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
         const uniqueBackpackCount = raid.lootFound.reduce((acc, e) => acc + e.quantity, 0);
 
         if (uniqueBackpackCount < capacity) {
-          const secureCap = SECURE_CONTAINER_CAPACITY(newState.hideout.intelligenceCenter.level);
+          const secureCap = secureContainerCapacity(newState.hideout.intelligenceCenter.level);
           raid.lootFound.push({ item, quantity: 1 });
 
           const { lootFound, secureContainerSaved } = sortLootIntoContainers(
