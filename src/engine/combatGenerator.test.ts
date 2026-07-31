@@ -1,11 +1,11 @@
 import { describe, it, expect, vi } from 'vitest';
 import { simulateCombatRound, simulateCombatRoundAsync, simulateCombatRoundGenerator } from './combat';
 import { spawnEnemy } from './spawning';
-import { getWeaponStats, ALL_MAPS, INITIAL_WEAPONS, createInitialPMC, createInitialHideout } from '../data';
+import { getWeaponStats, ALL_MAPS, ALL_ITEMS, INITIAL_WEAPONS, createInitialPMC, createInitialHideout } from '../data';
 import { ClassType, RaidState, GameState, PMCCharacter, EnemyState, Weapon } from '../types';
 import { createEngineContext } from './engineContext';
 import { EngineContext, InterruptHook } from './types';
-import { mulberry32 } from './characterization/goldenHarness';
+import { mulberry32, makeEnemy } from './characterization/goldenHarness';
 
 const VALID_ACTIONS = ["reload", "cover", "flee", "fire", "wait"] as const;
 const VALID_BODY_PARTS = ["head", "thorax", "stomach", "leftArm", "rightArm", "leftLeg", "rightLeg"] as const;
@@ -122,5 +122,25 @@ describe('simulateCombatRound Generator conversion', () => {
     expect(firstActionIndex).toBeLessThan(firstDamageIndex);
 
     expect(afterDamages.length).toBe(dmgLogs);
+  });
+
+  it('enemy 9x19 shots at a SCOUT PMC use baseline pen 20 (SMG bonus is attacker-only)', async () => {
+    const seed = 9;
+    const logs = await withSeed(seed, () => {
+      const pmc = createInitialPMC(ClassType.SCOUT);
+      pmc.equippedArmor = { ...ALL_ITEMS.armor_6b23 }; // Class 3 full dur -> threshold 30: pen 20 BLOCKs, pen 32 PENETRATEs
+      const enemy = makeEnemy();
+      enemy.equippedWeapon = JSON.parse(JSON.stringify(INITIAL_WEAPONS[ClassType.SCOUT])) as Weapon; // 9x19 SMG
+      const weapon = JSON.parse(JSON.stringify(INITIAL_WEAPONS[ClassType.SCOUT])) as Weapon;
+      const weaponStats = getWeaponStats(weapon, 0);
+      const raid = createMockRaid();
+      raid.combatTarget = enemy;
+      const context = createTestContext(pmc, enemy, weapon, raid);
+      return simulateCombatRound(pmc, enemy, weapon, weaponStats, 60, raid, 0, context);
+    });
+
+    const penLogs = logs.filter(l => l.message.includes('[PEN]'));
+    expect(penLogs.length).toBeGreaterThan(0);
+    expect(penLogs.every(l => l.message.includes('BLOCKED'))).toBe(true);
   });
 });

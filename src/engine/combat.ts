@@ -230,7 +230,7 @@ export const simulateCombatRoundGenerator = function* (
 
         let bulletPen = 20;
         if (curWep.caliber === "7.62x39mm") bulletPen = 34;
-        else if (curWep.caliber === "9x19mm") bulletPen = getSmgPenetration(pmc.classType, 20);
+        else if (curWep.caliber === "9x19mm") bulletPen = attacker.type === "pmc" ? getSmgPenetration(pmc.classType, 20) : 20;
         else if (curWep.caliber === "12x70mm") bulletPen = 18;
         else if (curWep.caliber === "7.62x54mm") bulletPen = 45;
         else if (curWep.caliber === "9x18mm") bulletPen = 15;
