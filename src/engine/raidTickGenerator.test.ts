@@ -161,4 +161,30 @@ describe('runRaidTick Generator conversion', () => {
     expect(result.drained.hooks).toHaveLength(0);
     expect(result.drained.state).toEqual(result.snapshot);
   });
+
+  it('does not mutate its input state (Immer structural immutability)', async () => {
+    const scenario = SCENARIOS.combat;
+    await withSeed(scenario.seed, () => {
+      const input = makeGoldenState();
+      scenario.configure(input);
+      const snapshot = JSON.parse(JSON.stringify(input)) as GameState;
+      const result = runRaidTick(input);
+      expect(input).toEqual(snapshot);
+      expect(result).not.toBe(input);
+      expect(result.activeRaid).not.toBe(input.activeRaid);
+      expect(result.activeRaid.combatTarget).not.toBe(input.activeRaid.combatTarget);
+    });
+  });
+
+  it('produces a structurally-shared, frozen result instead of a full-tree clone', async () => {
+    const scenario = SCENARIOS.extraction;
+    await withSeed(scenario.seed, () => {
+      const input = makeGoldenState();
+      scenario.configure(input);
+      const result = runRaidTick(input);
+      expect(result.hideout).toBe(input.hideout);
+      expect(result).not.toBe(input);
+      expect(Object.isFrozen(result)).toBe(true);
+    });
+  });
 });

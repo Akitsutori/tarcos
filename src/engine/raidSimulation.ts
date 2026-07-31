@@ -1,4 +1,5 @@
 import { GameState, ClassType } from "../types";
+import { createDraft, finishDraft } from "immer";
 import { getWeaponStats, buildProceduralMap } from "../data";
 import { createLog } from "./utils";
 import { spawnEnemy } from "./spawning";
@@ -21,13 +22,18 @@ import { ENCOUNTER_CHANCE, REINFORCEMENT_MAX_PER_TILE, REINFORCEMENT_CHANCE } fr
  * draining the generator and taking its return value reproduces the original
  * synchronous tick byte-for-byte.
  *
+ * The tick mutates an Immer draft (`createDraft`) of the input state: the
+ * input is never modified, and `finishDraft` returns a fresh state reference
+ * built with structural sharing (no per-tick full-tree clone) and frozen by
+ * Immer's autoFreeze. Settlement is atomic at the finishDraft boundary.
+ *
  * @param state The current global GameState
  * @returns A fresh GameState object representing the next simulation state
  */
 export const runRaidTickGenerator = function* (state: GameState): Generator<InterruptHook, GameState, unknown> {
   if (!state.activeRaid.isActive || !state.activeRaid.map) return state;
 
-  const newState = JSON.parse(JSON.stringify(state)) as GameState;
+  const newState = createDraft(state);
   const engine = createEngineContext(newState);
   const context = engine.context;
   const raid = newState.activeRaid;
@@ -67,7 +73,7 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
   if (pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0) {
     handleKIA(newState, "dehydration");
     yield { sourceEntityId: "raid", hookType: "AFTER_RAID_END", metadata: { status: raid.status } };
-    return newState;
+    return finishDraft(newState);
   }
 
   // Combat State
@@ -79,7 +85,7 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
     if (pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0) {
       handleKIA(newState, "combat");
       yield { sourceEntityId: "raid", hookType: "AFTER_RAID_END", metadata: { status: raid.status } };
-      return newState;
+      return finishDraft(newState);
     }
 
     if (enemy.isDead) {
@@ -140,14 +146,14 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
         raid.combatTarget = null;
         pmc.isCovered = false;
         raid.reinforcementsSpawnedThisTile = 0;
-        
+
         executeMaintenancePhase(pmc, raid, equippedWeapon);
         executeLootPhase(pmc, raid, map, newState.hideout.intelligenceCenter.level);
 
         context.emitIntent({ targetEntityId: "raid", type: "POSITION_CHANGE", value: { to: raid.currentStage + 1 } });
       }
     }
-    return newState;
+    return finishDraft(newState);
   }
 
   // Scouting/Exploration phase
@@ -165,7 +171,7 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
   if (!currentTile || currentTile.type === "extraction" || raid.currentStage >= raid.tiles.length) {
     handleExtraction(newState);
     yield { sourceEntityId: "raid", hookType: "AFTER_RAID_END", metadata: { status: raid.status } };
-    return newState;
+    return finishDraft(newState);
   }
 
   raid.logs.push(createLog(`Entered [${currentTile.name}]: ${currentTile.description}`, "info", raid.elapsedSeconds));
@@ -183,7 +189,7 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
     context.emitIntent({ targetEntityId: "raid", type: "POSITION_CHANGE", value: { to: raid.currentStage + 1 } });
   }
 
-  return newState;
+  return finishDraft(newState);
 };
 
 /** Synchronously drains the raid-tick generator and returns the next state. */

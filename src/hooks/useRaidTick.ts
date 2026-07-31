@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback } from "react";
 import { GameState, PMCBodyParts } from "../types";
-import { runRaidTick } from "../gameEngine";
+import { runRaidTickGenerator } from "../gameEngine";
+import { InterruptHook } from "../engine/types";
 import { STORAGE_KEY } from "./useGameSave";
 
 /**
@@ -71,7 +72,15 @@ export const useRaidTick = (
         return prev;
       }
 
-      const nextState = runRaidTick(prev);
+      const gen = runRaidTickGenerator(prev);
+      let result = gen.next();
+      const hooks: InterruptHook[] = [];
+      while (!result.done) {
+        hooks.push(result.value as InterruptHook);
+        result = gen.next();
+      }
+      const nextState = result.value;
+
       localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
       return nextState;
     });

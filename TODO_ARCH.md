@@ -506,6 +506,17 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 - **Verification**: `npm test` — 62/62 pass; `npm run lint` (`tsc --noEmit`) — clean.
 - **Bridge to Phase 4**: `runRaidTickGenerator` is now the single observable tick stream (`BEFORE_ACTION` / `AFTER_DAMAGE` / `AFTER_RAID_END`); `BehaviorModule.execute` (`types.ts`) already matches this contract for hideout/class interceptor plugins.
 
+#### 2026-07-31 — Phase 3 Slice: Caller Adoption & Immer-Based Immutable Settlement
+- **Intent**: Close out Phase 3 — migrate the UI tick loop onto the generator flow and replace the per-tick `JSON.parse(JSON.stringify(state))` full-tree clone with Immer copy-on-write settlement that preserves caller immutability.
+- **Changes**:
+  - `useRaidTick.ts` — `handleTick` now drains `runRaidTickGenerator` explicitly inside the existing synchronous React updater, collecting `InterruptHook`s for Phase 4 interceptor consumption; commits the next state exactly as before (updater stays pure — no async/ref machinery).
+  - `raidSimulation.ts` — replaced `JSON.parse(JSON.stringify(state))` with `createDraft(state)` / `finishDraft(newState)`: the tick body mutates an Immer draft verbatim (zero behavioral drift), and every exit point (`return newState` ×4) became `return finishDraft(newState)`. Output is a fresh, structurally-shared, autoFreeze-frozen reference; input is never mutated. (Initial attempt used `produce(...)` as a recipe wrapper, but `yield` inside the nested non-generator recipe is a SyntaxError — `createDraft`/`finishDraft` is the correct generator-compatible form.) Added `immer@11.1.15` dependency.
+  - Caller/test-harness audit result: the 4 direct `simulateCombatRound` sites in `gameEngine.test.ts` already flow through the sync drainer + `EngineContext`; `goldenHarness.runScenario` and `raidResolution.test.ts` use the `runRaidTick` wrapper — all compatible, no changes required. Only the `useRaidTick` React updater strictly needed input immutability.
+  - `raidTickGenerator.test.ts` — +2 regression tests: (1) combat scenario input state deeply unchanged after the tick (the `combatTarget` aliasing case a naive clone-removal would corrupt) and `result`/`activeRaid`/`combatTarget` are fresh references; (2) structural sharing + frozen output (`result.hideout === input.hideout`, `Object.isFrozen(result)`).
+- **Behavior**: Byte-for-byte parity — goldens NOT regenerated and still pass against the committed transcripts (64/64 suite green). Tick state deep-clone metric: 1 per tick → 0.
+- **Verification**: `npm test` — 64/64 pass; `npm run lint` (`tsc --noEmit`) — clean.
+- **Bridge to Phase 4**: `BehaviorModule.execute` and the hook stream are ready for interceptor plugins; `settle()` telemetry and the immutable state contract are in place for the hideout `ModuleInstance` adapter.
+
 ### Phase 3: Async Generator Action Pipeline & Interceptors (HIGH-RISK PHASE)
 
 > [!WARNING]
@@ -516,8 +527,8 @@ The following 6 guardrails govern all future human and AI-agent contributions to
   - Record the exact tick-by-tick state transitions, inventory outcomes, and log outputs of the current engine across combat, scavenging, and extraction scenarios.
   - *Purpose*: This baseline allows developers to clearly distinguish **intentional bug fixes** (e.g., container cap fix, unified KIA processing) from **unintended regressions** in tick timing or state mutation ordering.
 - [x] Convert primary simulation ticks (`runRaidTick` and `simulateCombatRound`) into `AsyncGenerator` flows yielding `InterruptHook` objects at `BEFORE_ACTION` and `AFTER_DAMAGE`.
-- [ ] Update engine callers (UI loop / test harness) to consume generator flows.
-- [ ] **State Mutation Semantics Audit & Immutable Settlement Transition**:
+- [x] Update engine callers (UI loop / test harness) to consume generator flows.
+- [x] **State Mutation Semantics Audit & Immutable Settlement Transition**:
   - *Audit*: Before removing `JSON.parse(JSON.stringify(state))` at `raidSimulation.ts:L20`, audit all UI state handlers, log previewers, and test harnesses that rely on `runRaidTick` treating input state as an immutable reference.
   - *Replacement Mechanism*: Ensure `EngineContext` settlement produces a fresh state reference atomically via structural patching (or shallow `Object.assign`/`Immer` patches) at the end of settlement steps, replacing full-tree stringify deep cloning without breaking caller immutability expectations.
 
@@ -534,7 +545,7 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 
 ## Metrics & Impact Summary
 
-> **Progress as of 2026-07-31**: **Phase 1 complete** — `raidSimulation.ts` 336 → 173 lines, `loot.ts` 115 → 98 lines, duplicated container-sort code 44 → 0 lines, duplicated KIA/extraction pipeline ~170 → 0 lines (centralized in `raidResolution.ts`); all raid/nutrition/enemy-spawn/medical balance values moved into `src/data/tuning/` (`raidConfig.ts`, `enemySpawning.ts`, `medicalConfig.ts`). **Phase 2 core complete** — engine contract layer (`engineContext.ts` + `types.ts`, 12 tests) added; simulation results unchanged. **Phase 3 prerequisite complete** — Golden Master characterization baseline (`goldenHarness.ts` + `goldenMaster.test.ts`, 3 committed transcripts under `src/engine/__golden__/`) freezes `runRaidTick` behavior for extraction/combat/dehydration scenarios. **Phase 3 control-flow conversion complete** — `simulateCombatRound` and `runRaidTick` are both yieldable generators (sync drainer + `return yield*` async variant); the tick generator forwards combat hooks and emits `AFTER_RAID_END` on KIA/extraction, verified byte-for-byte against the un-regenerated goldens; also fixed a shared-`ALL_ITEMS` armor/helmet template mutation leak in `spawnEnemy` (armored enemies now start with full durability). 62/62 tests green. Remaining targets below are unchanged.
+> **Progress as of 2026-07-31**: **Phase 1 complete** — `raidSimulation.ts` 336 → 173 lines, `loot.ts` 115 → 98 lines, duplicated container-sort code 44 → 0 lines, duplicated KIA/extraction pipeline ~170 → 0 lines (centralized in `raidResolution.ts`); all raid/nutrition/enemy-spawn/medical balance values moved into `src/data/tuning/` (`raidConfig.ts`, `enemySpawning.ts`, `medicalConfig.ts`). **Phase 2 core complete** — engine contract layer (`engineContext.ts` + `types.ts`, 12 tests) added; simulation results unchanged. **Phase 3 prerequisite complete** — Golden Master characterization baseline (`goldenHarness.ts` + `goldenMaster.test.ts`, 3 committed transcripts under `src/engine/__golden__/`) freezes `runRaidTick` behavior for extraction/combat/dehydration scenarios. **Phase 3 control-flow conversion complete** — `simulateCombatRound` and `runRaidTick` are both yieldable generators (sync drainer + `return yield*` async variant); the tick generator forwards combat hooks and emits `AFTER_RAID_END` on KIA/extraction, verified byte-for-byte against the un-regenerated goldens; also fixed a shared-`ALL_ITEMS` armor/helmet template mutation leak in `spawnEnemy` (armored enemies now start with full durability). **Phase 3 complete** — UI tick loop drains the generator flow, and per-tick state settlement switched from `JSON.parse(JSON.stringify)` full-tree cloning to Immer copy-on-write (`createDraft`/`finishDraft`, `immer@11.1.15`): input never mutated, output fresh/structurally-shared/frozen, atomic at the `finishDraft` boundary. 64/64 tests green. Remaining targets below are unchanged.
 
 | Metric | Baseline | Target | Improvement |
 | :--- | :--- | :--- | :--- |
@@ -544,4 +555,4 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 | **Duplicated Code** | ~100 lines | ~5 lines | **-95% reduction** |
 | **Hardcoded Magic Numbers** | 50+ instances | 5 instances | **-90% reduction** |
 | **PMC Class Touchpoints** | 5 scattered conditionals | 1 modular config | **-80% coupling** |
-| **Tick State Deep-Clones** | 1 per tick (`JSON.parse`) | 0 (Atomic Settlement) | **100% eliminated** |
+| **Tick State Deep-Clones** | 1 per tick (`JSON.parse`) | 0 (Atomic Settlement) | **100% eliminated** (Immer COW, `finishDraft` boundary) |
