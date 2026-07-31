@@ -1,5 +1,5 @@
 import { GameState, PMCCharacter, EnemyState } from "../types";
-import { ALL_ITEMS } from "../data";
+import { ALL_ITEMS } from "../data/content/items";
 import {
   AppliedPatch,
   EngineContext,

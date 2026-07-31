@@ -1,15 +1,17 @@
 import { MapData, GameItem, PMCCharacter, RaidState } from "../types";
-import { ALL_ITEMS } from "../data";
+import { ALL_ITEMS } from "../data/content/items";
 import { createLog } from "./utils";
 import { SECURE_CONTAINER_CAPACITY, sortLootIntoContainers } from "./lootManagement";
-
-// Zentrale Rarity-Gewichtung — alle Items mit dieser Gewichtung, keine individuellen Gewichte
-const RARITY_WEIGHT: Record<string, number> = {
-  common: 5,
-  rare: 3,
-  epic: 2,
-  legendary: 1,
-};
+import { getLuckyLootRolls } from "./behaviors/classPassives";
+import {
+  LOOT_RARITY_WEIGHT,
+  LOOT_BASE_CHANCE,
+  LOOT_CHANCE_CAP,
+  LOOT_PERCEPTION_PER_LEVEL,
+  LOOT_BASE_ROLLS,
+  BACKPACK_CAPACITY_BASE,
+  BACKPACK_CAPACITY_CONSTITUTION_FACTOR,
+} from "../data/tuning/lootConfig";
 
 /**
  * Rolls a random item from the loot table.
@@ -17,8 +19,8 @@ const RARITY_WEIGHT: Record<string, number> = {
  */
 export const rollLootItem = (map: MapData): GameItem => {
   const lootTable = Object.values(ALL_ITEMS)
-    .filter(item => (RARITY_WEIGHT[item.rarity] ?? 0) > 0)
-    .map(item => ({ item, weight: RARITY_WEIGHT[item.rarity] }));
+    .filter(item => (LOOT_RARITY_WEIGHT[item.rarity] ?? 0) > 0)
+    .map(item => ({ item, weight: LOOT_RARITY_WEIGHT[item.rarity] }));
 
   const totalWeight = lootTable.reduce((acc, e) => acc + e.weight, 0);
   let roll = Math.random() * totalWeight;
@@ -44,7 +46,7 @@ export const rollLootItem = (map: MapData): GameItem => {
  * @param constitution Player's constitution level
  */
 export const getBackpackCapacity = (constitution: number): number => {
-  return 9 + Math.floor(Math.sqrt(constitution * 30));
+  return BACKPACK_CAPACITY_BASE + Math.floor(Math.sqrt(constitution * BACKPACK_CAPACITY_CONSTITUTION_FACTOR));
 };
 
 /**
@@ -56,14 +58,12 @@ export const getBackpackCapacity = (constitution: number): number => {
  * @param map Map context
  */
 export const executeLootPhase = (pmc: PMCCharacter, raid: RaidState, map: MapData, intelligenceCenterLevel: number) => {
-  const baseLootChance = 0.50;
   const perceptionLevel = pmc.skills.perception.level;
   const mapMult = map.lootMultiplier ?? 1.0;
-  const lootChance = Math.min(0.95, (baseLootChance + perceptionLevel * 0.01) * mapMult);
+  const lootChance = Math.min(LOOT_CHANCE_CAP, (LOOT_BASE_CHANCE + perceptionLevel * LOOT_PERCEPTION_PER_LEVEL) * mapMult);
 
-  const baseRolls = 3;
-  const luckyBonus = pmc.classType === "Lucky" ? 1 : 0;
-  const totalRolls = baseRolls + luckyBonus;
+  const luckyBonus = getLuckyLootRolls(pmc.classType);
+  const totalRolls = LOOT_BASE_ROLLS + luckyBonus;
 
   let itemsFoundCount = 0;
 

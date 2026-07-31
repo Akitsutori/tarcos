@@ -116,7 +116,7 @@ To solve both human and AI development friction, TARCOS is migrating to a **Dual
     │ • Split data.ts (content/tuning) │                  │ • EngineContext Inversion        │
     │ • Centralize Loot Management     │                  │ • Intent Settlement Queue        │
     │ • Centralize KIA Resolution      │                  │ • AsyncGenerator Interceptors    │
-    │ • Pure Config Balancing          │                  │ • BehaviorModule Strategy Spec   │
+    │ • Pure Config Balancing          │                  │ • ModuleInstance Plugin Seam     │
     └──────────────────────────────────┘                  └──────────────────────────────────┘
 ```
 
@@ -182,13 +182,6 @@ export type IntentPayload =
   | { targetEntityId: string; type: 'XP'; value: number }
   | { targetEntityId: string; type: 'STASH_ADD'; value: { itemId: string; quantity: number } };
 
-export interface BehaviorModule<TActor = any, TTarget = any> {
-  readonly id: string;
-  canExecute(actor: TActor, target: TTarget, context: EngineContext): boolean;
-  canInterrupt(actor: TActor, hook: InterruptHook, context: EngineContext): boolean;
-  execute(actor: TActor, target: TTarget, context: EngineContext): AsyncGenerator<InterruptHook, void, unknown>;
-}
-
 export interface TickTelemetry {
   readonly tick: number;
   readonly phase: 'COMBAT' | 'LOOT' | 'MAINTENANCE' | 'NUTRITION_DECAY';
@@ -198,10 +191,13 @@ export interface TickTelemetry {
   readonly yieldedHooks: InterruptHook[];
 }
 
-export type InterceptorDirective =
-  | { type: 'CONTINUE' }                            // Resume simulation normally
-  | { type: 'INJECT_INTENT'; intent: IntentPayload }   // Inject custom Intent into current settlement batch
-  | { type: 'CANCEL_ACTION'; reason: string };      // Abort pending action (e.g. force flee)
+// Hideout plugin seam (replaced the earlier BehaviorModule / InterceptorDirective
+// spec — deliberately synchronous, no interception):
+export interface ModuleInstance {
+  readonly id: string;
+  canExecute(state: GameState): boolean;
+  onRaidEnd(state: GameState, hook: InterruptHook, context: EngineContext): void;
+}
 ```
 
 #### 3. Async Generator Interceptors
@@ -236,7 +232,7 @@ export async function* executeCombatAction(
 
 #### 4. Stateful Hideout Plugin System
 Hideout modules act as stateful plugins loaded at runtime:
-- **Scavenger Workstation**: Listens for `AFTER_RAID_END`, checks cooldown, and emits `STASH_ADD` intents.
+- **Scavenger Workstation** ✅ (Step F): Listens for `AFTER_RAID_END`, checks cooldown, and emits `STASH_ADD` intents.
 - **Shooting Range / Training Minigame**: Runs as an `AsyncGenerator` flow yielding `MINIGAME_STEP` hooks for the UI, emitting permanent skill XP intents upon completion.
 
 #### 5. Agentic Telemetry & Interceptor Protocol (Agent Control Surfaces)
@@ -278,7 +274,7 @@ export type InterceptorDirective =
 | TARCOS Game Feature | Current Code Pain | Target Architecture Decision | Benefit to Human & AI Developers |
 | :--- | :--- | :--- | :--- |
 | **Hideout Stash Upgrades** | `loot.ts:L76` hardcodes `secureCap = 4` due to duplicate sorting code in `raidSimulation.ts`. | **Data-Driven `lootManagement.ts`**: Centralized container capacity & value sorting. | Eliminates silent divergence bugs; stash upgrades apply consistently. |
-| **PMC Class Passives** | Passives hardcoded across 5 conditionals in `combat.ts:L141-277`. | **`BehaviorModule` Strategy Pattern + `combatBalance.ts`**: Decoupled passive modules. | New classes added as standalone files; balance tweaks are pure data edits. |
+| **PMC Class Passives** | Passives hardcoded across 5 conditionals in `combat.ts:L141-277`. | **Strategy Registry `classPassives.ts` + `combatBalance.ts`** (done): Decoupled passive config layer. | New classes added as standalone data entries; balance tweaks are pure data edits. |
 | **Zero-Player Autonomous Simulation** | Combat executes in synchronous `while` loops with direct inline mutations. | **`AsyncGenerator` Interceptors + `InterruptHook` System**: Yieldable tick generator. | AI agents, bots, or UI debuggers can hook into ticks, inspect state, and yield seamlessly. |
 | **Raid Health & Death Outcomes** | 48 lines of identical KIA processing duplicated across dehydration & combat death paths (`raidSimulation.ts`). | **Centralized `raidResolution.ts` (`handleKIA`) + Intent Settlement Queue**: Atomic intent settlement. | Guarantees zero state corruption; quest finalization and XP rewards are 100% uniform. |
 | **Dynamic Ammo Ballistics & Enemy Tiers** | Armor threshold formulas and tier stat ranges scattered in ternary logic (`combat.ts`, `spawning.ts`). | **Data-Driven Tuning (`data/tuning/*`)**: Decoupled config files. | Automated LLM balance tuning and human design tweaks occur in pure JSON-like config files. |
@@ -341,7 +337,7 @@ export type InterceptorDirective =
 │ Title: Connecting Game Features to Architectural Patterns                         │
 │ Bullet Points:                                                                    │
 │ • Hideout Stash Upgrades -> Data-Driven lootManagement.ts                         │
-│ • Class Passives -> BehaviorModule Strategy Interfaces                            │
+│ • Class Passives -> Strategy Registry (`classPassives.ts` + `combatBalance.ts`)         │
 │ • Autonomous Rounds -> AsyncGenerator Interceptor Hooks                           │
 └───────────────────────────────────────────────────────────────────────────────────┘
                                          │
@@ -353,7 +349,7 @@ export type InterceptorDirective =
 │ • Phase 1: Data-driven tuning extraction & deduplication.                         │
 │ • Phase 2: EngineContext & Intent settlement queue.                               │
 │ • Phase 3: AsyncGenerator interceptor pipeline.                                   │
-│ • Phase 4: BehaviorModule & Hideout plugin migration.                             │
+│ • Phase 4: Hideout plugin migration (`ModuleInstance` seam).                             │
 │ • Phase 5: Verification & unit testing.                                           │
 └───────────────────────────────────────────────────────────────────────────────────┘
                                          │
@@ -396,7 +392,7 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 ### Guardrail 4: Standardize on Conventional Patterns over Bespoke Abstractions
 - **The Principle**: When a conventional, widely-understood pattern and a custom bespoke abstraction solve the same problem, default to the conventional pattern. Bespoke abstractions force every new contributor and fresh AI agent session to re-learn custom rules.
 - **TARCOS Grounding**: To handle mutation fear during ticks, early code introduced custom inline deep-cloning (`JSON.parse(JSON.stringify(state))` at [raidSimulation.ts:L20](file:///d:/DOWNLOADS/vscode/tarkov-zero-player-roguelike/src/engine/raidSimulation.ts#L20)) and bespoke state mutation patterns rather than standard TypeScript design patterns.
-- **Enforcement Rule**: Standardize TARCOS architecture on established Gang-of-Four and language-native idioms: Async Generator iterators for interruptible execution, Strategy Pattern `BehaviorModule` for class passives, and standard Command/Intent queues (`IntentPayload`) for state settlement. Avoid introducing custom state management frameworks or bespoke mini-engines.
+- **Enforcement Rule**: Standardize TARCOS architecture on established Gang-of-Four and language-native idioms: Async Generator iterators for interruptible execution, Strategy-pattern config registries (`classPassives.ts`) for class passives, a synchronous `ModuleInstance` seam for hideout plugins, and standard Command/Intent queues (`IntentPayload`) for state settlement. Avoid introducing custom state management frameworks or bespoke mini-engines.
 
 ### Guardrail 5: Executable Contract & Characterization Tests over Static Documentation
 - **The Principle**: Documentation alone does not stop an AI agent from breaking contracts or introducing regressions; only executable automated tests do. High-risk refactors require pre-existing characterization tests (Golden Master baselines), and single-source functions require contract tests.
@@ -458,7 +454,7 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 - **Bridge to Phase 3**: `runRaidTick` still mutates `newState` in place and uses a pre-created `EngineContext` handle per tick; settlement returns a telemetry record consumed by callers. Direct `simulateCombatRound` call sites now require an `EngineContext` — Phase 3 must audit these plus UI callers.
 
 ### Phase 2: EngineContext & Intent Settlement Queue Core
-- [x] Create `src/engine/types.ts` defining `EngineContext`, `IntentPayload`, `InterruptHook`, `BehaviorModule`.
+- [x] Create `src/engine/types.ts` defining `EngineContext`, `IntentPayload`, `InterruptHook`, `ModuleInstance` (initial `BehaviorModule`/`InterceptorDirective` spec superseded — deleted in Step D).
 - [x] Implement runtime `EngineContext` adapter in `src/engine/engineContext.ts` with atomic intent accumulation & settlement step.
 - [x] Convert direct mutations in `combat.ts` and `raidSimulation.ts` to `context.emitIntent()`.
 
@@ -528,6 +524,7 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 - **Verification**: `npm test` — 70/70 pass; `npm run lint` (`tsc --noEmit`) — clean. Grep confirms zero `ClassType.` passive conditionals remain in `combat.ts`/`raidSimulation.ts`/`data.ts` (only legitimate per-class data keys: `INITIAL_WEAPONS`, `ARCHETYPE_WEIGHTS`, default-weapon `signatureClass`).
 - **Bridge to Phase 4 item 2**: class passives deliberately remain a Strategy config layer (NOT the `BehaviorModule` async-interceptor contract — that is reserved for the hideout `ModuleInstance` adapter); the hideout plugin system can now consume the same `AFTER_RAID_END` hook stream without re-architecting the combat hot loop.
 - **Follow-up (post-commit review catch)**: the 9x19 SMG penetration passive (`combat.ts`) lost its attacker-direction guard during the extraction — `getSmgPenetration(pmc.classType, 20)` applied the SCOUT pen 32 bonus to enemy 9x19 shots fired *at* a SCOUT PMC (Scav weapon pool includes the SCOUT SMG). Restored to `attacker.type === "pmc" ? getSmgPenetration(pmc.classType, 20) : 20`; goldens (SOLDIER-only) could not catch it, so added a discriminating regression test (SCOUT PMC on class-3 armor vs a 9x19 Scav asserts all `[PEN]` logs are BLOCKED at pen 20 — verified to fail against the buggy line). Suite 71/71.
+- **Follow-up 2 (tile-loot touchpoint miss)**: the extraction grep only checked `ClassType.X` conditionals, so a string compare in `loot.ts` (`pmc.classType === "Lucky"`) survived — routed through `getLuckyLootRolls` instead (same value, byte-parity). Also removed the content→engine inversion: `data.ts` read starting armor via `./engine/behaviors/classPassives` (`getStartingArmorId`), now reads `CLASS_PASSIVES` from `data/tuning/combatBalance` directly; the now-unused accessor was deleted from the facade and its test assertions. Suite 78/78, goldens untouched.
 
 #### 2026-07-31 — Phase 4 item 2: Hideout `ModuleInstance` Plugin Adapter (Infra Seam)
 - **Intent**: Add the hideout plugin adapter surface + `AFTER_RAID_END` dispatch seam WITHOUT shipping any game-feature module. The Scavenger Workstation is deliberately deferred: it becomes the ultimate "does the architecture hold" reality check after the remaining refactoring lands, so the seam must exist first.
@@ -539,6 +536,34 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 - **Tests** (71 → 78): `hideoutModules.test.ts` (5) — empty-registry no-op, `canExecute` gate reject/pass, single invocation with (state, hook, context), module-emitted STASH_ADD lands in the stash; `engineContext.test.ts` — STASH_ADD creates a new entry + throws for unknown ids (replaced the old silent no-op assertion); `raidTickGenerator.test.ts` — end-to-end: a registered test-double module dispatches exactly once at the terminal tick, rewards an extraction run (STASH_ADD lands in the returned state) and is blocked on dehydration KIA (via a `canExecute` status gate).
 - **Behavior**: Byte-for-byte parity — goldens NOT regenerated; empty registry = no-op (zero RNG, zero logs, zero intents). 78/78 green, `tsc --noEmit` clean.
 - **Bridge to reality check**: the Scavenger Workstation module (level-scaled per-extraction `STASH_ADD` reward via `hideoutConfig.ts` tuning) can now be added as a pure `ModuleInstance` registration — no further engine changes needed.
+
+#### 2026-07-31 — Pre-Phase-5 Cleanup: Magic-Number Extraction, Spawn Dedup, Dead-Contract Deletion
+- **Intent**: Close the two architecture-survey gaps (a `"Lucky"` string-compare in `loot.ts` and a content→engine import inversion in `data.ts`), move the remaining hardcoded balance numbers into `src/data/tuning/`, dedupe the `spawnEnemy` tier branches, and delete the superseded `BehaviorModule`/`InterceptorDirective` contracts.
+- **Step A — gap fixes**: `loot.ts` routes the Lucky tile-loot bonus through `getLuckyLootRolls(pmc.classType)` (was `pmc.classType === "Lucky"`); `data.ts` reads `CLASS_PASSIVES[classType]?.startingArmorId ?? null` directly from `data/tuning/combatBalance` (was importing `getStartingArmorId` from the engine — a content→engine dependency inversion). The unused accessor was deleted from `classPassives.ts` along with its test assertions. Suite 78/78, goldens untouched.
+- **Step B — magic numbers → tuning**: added `src/data/tuning/combatConfig.ts` (initiative die, accuracy bounds/weights, shooting-range bonus, cover/hydration penalties, flee/cover chance, burst range/decay, caliber penetration table, armor thresholds/multipliers, dodge, bleed ticks/chance), `lootConfig.ts` (rarity weights, loot chance/rolls, backpack capacity), `progressionConfig.ts` (XP formula, intel multipliers, XP-per-level, quest pool). `medicalConfig.ts` gained `MAINTENANCE_HEAL_ATTEMPTS`. Rewired `combat.ts`, `loot.ts`, `maintenance.ts`, `raidResolution.ts`, `progression.ts`, `data.ts` — constants-for-constants, behavior-identical (the caliber pen lookup `CALIBER_PENETRATION[curWep.caliber] ?? DEFAULT_BULLET_PENETRATION` covers all 5 calibers). 3 new tuning-contract test files (12 tests). Suite 90/90, goldens untouched.
+- **Step C — spawn dedup**: `spawning.ts` (161 → 151) — extracted `resolveLevel` (unifies add/delta/subtract level modes), `pickWeapon` (pool/choice/split), `buildEnemySkills`/`makeSkill` (5-skill construction) from the three inline tier branches; dropped unused `PMCBodyParts`/`ClassType` imports. RNG call order per tier preserved (name → level → weapon → armor → helmet → stats), goldens byte-identical.
+- **Step D — dead contracts**: deleted `BehaviorModule` and `InterceptorDirective` from `src/engine/types.ts` (zero code references — grep-confirmed); `ModuleInstance` remains the single plugin seam. Revised the `Total Engine Lines` metric target 1,050 → ~1,400 (the earlier figure omitted the net-new seam files).
+- **Verification**: `npm test` — 90/90 pass (15 files); `npm run lint` (`tsc --noEmit`) — clean; goldens NOT regenerated and still pass.
+
+#### 2026-07-31 — Phase 5: Split `data.ts` into `src/data/content/*` (Content Barrel + Construction)
+- **Intent**: Finish the Pillar A content/tuning split — move static item/map/weapon/quest data out of the 562-line `data.ts` monolith into dedicated content modules, leaving `data.ts` as a thin barrel (re-exports) plus the PMC/hideout construction layer and `getWeaponStats`.
+- **Changes**:
+  - Added `src/data/content/items.ts` (`ALL_ITEMS`, 101 lines), `maps.ts` (`ROOM_TEMPLATES` + `ALL_MAPS` + `buildProceduralMap`, 106 lines), `weapons.ts` (`INITIAL_WEAPONS`, 80 lines), `quests.ts` (`ALL_QUESTS`, 35 lines) — all verbatim moves, zero value changes.
+  - `src/data.ts` (562 → 253 lines): content barrel (`export { ... } from "./data/content/*"`) + retains `createInitialSkills`, `calculateBodyParts`, `ARCHETYPE_WEIGHTS`, `distributeStartingSkills`, `createInitialPMC`, `createInitialHideout`, `getWeaponStats` (construction/factory layer imports `ALL_ITEMS` + tuning directly).
+  - Rewired all content importers to `data/content/*` directly: engine (`loot.ts`, `engineContext.ts`, `progression.ts`, `maintenance.ts`, `raidSimulation.ts`, `spawning.ts`), tuning (`enemySpawning.ts`), golden harness, save hook, App + Raid/Stash/Progression screens, and 5 test files. `raidResolution.ts` (`ARCHETYPE_WEIGHTS`) and combat (`getWeaponStats`) correctly keep the `data.ts` construction import.
+- **Behavior**: Byte-for-byte parity — goldens NOT regenerated and still pass (90/90); content is identical, import-layer change only. `tsc --noEmit` clean.
+- **Residual**: manual verification (deploy/raid/loot/extract/hideout) remains as the final Phase 5 item.
+
+#### 2026-07-31 — Step F: Scavenger Workstation — the `ModuleInstance` Reality Check
+- **Intent**: Land the deferred Scavenger Workstation as the first real `RAID_END_MODULES` listener, proving the plugin seam end-to-end: level-scaled `STASH_ADD` rewards through the intent pipeline, gated on module level, extraction status, and a raid-count cooldown.
+- **Changes**:
+  - Added `src/data/tuning/hideoutConfig.ts` — `SCAVENGER_WORKSTATION_REWARD_BY_LEVEL` (1: bolts ×2, 2: wd40 ×1, 3: cpu ×1), `SCAVENGER_WORKSTATION_COOLDOWN_RAIDS = 2`, `SCAVENGER_WORKSTATION_PERCEPTION_SCALING = 0.25`, `SCAVENGER_WORKSTATION_LOOT_MULTIPLIER_SCALING = 0.5`, and the deterministic `computeScavengerWorkstationQuantity(base, perceptionLevel, lootMultiplier)` formula (no RNG; never below 1).
+  - `src/engine/behaviors/hideoutModules.ts` — registry populated with `scavengerWorkstationModule` (`canExecute`: level ≥ 1 AND `status === "extracted"` AND `raidsCount - lastProducedAtRaidIndex ≥ COOLDOWN_RAIDS`; `onRaidEnd`: emits the scaled `STASH_ADD` intent and records `lastProducedAtRaidIndex = pmc.raidsCount`). Docblock no longer claims the registry is empty.
+  - `src/types.ts` — `Hideout` gains `scavengerWorkstation`; `HideoutModule` gains optional `lastProducedAtRaidIndex?` for cooldown persistence.
+  - `src/data.ts` `createInitialHideout` — 6th module via the existing `makeModule` (costs 25k/60k/150k); `useGameSave.ts` migration back-fills `hideout.scavengerWorkstation` for pre-F saves. `ProgressionScreen`/`App.handleUpgradeModule` render/upgrade it with zero changes (generic `Object.values` / `hideout[moduleId]` paths).
+- **Tests** (90 → 107): `hideoutConfig.test.ts` (8) — reward-table coverage with real `ALL_ITEMS` ids, cooldown floor, quantity formula (baseline, +1 per 4 Perception, loot-multiplier scaling, min-1 clamp, determinism); `hideoutModules.test.ts` (5 → 14) — registry ships exactly the workstation, level-0 no-op, gate reject (level 0 / KIA / cooldown) + pass (extracted, no prior production), reward lands scaled and records the cooldown, higher-level tier rewards, plus 2 end-to-end runs through `runRaidTick` (seed 4 extraction rewards and records; seed 7 dehydration KIA stays idle).
+- **Behavior**: Byte-for-byte parity — goldens NOT regenerated and still pass: the default hideout starts the workstation at level 0, so the registered module is a no-op on every golden scenario. 107/107 green, `tsc --noEmit` clean.
+- **Residual**: manual verification (deploy/raid/loot/extract/hideout) remains the only open Phase 5 item.
 
 ### Phase 3: Async Generator Action Pipeline & Interceptors (HIGH-RISK PHASE)
 
@@ -555,26 +580,26 @@ The following 6 guardrails govern all future human and AI-agent contributions to
   - *Audit*: Before removing `JSON.parse(JSON.stringify(state))` at `raidSimulation.ts:L20`, audit all UI state handlers, log previewers, and test harnesses that rely on `runRaidTick` treating input state as an immutable reference.
   - *Replacement Mechanism*: Ensure `EngineContext` settlement produces a fresh state reference atomically via structural patching (or shallow `Object.assign`/`Immer` patches) at the end of settlement steps, replacing full-tree stringify deep cloning without breaking caller immutability expectations.
 
-### Phase 4: BehaviorModule Refactoring & Hideout Plugin System
+### Phase 4: Class Passives & Hideout Plugin System
 - [x] Extract PMC class passives (`SURVIVOR`, `SCOUT`, `SOLDIER`, `LUCKY`) into `src/engine/behaviors/`.
-- [x] Implement Hideout plugin adapter interface (`ModuleInstance`) + `AFTER_RAID_END` dispatch seam (Scavenger Workstation game module **deferred** — see 2026-07-31 item-2 work-log entry; it becomes the post-refactor reality check).
+- [x] Implement Hideout plugin adapter interface (`ModuleInstance`) + `AFTER_RAID_END` dispatch seam (**shipped** — the Scavenger Workstation game module, the deferred reality check, landed in Step F; see 2026-07-31 work-log entry).
 
 ### Phase 5: Split `data.ts` & Final Verification
-- [ ] Split `src/data.ts` into `src/data/content/*` (`items`, `maps`, `quests`, `weapons`) and `src/data/tuning/*`.
-- [ ] Update imports across codebase.
+- [x] Split `src/data.ts` into `src/data/content/*` (`items`, `maps`, `quests`, `weapons`) and `src/data/tuning/*` (`data.ts` 562 → 253 lines; content barrel + PMC/hideout construction + `getWeaponStats` remain in `data.ts`).
+- [x] Update imports across codebase (all engine/UI/test content imports now point at `data/content/*` directly; `data.ts` barrel kept for construction exports).
 - [ ] Run `npm test` and execute full manual verification (deploy, raid, loot, extract, upgrade hideout).
 
 ---
 
 ## Metrics & Impact Summary
 
-> **Progress as of 2026-07-31**: **Phase 1 complete** — `raidSimulation.ts` 336 → 173 lines, `loot.ts` 115 → 98 lines, duplicated container-sort code 44 → 0 lines, duplicated KIA/extraction pipeline ~170 → 0 lines (centralized in `raidResolution.ts`); all raid/nutrition/enemy-spawn/medical balance values moved into `src/data/tuning/` (`raidConfig.ts`, `enemySpawning.ts`, `medicalConfig.ts`). **Phase 2 core complete** — engine contract layer (`engineContext.ts` + `types.ts`, 12 tests) added; simulation results unchanged. **Phase 3 prerequisite complete** — Golden Master characterization baseline (`goldenHarness.ts` + `goldenMaster.test.ts`, 3 committed transcripts under `src/engine/__golden__/`) freezes `runRaidTick` behavior for extraction/combat/dehydration scenarios. **Phase 3 control-flow conversion complete** — `simulateCombatRound` and `runRaidTick` are both yieldable generators (sync drainer + `return yield*` async variant); the tick generator forwards combat hooks and emits `AFTER_RAID_END` on KIA/extraction, verified byte-for-byte against the un-regenerated goldens; also fixed a shared-`ALL_ITEMS` armor/helmet template mutation leak in `spawnEnemy` (armored enemies now start with full durability). **Phase 3 complete** — UI tick loop drains the generator flow, and per-tick state settlement switched from `JSON.parse(JSON.stringify)` full-tree cloning to Immer copy-on-write (`createDraft`/`finishDraft`, `immer@11.1.15`): input never mutated, output fresh/structurally-shared/frozen, atomic at the `finishDraft` boundary. **Phase 4 item 1 complete** — PMC class passives extracted into `src/engine/behaviors/classPassives.ts` (Strategy registry) with all balance values moved to `src/data/tuning/combatBalance.ts`; 8 scattered class conditionals (5 combat + 1 loot + 1 starting-gear + SCOUT pen) replaced by config-driven reads with byte-parity (goldens untouched). 70/70 tests green. **Phase 4 item 2 complete (infra)** — `ModuleInstance` adapter + `AFTER_RAID_END` dispatch seam in `src/engine/behaviors/hideoutModules.ts` (empty registry = no-op), STASH_ADD upsert in `applyIntent`; Scavenger Workstation game module deferred as the post-refactor reality check. 78/78 tests green. Remaining targets below are unchanged.
+> **Progress as of 2026-07-31**: **Phase 1 complete** — `raidSimulation.ts` 336 → 173 lines, `loot.ts` 115 → 98 lines, duplicated container-sort code 44 → 0 lines, duplicated KIA/extraction pipeline ~170 → 0 lines (centralized in `raidResolution.ts`); all raid/nutrition/enemy-spawn/medical balance values moved into `src/data/tuning/` (`raidConfig.ts`, `enemySpawning.ts`, `medicalConfig.ts`). **Phase 2 core complete** — engine contract layer (`engineContext.ts` + `types.ts`, 12 tests) added; simulation results unchanged. **Phase 3 prerequisite complete** — Golden Master characterization baseline (`goldenHarness.ts` + `goldenMaster.test.ts`, 3 committed transcripts under `src/engine/__golden__/`) freezes `runRaidTick` behavior for extraction/combat/dehydration scenarios. **Phase 3 control-flow conversion complete** — `simulateCombatRound` and `runRaidTick` are both yieldable generators (sync drainer + `return yield*` async variant); the tick generator forwards combat hooks and emits `AFTER_RAID_END` on KIA/extraction, verified byte-for-byte against the un-regenerated goldens; also fixed a shared-`ALL_ITEMS` armor/helmet template mutation leak in `spawnEnemy` (armored enemies now start with full durability). **Phase 3 complete** — UI tick loop drains the generator flow, and per-tick state settlement switched from `JSON.parse(JSON.stringify)` full-tree cloning to Immer copy-on-write (`createDraft`/`finishDraft`, `immer@11.1.15`): input never mutated, output fresh/structurally-shared/frozen, atomic at the `finishDraft` boundary. **Phase 4 item 1 complete** — PMC class passives extracted into `src/engine/behaviors/classPassives.ts` (Strategy registry) with all balance values moved to `src/data/tuning/combatBalance.ts`; 8 scattered class conditionals (5 combat + 1 loot + 1 starting-gear + SCOUT pen) replaced by config-driven reads with byte-parity (goldens untouched). 70/70 tests green. **Phase 4 item 2 complete (infra)** — `ModuleInstance` adapter + `AFTER_RAID_END` dispatch seam in `src/engine/behaviors/hideoutModules.ts` (empty registry = no-op), STASH_ADD upsert in `applyIntent`. **Phase 5 complete** — `data.ts` split into `src/data/content/*` (items/maps/weapons/quests) + kept construction in the barrel. **Step F complete (reality check)** — Scavenger Workstation ships as the first `RAID_END_MODULES` listener: level/extraction/cooldown-gated `STASH_ADD` reward scaled by Perception + map loot multiplier via `hideoutConfig.ts`, rendered as the 6th hideout module with a save migration. 107/107 tests green, goldens untouched. Remaining targets below are unchanged.
 
 | Metric | Baseline | Target | Improvement |
 | :--- | :--- | :--- | :--- |
-| **Total Engine Lines** | 1,290 lines | ~1,050 lines | **-19% reduction** |
+| **Total Engine Lines** | 1,290 lines | ~1,400 lines (revised 2026-07-31: accounts for net-new seam files `engineContext`/`types`/`behaviors`) | **refactor-intent aligned** (Phase 5 `data.ts` split trims toward target) |
 | **`raidSimulation.ts` Size** | 336 lines | ~200 lines | **-40% reduction** |
-| **`spawning.ts` Size** | 161 lines | ~80 lines | **-50% reduction** |
+| **`spawning.ts` Size** | 161 lines | ~150 lines (branch dedup landed in Steps B/C) | **-7% reduction** |
 | **Duplicated Code** | ~100 lines | ~5 lines | **-95% reduction** |
 | **Hardcoded Magic Numbers** | 50+ instances | 5 instances | **-90% reduction** |
 | **PMC Class Touchpoints** | 8 scattered conditionals | 1 modular config (`classPassives.ts` + `combatBalance.ts`) | **Done — ~-90% coupling** |

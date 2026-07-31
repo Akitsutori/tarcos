@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createEngineContext, applyIntent } from './engineContext';
-import { createInitialPMC, createInitialHideout, ALL_MAPS } from '../data';
+import { createInitialPMC, createInitialHideout } from '../data';
+import { ALL_MAPS } from '../data/content/maps';
 import { ClassType, GameState, RaidState, Stash, Weapon, GameItem, EnemyState } from '../types';
 
 const makeItem = (id: string, value: number): GameItem => ({

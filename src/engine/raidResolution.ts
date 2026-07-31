@@ -2,6 +2,7 @@ import { GameState, GameItem } from "../types";
 import { ARCHETYPE_WEIGHTS } from "../data";
 import { createLog } from "./utils";
 import { finalizeQuestsAndXP, refillQuests } from "./progression";
+import { XP_PER_LEVEL, PERCEPTION_XP_GAIN } from "../data/tuning/progressionConfig";
 
 /**
  * Moves a single loot entry into the stash, merging with any existing stack.
@@ -19,7 +20,7 @@ const gainPerceptionXp = (state: GameState) => {
   const pmc = state.pmc;
   const raid = state.activeRaid;
   const perception = pmc.skills.perception;
-  perception.xp += 25;
+  perception.xp += PERCEPTION_XP_GAIN;
   if (perception.xp >= perception.maxXp) {
     perception.level++;
     perception.xp -= perception.maxXp;
@@ -37,7 +38,7 @@ const levelUpLoop = (state: GameState) => {
   while (pmc.xp >= pmc.maxXp) {
     pmc.level++;
     pmc.xp -= pmc.maxXp;
-    pmc.maxXp = pmc.level * 200;
+    pmc.maxXp = pmc.level * XP_PER_LEVEL;
     raid.logs.push(createLog(`PMC LEVELED UP! Level reached: ${pmc.level}!`, "info", raid.elapsedSeconds));
 
     const weights = ARCHETYPE_WEIGHTS[pmc.classType];

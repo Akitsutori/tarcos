@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { runRaidTick } from './raidSimulation';
-import { createInitialPMC, createInitialHideout, ALL_MAPS, ALL_ITEMS } from '../data';
+import { createInitialPMC, createInitialHideout } from '../data';
+import { ALL_MAPS } from '../data/content/maps';
+import { ALL_ITEMS } from '../data/content/items';
 import {
   ClassType, GameState, RaidState, Stash, Weapon, EnemyState, GameItem,
   PMCBodyParts, CharacterSkills, Skill, RoomTile

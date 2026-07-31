@@ -3,6 +3,37 @@ import { getWeaponStats } from "../data";
 import { createLog } from "./utils";
 import { EngineContext, InterruptHook } from "./types";
 import { isFreeReloader, isSmgPassive, getBurstRange, getSmgPenetration, getDodgeMultiplier, getDamageMultipliers, getFatalSurviveChance } from "./behaviors/classPassives";
+import {
+  INITIATIVE_DIE,
+  ACCURACY_MIN,
+  ACCURACY_MAX,
+  ACCURACY_WEAPON_WEIGHT,
+  ACCURACY_SKILL_WEIGHT,
+  SHOOTING_RANGE_BONUS,
+  COVER_ACCURACY_PENALTY,
+  HYDRATION_PENALTY_BANDS,
+  FLEE_CHANCE_BASE,
+  FLEE_CHANCE_AGILITY_PER_LEVEL,
+  COVER_CHANCE,
+  DEFAULT_BURST_RANGE,
+  BURST_DECAY_PMC,
+  BURST_DECAY_ENEMY,
+  DEFAULT_BULLET_PENETRATION,
+  CALIBER_PENETRATION,
+  ARMOR_THRESHOLD_MULTIPLIER,
+  ARMOR_BLOCK_DAMAGE_MULTIPLIER,
+  ARMOR_PENETRATE_DAMAGE_MULTIPLIER,
+  ARMOR_BLOCK_DURABILITY_LOSS,
+  ARMOR_PENETRATE_DURABILITY_LOSS,
+  DODGE_AGILITY_FACTOR,
+  BLEED_TICK_BASE_DAMAGE,
+  BLEED_TICK_CONSTITUTION_FACTOR,
+  BLEED_TICK_MIN_DAMAGE,
+  BLEED_CHANCE_BASE,
+  BLEED_CHANCE_MIN,
+  BLEED_CHANCE_CONSTITUTION_PER_LEVEL,
+  BLEED_CHANCE_HYDRATION_MODS,
+} from "../data/tuning/combatConfig";
 
 const createDefaultWeapon = (): Weapon => ({
   id: "assault_rifle",
@@ -23,17 +54,21 @@ const createDefaultWeapon = (): Weapon => ({
 const calculateAccuracy = (attacker: CombatantView, defender: CombatantView, burstDecay: number, shootingRangeLevel: number): number => {
   const baseAcc = attacker.baseAccuracy;
   const skillWeap = attacker.skills.weaponSkill.level;
-  const shootingRangeBonus = shootingRangeLevel >= 3 ? 6 : shootingRangeLevel === 2 ? 3 : shootingRangeLevel === 1 ? 1 : 0;
-  const coverPenalty = defender.isCovered ? 20 : 0;
+  const shootingRangeBonus = SHOOTING_RANGE_BONUS[shootingRangeLevel] ?? 0;
+  const coverPenalty = defender.isCovered ? COVER_ACCURACY_PENALTY : 0;
   
   let hydrationPenalty = 0;
-  if (attacker.hydration < 25) hydrationPenalty = 10;
-  else if (attacker.hydration < 50) hydrationPenalty = 5;
+  for (const band of HYDRATION_PENALTY_BANDS) {
+    if (attacker.hydration < band.below) {
+      hydrationPenalty = band.penalty;
+      break;
+    }
+  }
 
   const weaponStats = getWeaponStats(attacker.equippedWeapon, 0); // basic stats for enemy, pmc passes active
 
-  return Math.min(95, Math.max(5, 
-    baseAcc + (weaponStats.accuracy * 0.5) + (skillWeap + shootingRangeBonus) * 1.0 - burstDecay - coverPenalty - hydrationPenalty
+  return Math.min(ACCURACY_MAX, Math.max(ACCURACY_MIN, 
+    baseAcc + (weaponStats.accuracy * ACCURACY_WEAPON_WEIGHT) + (skillWeap + shootingRangeBonus) * ACCURACY_SKILL_WEIGHT - burstDecay - coverPenalty - hydrationPenalty
   ));
 };
 
@@ -46,7 +81,7 @@ const resolveBleeding = (actor: CombatantView, logs: RaidLog[], elapsedSeconds: 
   const target = damagedParts[0];
 
   if (target) {
-    const bleedDmg = Math.max(1, 5 - Math.floor(actor.skills.constitution.level * 0.01));
+    const bleedDmg = Math.max(BLEED_TICK_MIN_DAMAGE, BLEED_TICK_BASE_DAMAGE - Math.floor(actor.skills.constitution.level * BLEED_TICK_CONSTITUTION_FACTOR));
     target.current = Math.max(0, target.current - bleedDmg);
     logs.push(createLog(`${actor.name} bled on [${target.name}] for ${bleedDmg} damage.`, "combat_hit", elapsedSeconds));
 
@@ -100,8 +135,8 @@ export const simulateCombatRoundGenerator = function* (
   };
 
   // 2. Initiative
-  const pmcInitRoll = Math.floor(Math.random() * 20) + pmcView.skills.initiative.level;
-  const enemyInitRoll = Math.floor(Math.random() * 20) + enemyView.skills.initiative.level;
+  const pmcInitRoll = Math.floor(Math.random() * INITIATIVE_DIE) + pmcView.skills.initiative.level;
+  const enemyInitRoll = Math.floor(Math.random() * INITIATIVE_DIE) + enemyView.skills.initiative.level;
   const pmcFirst = pmcInitRoll >= enemyInitRoll;
 
   const enemyHpTotal = Object.values(enemyView.bodyParts).reduce((s, p) => s + p.current, 0);
@@ -135,9 +170,9 @@ export const simulateCombatRoundGenerator = function* (
     if (curWep.currentMagRounds <= 0 && curWep.reserveMags > 0) {
       actionChosen = "reload";
     } else if (curWep.currentMagRounds <= 0 && curWep.reserveMags <= 0) {
-      const fleeChance = 0.30 + attacker.skills.agility.level * 0.02;
+      const fleeChance = FLEE_CHANCE_BASE + attacker.skills.agility.level * FLEE_CHANCE_AGILITY_PER_LEVEL;
       actionChosen = Math.random() < fleeChance ? "flee" : "wait";
-    } else if (!attacker.isCovered && Math.random() < 0.40) {
+    } else if (!attacker.isCovered && Math.random() < COVER_CHANCE) {
       actionChosen = "cover";
     }
 
@@ -162,7 +197,7 @@ export const simulateCombatRoundGenerator = function* (
 
     if (actionChosen === "cover") {
       attacker.isCovered = true;
-      roundLogs.push(createLog(`${attacker.name} ducked into COVER. Attacker accuracy reduced by 20.`, "info", elapsedSeconds));
+      roundLogs.push(createLog(`${attacker.name} ducked into COVER. Attacker accuracy reduced by ${COVER_ACCURACY_PENALTY}.`, "info", elapsedSeconds));
       continue;
     }
 
@@ -189,7 +224,7 @@ export const simulateCombatRoundGenerator = function* (
       }
 
       const isScoutSMG = attacker.type === "pmc" && isSmgPassive(pmc.classType);
-      const burstRange = isScoutSMG ? getBurstRange(pmc.classType) : { min: 1, max: 5 };
+      const burstRange = isScoutSMG ? getBurstRange(pmc.classType) : DEFAULT_BURST_RANGE;
       const minBurst = burstRange.min;
       const maxBurst = burstRange.max;
       const maxPossible = Math.min(curWep.currentMagRounds, maxBurst);
@@ -203,7 +238,7 @@ export const simulateCombatRoundGenerator = function* (
       for (let b = 0; b < burstCount; b++) {
         curWep.currentMagRounds--;
         
-        const decayRate = attacker.type === "pmc" ? 2.5 : 3.0;
+        const decayRate = attacker.type === "pmc" ? BURST_DECAY_PMC : BURST_DECAY_ENEMY;
         const burstDecay = b * decayRate;
         const finalAccuracy = calculateAccuracy(attacker, defender, burstDecay, shootingRangeLevel);
 
@@ -211,9 +246,8 @@ export const simulateCombatRoundGenerator = function* (
 
         if (Math.random() * 100 >= finalAccuracy) continue;
 
-        const dodgeFactor = 0.0025;
         const dodgeMult = attacker.type === "enemy" ? getDodgeMultiplier(pmc.classType) : 1.0;
-        if (Math.random() < defender.skills.agility.level * dodgeFactor * dodgeMult) {
+        if (Math.random() < defender.skills.agility.level * DODGE_AGILITY_FACTOR * dodgeMult) {
           roundLogs.push(createLog(`${defender.name} dynamically dodged the incoming bullet!`, "info", elapsedSeconds));
           continue;
         }
@@ -228,25 +262,21 @@ export const simulateCombatRoundGenerator = function* (
           activeArmor = defender.equippedArmor;
         }
 
-        let bulletPen = 20;
-        if (curWep.caliber === "7.62x39mm") bulletPen = 34;
-        else if (curWep.caliber === "9x19mm") bulletPen = attacker.type === "pmc" ? getSmgPenetration(pmc.classType, 20) : 20;
-        else if (curWep.caliber === "12x70mm") bulletPen = 18;
-        else if (curWep.caliber === "7.62x54mm") bulletPen = 45;
-        else if (curWep.caliber === "9x18mm") bulletPen = 15;
+        let bulletPen = CALIBER_PENETRATION[curWep.caliber] ?? DEFAULT_BULLET_PENETRATION;
+        if (curWep.caliber === "9x19mm" && attacker.type === "pmc") bulletPen = getSmgPenetration(pmc.classType, bulletPen);
 
         let dmgMultiplier = 1.0;
 
         if (activeArmor && activeArmor.armorClass && activeArmor.durability && activeArmor.maxDurability) {
           const effectiveArmor = activeArmor.armorClass * (activeArmor.durability / activeArmor.maxDurability);
-          const armorThreshold = effectiveArmor * 10;
+          const armorThreshold = effectiveArmor * ARMOR_THRESHOLD_MULTIPLIER;
           if (bulletPen < armorThreshold) {
-            dmgMultiplier = 0.20;
-            activeArmor.durability = Math.max(0, activeArmor.durability - 5);
+            dmgMultiplier = ARMOR_BLOCK_DAMAGE_MULTIPLIER;
+            activeArmor.durability = Math.max(0, activeArmor.durability - ARMOR_BLOCK_DURABILITY_LOSS);
             roundLogs.push(createLog(`[PEN] BLOCKED by ${activeArmor.name} (20% dmg) | Armor Dur: ${activeArmor.durability}/${activeArmor.maxDurability}`, "combat_damage", elapsedSeconds));
           } else {
-            dmgMultiplier = 0.60;
-            activeArmor.durability = Math.max(0, activeArmor.durability - 10);
+            dmgMultiplier = ARMOR_PENETRATE_DAMAGE_MULTIPLIER;
+            activeArmor.durability = Math.max(0, activeArmor.durability - ARMOR_PENETRATE_DURABILITY_LOSS);
             roundLogs.push(createLog(`[PEN] PENETRATED ${activeArmor.name} (60% dmg) | Armor Dur: ${activeArmor.durability}/${activeArmor.maxDurability}`, "combat_damage", elapsedSeconds));
           }
         }
@@ -289,11 +319,15 @@ export const simulateCombatRoundGenerator = function* (
           }
         }
 
-        const armorDeflectedFully = activeArmor && bulletPen < (activeArmor.armorClass! * (activeArmor.durability! / activeArmor.maxDurability!)) * 10;
+        const armorDeflectedFully = activeArmor && bulletPen < (activeArmor.armorClass! * (activeArmor.durability! / activeArmor.maxDurability!)) * ARMOR_THRESHOLD_MULTIPLIER;
         if (!armorDeflectedFully && targetedPart.current > 0) {
-          let bleedChance = Math.max(5, 35 - defender.skills.constitution.level * 1.0);
-          if (defender.hydration < 25) bleedChance += 10;
-          else if (defender.hydration < 50) bleedChance += 5;
+          let bleedChance = Math.max(BLEED_CHANCE_MIN, BLEED_CHANCE_BASE - defender.skills.constitution.level * BLEED_CHANCE_CONSTITUTION_PER_LEVEL);
+          for (const mod of BLEED_CHANCE_HYDRATION_MODS) {
+            if (defender.hydration < mod.below) {
+              bleedChance += mod.bonus;
+              break;
+            }
+          }
 
           if (Math.random() * 100 < bleedChance) {
             defender.isBleeding = true;

@@ -74,28 +74,11 @@ export interface TickTelemetry {
   readonly yieldedHooks: InterruptHook[];
 }
 
-export type InterceptorDirective =
-  | { type: "CONTINUE" }
-  | { type: "INJECT_INTENT"; intent: IntentPayload }
-  | { type: "CANCEL_ACTION"; reason: string };
-
-/**
- * Strategy contract for PMC class passives and hideout modules.
- * `execute` yields interception points so external agents/UI can observe
- * or redirect an action mid-flight (Phase 4 target).
- */
-export interface BehaviorModule<TActor = any, TTarget = any> {
-  readonly id: string;
-  canExecute(actor: TActor, target: TTarget, context: EngineContext): boolean;
-  canInterrupt(actor: TActor, hook: InterruptHook, context: EngineContext): boolean;
-  execute(actor: TActor, target: TTarget, context: EngineContext): AsyncGenerator<InterruptHook, void, unknown>;
-}
-
 /**
  * Hideout plugin seam: a single, synchronous listener invoked after a raid
  * terminates. Registered instances live in the RAID_END_MODULES registry
  * (behaviors/hideoutModules.ts); `canExecute` gates whether `onRaidEnd` runs.
- * Deliberately simpler than BehaviorModule: no interception, no async work.
+ * Deliberately synchronous: no interception, no async work.
  */
 export interface ModuleInstance {
   readonly id: string;

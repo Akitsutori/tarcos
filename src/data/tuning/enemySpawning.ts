@@ -4,7 +4,8 @@
  */
 
 import { ClassType, GameItem, Weapon } from "../../types";
-import { INITIAL_WEAPONS, ALL_ITEMS } from "../../data";
+import { INITIAL_WEAPONS } from "../content/weapons";
+import { ALL_ITEMS } from "../content/items";
 
 /**
  * Enemy spawn tuning: per-tier spawn profiles consumed by engine/spawning.ts.

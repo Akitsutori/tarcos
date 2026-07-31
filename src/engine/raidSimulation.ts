@@ -1,6 +1,7 @@
 import { GameState } from "../types";
 import { createDraft, finishDraft } from "immer";
-import { getWeaponStats, buildProceduralMap } from "../data";
+import { getWeaponStats } from "../data";
+import { buildProceduralMap } from "../data/content/maps";
 import { createLog } from "./utils";
 import { spawnEnemy } from "./spawning";
 import { executeLootPhase, rollLootItem, getBackpackCapacity } from "./loot";

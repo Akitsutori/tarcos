@@ -5,7 +5,7 @@
 
 import React, { useState, useMemo } from "react";
 import { GameState, GameItem, ItemType, BodyPart } from "../types";
-import { ALL_ITEMS } from "../data";
+import { ALL_ITEMS } from "../data/content/items";
 import { BodyMap } from "./BodyMap";
 import { 
   Coins, PackageOpen, Heart, Zap, 

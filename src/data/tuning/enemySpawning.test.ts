@@ -1,5 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ALL_MAPS, INITIAL_WEAPONS, ALL_ITEMS } from '../../data';
+import { ALL_MAPS } from '../content/maps';
+import { INITIAL_WEAPONS } from '../content/weapons';
+import { ALL_ITEMS } from '../content/items';
 import { spawnEnemy } from '../../engine/spawning';
 import { ENEMY_SPAWN_PROFILES, LEVEL_STAT_SCALE, ENCOUNTER_CHANCE, REINFORCEMENT_MAX_PER_TILE, REINFORCEMENT_CHANCE, EnemyTier, LevelConfig, WeaponConfig } from './enemySpawning';
 

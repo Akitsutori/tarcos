@@ -1,9 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { GameState, ClassType, GameItem, WeaponModCategory, PMCBodyParts } from "../types";
 import { 
-  ALL_ITEMS, INITIAL_WEAPONS, createInitialPMC, 
-  createInitialHideout, ALL_QUESTS, calculateBodyParts 
+  createInitialPMC, 
+  createInitialHideout, calculateBodyParts 
 } from "../data";
+import { ALL_ITEMS } from "../data/content/items";
+import { INITIAL_WEAPONS } from "../data/content/weapons";
+import { ALL_QUESTS } from "../data/content/quests";
 
 export const STORAGE_KEY = "tarkov_zero_player_state_v1";
 
@@ -84,6 +87,7 @@ export const useGameSave = () => {
         }
         if (!parsed.stash) parsed.stash = defaultState.stash;
         if (!parsed.hideout) parsed.hideout = defaultState.hideout;
+        if (!parsed.hideout.scavengerWorkstation) parsed.hideout.scavengerWorkstation = defaultState.hideout.scavengerWorkstation;
         if (!parsed.activeRaid) parsed.activeRaid = defaultState.activeRaid;
 
         if (!parsed.pmc.skills) {

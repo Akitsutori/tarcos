@@ -1,5 +1,6 @@
-import { MapData, EnemyState, Weapon, GameItem, PMCBodyParts, CharacterSkills, ClassType } from "../types";
-import { INITIAL_WEAPONS, calculateBodyParts } from "../data";
+import { MapData, EnemyState, Weapon, GameItem, CharacterSkills } from "../types";
+import { INITIAL_WEAPONS } from "../data/content/weapons";
+import { calculateBodyParts } from "../data";
 import { ENEMY_SPAWN_PROFILES, LEVEL_STAT_SCALE, EnemyTier, LevelConfig, WeaponConfig, EquipmentConfig } from "../data/tuning/enemySpawning";
 
 /**
@@ -24,9 +25,71 @@ const cloneEquipment = (item: GameItem | null): GameItem | null => {
 };
 
 /**
+ * Resolves an enemy level from the profile's LevelConfig. Preserves each
+ * mode's exact formula and RNG consumption (add: none, delta/subtract: one).
+ */
+const resolveLevel = (mode: LevelConfig, pmcLevel: number): number => {
+  switch (mode.mode) {
+    case "add":
+      return Math.min(pmcLevel + mode.amount, mode.max);
+    case "delta": {
+      const roll = pmcLevel + (Math.floor(Math.random() * mode.rollRange) + mode.offset);
+      return Math.max(mode.min, Math.min(mode.max, roll));
+    }
+    case "subtract": {
+      const roll = pmcLevel - (Math.floor(Math.random() * mode.rollRange) + mode.offset);
+      return Math.max(mode.min, roll);
+    }
+  }
+};
+
+/**
+ * Rolls the enemy's weapon from the profile's WeaponConfig and returns a
+ * fresh clone (weapon ammo/mag state must be per-enemy). RNG consumption
+ * matches the original inline branches exactly per mode.
+ */
+const pickWeapon = (mode: WeaponConfig): Weapon => {
+  const cloneWeapon = (w: Weapon) => JSON.parse(JSON.stringify(w)) as Weapon;
+  switch (mode.mode) {
+    case "pool":
+      return cloneWeapon(INITIAL_WEAPONS[mode.pool[Math.floor(Math.random() * mode.pool.length)]]);
+    case "choice":
+      return Math.random() < mode.chance
+        ? cloneWeapon(INITIAL_WEAPONS[mode.chosen])
+        : cloneWeapon(INITIAL_WEAPONS[mode.fallback]);
+    case "split":
+      return Math.random() < mode.pistolChance
+        ? cloneWeapon(mode.pistol)
+        : cloneWeapon(INITIAL_WEAPONS[mode.pool[Math.floor(Math.random() * mode.pool.length)]]);
+  }
+};
+
+const makeSkill = (id: string, name: string, level: number): CharacterSkills[keyof CharacterSkills] => ({
+  id,
+  name,
+  description: "",
+  level,
+  xp: 0,
+  maxXp: 100,
+  bonusPerLevel: "",
+});
+
+/**
+ * Builds the enemy's CharacterSkills from five already-rolled levels.
+ */
+const buildEnemySkills = (initiative: number, agility: number, weaponSkill: number, perception: number, constitution: number): CharacterSkills => ({
+  weaponSkill: makeSkill("weaponSkill", "Weapon Skill", weaponSkill),
+  constitution: makeSkill("constitution", "Constitution", constitution),
+  perception: makeSkill("perception", "Perception", perception),
+  initiative: makeSkill("initiative", "Initiative", initiative),
+  agility: makeSkill("agility", "Agility", agility),
+});
+
+/**
  * Generates an enemy based on the map's difficulty and spawn chances.
  * Handles Boss, PMC, and Scav tiers, including their randomized stats and equipment.
  * All values are sourced from ENEMY_SPAWN_PROFILES (data/tuning/enemySpawning.ts).
+ * The RNG call sequence per tier is preserved exactly (golden-parity).
  *
  * @param map The current map metadata
  * @param pmcLevel The player's current level (for level scaling)
@@ -37,101 +100,46 @@ export const spawnEnemy = (map: MapData, pmcLevel: number): EnemyState => {
   const isBoss = rand < map.bossSpawnChance;
   const isPMC = !isBoss && rand < (map.bossSpawnChance + map.pmcSpawnChance);
 
+  const profile = isBoss ? ENEMY_SPAWN_PROFILES.Boss : isPMC ? ENEMY_SPAWN_PROFILES.PMC : ENEMY_SPAWN_PROFILES.Scav;
+
   let tier: EnemyTier = "Scav";
   let name = "";
-  let level = 1;
-  let equippedWeapon: Weapon;
-  let equippedArmor: GameItem | null = null;
-  let equippedHelmet: GameItem | null = null;
-
   if (isBoss) {
-    const profile = ENEMY_SPAWN_PROFILES.Boss;
     tier = "Boss";
     name = map.bossName;
-    const lvl = profile.level as Extract<LevelConfig, { mode: "add" }>;
-    level = Math.min(pmcLevel + lvl.amount, lvl.max);
-
-    const wpn = profile.weapon as Extract<WeaponConfig, { mode: "pool" }>;
-    const chosenW = wpn.pool[Math.floor(Math.random() * wpn.pool.length)];
-    equippedWeapon = JSON.parse(JSON.stringify(INITIAL_WEAPONS[chosenW])) as Weapon;
-
-    equippedArmor = cloneEquipment(rollEquipment(profile.armor));
-    equippedHelmet = cloneEquipment(rollEquipment(profile.helmet));
-  } else if (isPMC) {
-    const profile = ENEMY_SPAWN_PROFILES.PMC;
-    tier = "PMC";
-    name = `${profile.names[Math.floor(Math.random() * profile.names.length)]} (PMC)`;
-
-    const lvl = profile.level as Extract<LevelConfig, { mode: "delta" }>;
-    level = pmcLevel + (Math.floor(Math.random() * lvl.rollRange) + lvl.offset);
-    if (level < lvl.min) level = lvl.min;
-    if (level > lvl.max) level = lvl.max;
-
-    const wpn = profile.weapon as Extract<WeaponConfig, { mode: "choice" }>;
-    const isLmg = Math.random() < wpn.chance;
-    equippedWeapon = isLmg
-      ? JSON.parse(JSON.stringify(INITIAL_WEAPONS[wpn.chosen])) as Weapon
-      : JSON.parse(JSON.stringify(INITIAL_WEAPONS[wpn.fallback])) as Weapon;
-
-    equippedArmor = cloneEquipment(rollEquipment(profile.armor));
-    equippedHelmet = cloneEquipment(rollEquipment(profile.helmet));
   } else {
-    const profile = ENEMY_SPAWN_PROFILES.Scav;
-    tier = "Scav";
-    name = `${profile.names[Math.floor(Math.random() * profile.names.length)]} (Scav)`;
-
-    const lvl = profile.level as Extract<LevelConfig, { mode: "subtract" }>;
-    level = pmcLevel - (Math.floor(Math.random() * lvl.rollRange) + lvl.offset);
-    if (level < lvl.min) level = lvl.min;
-
-    const wpn = profile.weapon as Extract<WeaponConfig, { mode: "split" }>;
-    const rollWeapon = Math.random();
-    if (rollWeapon < wpn.pistolChance) {
-      equippedWeapon = JSON.parse(JSON.stringify(wpn.pistol)) as Weapon;
-    } else {
-      const classWeapon = wpn.pool[Math.floor(Math.random() * wpn.pool.length)];
-      equippedWeapon = JSON.parse(JSON.stringify(INITIAL_WEAPONS[classWeapon])) as Weapon;
-    }
-
-    equippedArmor = rollEquipment(profile.armor);
-    equippedHelmet = rollEquipment(profile.helmet);
+    tier = isPMC ? "PMC" : "Scav";
+    name = `${profile.names[Math.floor(Math.random() * profile.names.length)]} (${tier})`;
   }
 
-  const profile = isBoss ? ENEMY_SPAWN_PROFILES.Boss : isPMC ? ENEMY_SPAWN_PROFILES.PMC : ENEMY_SPAWN_PROFILES.Scav;
+  const level = resolveLevel(profile.level, pmcLevel);
+  const equippedWeapon = pickWeapon(profile.weapon);
+
+  // Boss/PMC clone rolled armor so combat never mutates the shared templates;
+  // Scavs intentionally keep the original (reference) behavior.
+  const isElite = isBoss || isPMC;
+  const equippedArmor = isElite ? cloneEquipment(rollEquipment(profile.armor)) : rollEquipment(profile.armor);
+  const equippedHelmet = isElite ? cloneEquipment(rollEquipment(profile.helmet)) : rollEquipment(profile.helmet);
+
   const baseAccuracy = profile.baseAccuracy;
-  const { initiative: initiativeRange, agility: agilityRange, weaponSkill: weaponSkillRange, perception: perceptionRange, constitution: constitutionRange } = profile.statRanges;
+  const { initiative: iRange, agility: aRange, weaponSkill: wRange, perception: pRange, constitution: cRange } = profile.statRanges;
 
   const getRandVal = (range: number[]) => Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
-
-  const rollInit = getRandVal(initiativeRange);
-  const rollAgil = getRandVal(agilityRange);
-  const rollWeap = getRandVal(weaponSkillRange);
-  const rollPerc = getRandVal(perceptionRange);
-  const rollConst = getRandVal(constitutionRange);
-
   const levelBonus = Math.floor((level - 1) * LEVEL_STAT_SCALE);
 
-  const finalInit = rollInit + levelBonus;
-  const finalAgil = rollAgil + levelBonus;
-  const finalWeap = rollWeap + levelBonus;
-  const finalPerc = rollPerc + levelBonus;
-  const finalConst = rollConst + levelBonus;
-
-  const skills: CharacterSkills = {
-    weaponSkill: { id: "weaponSkill", name: "Weapon Skill", description: "", level: finalWeap, xp: 0, maxXp: 100, bonusPerLevel: "" },
-    constitution: { id: "constitution", name: "Constitution", description: "", level: finalConst, xp: 0, maxXp: 100, bonusPerLevel: "" },
-    perception: { id: "perception", name: "Perception", description: "", level: finalPerc, xp: 0, maxXp: 100, bonusPerLevel: "" },
-    initiative: { id: "initiative", name: "Initiative", description: "", level: finalInit, xp: 0, maxXp: 100, bonusPerLevel: "" },
-    agility: { id: "agility", name: "Agility", description: "", level: finalAgil, xp: 0, maxXp: 100, bonusPerLevel: "" }
-  };
-
-  const bodyParts = calculateBodyParts(finalConst);
+  const skills = buildEnemySkills(
+    getRandVal(iRange) + levelBonus,
+    getRandVal(aRange) + levelBonus,
+    getRandVal(wRange) + levelBonus,
+    getRandVal(pRange) + levelBonus,
+    getRandVal(cRange) + levelBonus,
+  );
 
   return {
     name,
     tier,
     level,
-    bodyParts,
+    bodyParts: calculateBodyParts(skills.constitution.level),
     skills,
     baseAccuracy,
     equippedWeapon,

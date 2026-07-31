@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { spawnEnemy, getBackpackCapacity, rollLootItem, simulateCombatRound } from './gameEngine';
-import { ALL_MAPS, ALL_ITEMS, INITIAL_WEAPONS, getWeaponStats, createInitialPMC, createInitialHideout } from './data';
+import { ALL_MAPS } from './data/content/maps';
+import { ALL_ITEMS } from './data/content/items';
+import { INITIAL_WEAPONS } from './data/content/weapons';
+import { getWeaponStats, createInitialPMC, createInitialHideout } from './data';
 import { ClassType, RaidState, GameState, PMCCharacter, EnemyState, Weapon } from './types';
 import { createEngineContext } from './engine/engineContext';
 import { EngineContext } from './engine/types';

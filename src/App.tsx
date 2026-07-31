@@ -5,7 +5,10 @@
 
 import { useState } from "react";
 import { GameState, RaidState, ClassType, GameItem, WeaponModCategory, PMCBodyParts } from "./types";
-import { ALL_MAPS, buildProceduralMap, ALL_ITEMS, INITIAL_WEAPONS, createInitialPMC } from "./data";
+import { ALL_MAPS, buildProceduralMap } from "./data/content/maps";
+import { ALL_ITEMS } from "./data/content/items";
+import { INITIAL_WEAPONS } from "./data/content/weapons";
+import { createInitialPMC } from "./data";
 import { RaidScreen } from "./components/RaidScreen";
 import { StashScreen } from "./components/StashScreen";
 import { WeaponModding } from "./components/WeaponModding";

@@ -1,7 +1,7 @@
 import { PMCCharacter, RaidState, Weapon, PMCBodyParts } from "../types";
-import { INITIAL_WEAPONS } from "../data";
+import { INITIAL_WEAPONS } from "../data/content/weapons";
 import { createLog } from "./utils";
-import { findBackupMedical, consumeFoundEntry, BLEED_STOP_COST, DEFAULT_HEAL_RESTORE } from "../data/tuning/medicalConfig";
+import { findBackupMedical, consumeFoundEntry, BLEED_STOP_COST, DEFAULT_HEAL_RESTORE, MAINTENANCE_HEAL_ATTEMPTS } from "../data/tuning/medicalConfig";
 import { MAINTENANCE_HYDRATION_DRAIN_MIN, MAINTENANCE_HYDRATION_DRAIN_MAX, PROVISION_DRINK_THRESHOLD } from "../data/tuning/raidConfig";
 
 /**
@@ -66,7 +66,7 @@ export const executeMaintenancePhase = (pmc: PMCCharacter, raid: RaidState, equi
   const healOrder: (keyof PMCBodyParts)[] = ["head", "thorax", "stomach", "leftLeg", "rightLeg", "leftArm", "rightArm"];
   const healHPRestore = pmc.equippedMedkit?.hpHeal ?? DEFAULT_HEAL_RESTORE;
 
-  let healAttemptsCount = 5;
+  let healAttemptsCount = MAINTENANCE_HEAL_ATTEMPTS;
   while (healAttemptsCount > 0) {
     let healedThisPass = false;
 

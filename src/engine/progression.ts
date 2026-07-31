@@ -1,6 +1,13 @@
 import { GameState, RaidLog, Hideout } from "../types";
-import { ALL_QUESTS } from "../data";
+import { ALL_QUESTS } from "../data/content/quests";
 import { createLog } from "./utils";
+import {
+  XP_KILL_BASE,
+  XP_LOOT_VALUE_DIVISOR,
+  XP_EXTRACTION_BONUS_MULTIPLIER,
+  XP_INTEL_MULTIPLIER_BY_LEVEL,
+  ACTIVE_QUEST_POOL_SIZE,
+} from "../data/tuning/progressionConfig";
 
 /**
  * Calculates snapshot progress for all active quests and distributes base XP.
@@ -19,16 +26,16 @@ export const finalizeQuestsAndXP = (state: GameState, isExtraction: boolean, hid
   const lootValue = raid.lootFound.reduce((acc, entry) => acc + (entry.item.value * entry.quantity), 0);
   const valCount = raid.lootFound.filter(e => e.item.type === "valuable").reduce((acc, e) => acc + e.quantity, 0);
 
-  // Base XP formula: (Kills * 10) + (Loot Value / 10)
-  let baseXP = (totalKills * 10) + Math.floor(lootValue / 10);
+  // Base XP formula: (Kills * XP_KILL_BASE) + (Loot Value / XP_LOOT_VALUE_DIVISOR)
+  let baseXP = (totalKills * XP_KILL_BASE) + Math.floor(lootValue / XP_LOOT_VALUE_DIVISOR);
   if (isExtraction) {
-    baseXP = Math.floor(baseXP * 1.25); // +25% Extraction bonus
+    baseXP = Math.floor(baseXP * XP_EXTRACTION_BONUS_MULTIPLIER); // +25% Extraction bonus
   }
 
   // Intelligence Center XP multiplier
   const intelLevel = hideout.intelligenceCenter.level;
   if (intelLevel >= 1) {
-    const xpMultiplier = intelLevel === 1 ? 1.05 : intelLevel === 2 ? 1.10 : 1.15;
+    const xpMultiplier = XP_INTEL_MULTIPLIER_BY_LEVEL[intelLevel] ?? 1.15;
     baseXP = Math.floor(baseXP * xpMultiplier);
   }
 
@@ -100,7 +107,7 @@ export const refillQuests = (state: GameState) => {
 
   state.activeQuests = state.activeQuests.filter(q => !q.completed);
 
-  while (state.activeQuests.length < 5 && availablePool.length > 0) {
+  while (state.activeQuests.length < ACTIVE_QUEST_POOL_SIZE && availablePool.length > 0) {
     const randIdx = Math.floor(Math.random() * availablePool.length);
     const drawn = availablePool.splice(randIdx, 1)[0];
     state.activeQuests.push({ ...drawn, progress: 0, completed: false });

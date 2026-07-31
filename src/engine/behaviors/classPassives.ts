@@ -44,6 +44,3 @@ export const getFatalSurviveChance = (classType: ClassType): number =>
 
 export const getLuckyLootRolls = (classType: ClassType): number =>
   getClassPassive(classType).luckyLootRolls ?? 0;
-
-export const getStartingArmorId = (classType: ClassType): string | null =>
-  getClassPassive(classType).startingArmorId ?? null;

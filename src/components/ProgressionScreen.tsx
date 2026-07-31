@@ -5,7 +5,7 @@
 
 import React from "react";
 import { GameState, ClassType, HideoutModule, Skill } from "../types";
-import { ALL_ITEMS } from "../data";
+import { ALL_ITEMS } from "../data/content/items";
 import { 
   Home, Sparkles, TrendingUp, ShieldAlert, Award, 
   ChevronUp, Lock, CheckCircle2, ChevronRight, RefreshCw 

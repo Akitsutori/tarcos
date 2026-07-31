@@ -189,6 +189,11 @@ export interface HideoutModule {
     };
   };
   iconName: string;
+  /**
+   * Raid index (pmc.raidsCount) of the last passive production. Only the
+   * Scavenger Workstation sets it, to enforce its cooldown gate.
+   */
+  lastProducedAtRaidIndex?: number;
 }
 
 export interface Hideout {
@@ -197,6 +202,7 @@ export interface Hideout {
   intelligenceCenter: HideoutModule;
   shootingRange: HideoutModule;
   nutritionUnit: HideoutModule;
+  scavengerWorkstation: HideoutModule;
 }
 
 export interface MapData {

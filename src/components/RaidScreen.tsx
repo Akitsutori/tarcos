@@ -5,7 +5,8 @@
 
 import React, { useEffect, useRef } from "react";
 import { GameState, RaidLog, ClassType, PMCBodyParts, BodyPart } from "../types";
-import { getWeaponStats, ALL_MAPS } from "../data";
+import { getWeaponStats } from "../data";
+import { ALL_MAPS } from "../data/content/maps";
 import { BodyMap } from "./BodyMap";
 import { 
   Play, Pause, Heart, Zap, Droplet, Skull, 

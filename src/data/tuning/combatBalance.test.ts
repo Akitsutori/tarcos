@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { ClassType } from '../../types';
 import { CLASS_PASSIVES, ClassPassiveConfig } from './combatBalance';
-import { getBurstRange, getSmgPenetration, getDodgeMultiplier, getDamageMultipliers, getFatalSurviveChance, getLuckyLootRolls, getStartingArmorId, isFreeReloader, isSmgPassive } from '../../engine/behaviors/classPassives';
+import { getBurstRange, getSmgPenetration, getDodgeMultiplier, getDamageMultipliers, getFatalSurviveChance, getLuckyLootRolls, isFreeReloader, isSmgPassive } from '../../engine/behaviors/classPassives';
 
 const ALL_CLASS_TYPES = Object.values(ClassType);
 
@@ -40,7 +40,6 @@ describe('combatBalance class passives', () => {
     expect(passive.startingArmorId).toBe('armor_6b23');
     expect(getFatalSurviveChance(ClassType.LUCKY)).toBe(0.15);
     expect(getLuckyLootRolls(ClassType.LUCKY)).toBe(1);
-    expect(getStartingArmorId(ClassType.LUCKY)).toBe('armor_6b23');
   });
 
   it('MARKSMAN and non-passive classes fall back to baseline behavior', () => {
@@ -50,7 +49,6 @@ describe('combatBalance class passives', () => {
       if (classType !== ClassType.LUCKY) {
         expect(getFatalSurviveChance(classType)).toBe(0);
         expect(getLuckyLootRolls(classType)).toBe(0);
-        expect(getStartingArmorId(classType)).toBeNull();
       }
     }
     expect(getBurstRange(ClassType.MARKSMAN)).toEqual({ min: 1, max: 5 });

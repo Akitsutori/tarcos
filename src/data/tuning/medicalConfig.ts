@@ -53,3 +53,6 @@ export const BLEED_STOP_COST = 20;
 
 // Fallback HP restored per heal application when the medkit has no hpHeal stat
 export const DEFAULT_HEAL_RESTORE = 25;
+
+// Max passes of the maintenance heal loop before it gives up
+export const MAINTENANCE_HEAL_ATTEMPTS = 5;
