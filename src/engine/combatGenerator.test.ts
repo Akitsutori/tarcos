@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { simulateCombatRound, simulateCombatRoundAsync, simulateCombatRoundGenerator } from './combat';
+import { simulateCombatRound, simulateCombatRoundGenerator } from './combat';
 import { spawnEnemy } from './spawning';
 import { ALL_MAPS } from '../data/content/maps';
 import { ALL_ITEMS } from '../data/content/items';
@@ -65,38 +65,21 @@ const withSeed = async <T>(seed: number, fn: () => T | Promise<T>): Promise<T> =
   }
 };
 
-const drainAsync = async (gen: AsyncGenerator<InterruptHook, ReturnType<typeof simulateCombatRound>, unknown>) => {
+const drainSync = (gen: Generator<InterruptHook, ReturnType<typeof simulateCombatRound>, unknown>) => {
   const hooks: InterruptHook[] = [];
-  let result = await gen.next();
+  let result = gen.next();
   while (!result.done) {
     hooks.push(result.value as InterruptHook);
-    result = await gen.next();
+    result = gen.next();
   }
   return { hooks, logs: result.value };
 };
 
 describe('simulateCombatRound Generator conversion', () => {
-  it('sync drainer and async generator produce identical logs under the same seed', async () => {
-    const seed = 4242;
-
-    const syncLogs = await withSeed(seed, () => {
-      const { pmc, enemy, weapon, weaponStats, raid, context } = setup();
-      return simulateCombatRound(pmc, enemy, weapon, weaponStats, 60, raid, 0, context);
-    });
-
-    const { logs: asyncLogs, hooks } = await withSeed(seed, async () => {
-      const { pmc, enemy, weapon, weaponStats, raid, context } = setup();
-      return drainAsync(simulateCombatRoundAsync(pmc, enemy, weapon, weaponStats, 60, raid, 0, context));
-    });
-
-    expect(asyncLogs).toEqual(syncLogs);
-    expect(hooks.length).toBeGreaterThan(0);
-  });
-
   it('yields only BEFORE_ACTION and AFTER_DAMAGE hooks with valid metadata', async () => {
-    const { hooks } = await withSeed(1337, async () => {
+    const { hooks } = await withSeed(1337, () => {
       const { pmc, enemy, weapon, weaponStats, raid, context } = setup();
-      return drainAsync(simulateCombatRoundAsync(pmc, enemy, weapon, weaponStats, 60, raid, 0, context));
+      return drainSync(simulateCombatRoundGenerator(pmc, enemy, weapon, weaponStats, 60, raid, 0, context));
     });
 
     const beforeActions = hooks.filter(h => h.hookType === "BEFORE_ACTION");
@@ -111,9 +94,9 @@ describe('simulateCombatRound Generator conversion', () => {
 
   it('BEFORE_ACTION always precedes the first AFTER_DAMAGE and hook count matches DMG logs', async () => {
     const seed = 9090;
-    const { logs, hooks } = await withSeed(seed, async () => {
+    const { logs, hooks } = await withSeed(seed, () => {
       const { pmc, enemy, weapon, weaponStats, raid, context } = setup();
-      return drainAsync(simulateCombatRoundAsync(pmc, enemy, weapon, weaponStats, 60, raid, 0, context));
+      return drainSync(simulateCombatRoundGenerator(pmc, enemy, weapon, weaponStats, 60, raid, 0, context));
     });
 
     const dmgLogs = logs.filter(l => l.type === "combat_damage" && l.message.includes('[DMG]')).length;

@@ -382,15 +382,3 @@ export const simulateCombatRound = (
   while (!result.done) result = gen.next();
   return result.value;
 };
-
-/**
- * AsyncGenerator variant of the combat round, delegating to the sync
- * generator. Future async consumers (UI tick loop, Phase 4 interceptors)
- * advance this generator to observe `InterruptHook`s without changing the
- * simulation outcome.
- */
-export const simulateCombatRoundAsync = async function* (
-  pmc: PMCCharacter, enemy: EnemyState, weapon: Weapon, weaponStats: any, elapsedSeconds: number, raid: RaidState, shootingRangeLevel: number, context: EngineContext
-): AsyncGenerator<InterruptHook, RaidLog[], unknown> {
-  return yield* simulateCombatRoundGenerator(pmc, enemy, weapon, weaponStats, elapsedSeconds, raid, shootingRangeLevel, context);
-};

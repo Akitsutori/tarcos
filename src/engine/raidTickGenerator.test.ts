@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { runRaidTick, runRaidTickAsync, runRaidTickGenerator } from './raidSimulation';
+import { runRaidTick, runRaidTickGenerator } from './raidSimulation';
 import { mulberry32, makeGoldenState, makeEnemy } from './characterization/goldenHarness';
 import { GameState } from '../types';
 import { EngineContext, InterruptHook, ModuleInstance } from './types';
@@ -51,12 +51,12 @@ const withSeed = async <T>(seed: number, fn: () => T | Promise<T>): Promise<T> =
   }
 };
 
-const drainAsyncTick = async (gen: AsyncGenerator<InterruptHook, GameState, unknown>) => {
+const drainSyncTick = (gen: Generator<InterruptHook, GameState, unknown>) => {
   const hooks: InterruptHook[] = [];
-  let result = await gen.next();
+  let result = gen.next();
   while (!result.done) {
     hooks.push(result.value as InterruptHook);
-    result = await gen.next();
+    result = gen.next();
   }
   return { hooks, state: result.value };
 };
@@ -74,15 +74,15 @@ const runSyncTicks = (scenario: Scenario): GameState => {
   return state;
 };
 
-const runAsyncTicks = async (scenario: Scenario) => {
+const runTicksWithHooks = (scenario: Scenario) => {
   let state = makeGoldenState();
   scenario.configure(state);
   const hooks: InterruptHook[] = [];
   let ticks = 0;
   while (ticks < scenario.maxTicks) {
-    const result = await drainAsyncTick(runRaidTickAsync(state));
-    state = result.state;
-    hooks.push(...result.hooks);
+    const drained = drainSyncTick(runRaidTickGenerator(state));
+    state = drained.state;
+    hooks.push(...drained.hooks);
     ticks++;
     if (!state.activeRaid.isActive) break;
   }
@@ -90,17 +90,6 @@ const runAsyncTicks = async (scenario: Scenario) => {
 };
 
 describe('runRaidTick Generator conversion', () => {
-  it('sync wrapper and async generator produce identical final states for every scenario', async () => {
-    for (const [name, scenario] of Object.entries(SCENARIOS)) {
-      const syncState = await withSeed(scenario.seed, () => runSyncTicks(scenario));
-      const { state: asyncState } = await withSeed(scenario.seed, async () => runAsyncTicks(scenario));
-      expect(asyncState).toEqual(syncState);
-      expect(asyncState.activeRaid.status).toBe(scenario.expectedStatus);
-      expect(syncState.activeRaid.status).toBe(scenario.expectedStatus);
-      expect(name).toBeTruthy();
-    }
-  });
-
   it('sync drainer of runRaidTickGenerator matches the runRaidTick wrapper', async () => {
     const scenario = SCENARIOS.combat;
     const viaWrapper = await withSeed(scenario.seed, () => {
@@ -123,7 +112,7 @@ describe('runRaidTick Generator conversion', () => {
 
   it('emits AFTER_RAID_END with the resolved status exactly once at the terminal tick', async () => {
     for (const [name, scenario] of Object.entries(SCENARIOS)) {
-      const { hooks, ticks } = await withSeed(scenario.seed, async () => runAsyncTicks(scenario));
+      const { hooks, ticks } = await withSeed(scenario.seed, () => runTicksWithHooks(scenario));
       const endHooks = hooks.filter(h => h.hookType === "AFTER_RAID_END");
       expect(endHooks.length).toBe(1);
       expect(endHooks[0].sourceEntityId).toBe("raid");
@@ -134,7 +123,7 @@ describe('runRaidTick Generator conversion', () => {
   });
 
   it('forwards combat BEFORE_ACTION/AFTER_DAMAGE hooks only during combat scenarios', async () => {
-    const { hooks: combatHooks } = await withSeed(SCENARIOS.combat.seed, async () => runAsyncTicks(SCENARIOS.combat));
+    const { hooks: combatHooks } = await withSeed(SCENARIOS.combat.seed, () => runTicksWithHooks(SCENARIOS.combat));
     const beforeActions = combatHooks.filter(h => h.hookType === "BEFORE_ACTION");
     const afterDamages = combatHooks.filter(h => h.hookType === "AFTER_DAMAGE");
 
@@ -144,7 +133,7 @@ describe('runRaidTick Generator conversion', () => {
     expect(afterDamages.every(h => VALID_BODY_PARTS.includes(h.metadata.bodyPart as (typeof VALID_BODY_PARTS)[number]))).toBe(true);
     expect(afterDamages.every(h => (h.metadata.amount as number) > 0)).toBe(true);
 
-    const { hooks: dehydrationHooks } = await withSeed(SCENARIOS.dehydration.seed, async () => runAsyncTicks(SCENARIOS.dehydration));
+    const { hooks: dehydrationHooks } = await withSeed(SCENARIOS.dehydration.seed, () => runTicksWithHooks(SCENARIOS.dehydration));
     expect(dehydrationHooks.filter(h => h.hookType === "BEFORE_ACTION").length).toBe(0);
     expect(dehydrationHooks.filter(h => h.hookType === "AFTER_DAMAGE").length).toBe(0);
   });
@@ -156,7 +145,7 @@ describe('runRaidTick Generator conversion', () => {
       state.activeRaid.isActive = false;
       scenario.configure(state);
       const snapshot = JSON.parse(JSON.stringify(state)) as GameState;
-      const drained = await drainAsyncTick(runRaidTickAsync(state));
+      const drained = drainSyncTick(runRaidTickGenerator(state));
       return { drained, snapshot };
     });
     expect(result.drained.hooks).toHaveLength(0);
@@ -199,11 +188,11 @@ describe('runRaidTick Generator conversion', () => {
     };
     RAID_END_MODULES.push(testModule);
     try {
-      const extraction = await withSeed(SCENARIOS.extraction.seed, async () => runAsyncTicks(SCENARIOS.extraction));
+      const extraction = await withSeed(SCENARIOS.extraction.seed, () => runTicksWithHooks(SCENARIOS.extraction));
       expect(testModule.onRaidEnd).toHaveBeenCalledTimes(1);
       expect(extraction.state.stash.items.find(e => e.item.id === "ai2")?.quantity).toBe(1);
 
-      const dehydration = await withSeed(SCENARIOS.dehydration.seed, async () => runAsyncTicks(SCENARIOS.dehydration));
+      const dehydration = await withSeed(SCENARIOS.dehydration.seed, () => runTicksWithHooks(SCENARIOS.dehydration));
       expect(testModule.onRaidEnd).toHaveBeenCalledTimes(1);
       expect(dehydration.state.stash.items.find(e => e.item.id === "ai2")?.quantity).toBeUndefined();
     } finally {

@@ -209,13 +209,3 @@ export const runRaidTick = (state: GameState): GameState => {
   while (!result.done) result = gen.next();
   return result.value;
 };
-
-/**
- * AsyncGenerator variant of a single raid tick, delegating to the sync
- * generator. Future async consumers (UI tick loop, Phase 4 interceptors)
- * advance this generator to observe `InterruptHook`s without changing the
- * simulation outcome.
- */
-export const runRaidTickAsync = async function* (state: GameState): AsyncGenerator<InterruptHook, GameState, unknown> {
-  return yield* runRaidTickGenerator(state);
-};
