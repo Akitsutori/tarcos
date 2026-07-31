@@ -1,1050 +1,479 @@
-# Architecture Analysis: Engine Complexity & Data-Driven Refactoring Roadmap
+# TARCOS Architecture Roadmap: Grounded Agentic Engine & Data-Driven Refactoring
 
-## Overview
-
-This document analyzes **TARCOS engine complexity** and identifies opportunities to improve separation of concerns through **data-driven design**. The analysis covers 6 subsystems across 1,300+ lines of game logic, revealing ~100+ lines of duplication, scattered hardcoded values, and high cognitive load in the main orchestrator.
+> **Document Purpose**: This document serves as both the technical architectural master plan for `tarkov-zero-player-roguelike` and a **presentation blueprint**. It tells the narrative story of how TARCOS evolved from a monolithic prototype into an autonomous, event-driven agentic game engine, explaining the causal connections between game features and architectural choices.
 
 ---
 
-## Executive Summary
+## Act I: The Vision — A Zero-Player Roguelike Driven by Autonomous Simulation
 
-### Current Pain Points
+### The Game Concept
+TARCOS (**T**actical **A**rmed **R**oguelike **C**ombat **O**bservation **S**imulator) is a zero-player extraction roguelike inspired by *Escape from Tarkov*. Unlike traditional action RPGs where players control movement in real time via keyboard/gamepad, TARCOS runs on **autonomous simulation**:
+- Players manage meta-progression, PMC loadouts, stash inventory, and hideout modules.
+- Once deployed into a raid, PMC units, enemy scavs, bosses, and environmental hazards interact **autonomously**.
+- The engine simulates movement across map tiles, nutrition/hydration decay, ballistics, armor penetration, looting, medical maintenance, and extraction.
 
-| File | Lines | Primary Issue | Impact |
-|------|-------|---------------|--------|
-| **raidSimulation.ts** | 335 | KIA logic duplicated 3x, hardcoded thresholds, scattered decay rates | High maintainability cost, bug-prone |
-| **combat.ts** | 309 | Class passives, ballistics, armor deeply scattered in ternary chains | High rebalancing friction |
-| **spawning.ts** | 161 | Tier-specific stat ranges duplicated, nested conditionals | Difficult to add new enemy types |
-| **maintenance.ts** | 164 | Backup item search logic duplicated 3x, hardcoded costs | Error-prone refactoring |
-| **loot.ts** | 115 | Secure container sort duplicated, doesn't check hideout level (BUG) | Logic divergence |
-| **data.ts** | 560 | Mixed content (items, maps) + tuning (weights, formulas) | Monolithic, growing tech debt |
-
-### Proposed Solution
-
-- Extract **gameplay formulas & thresholds** into configuration objects
-- Centralize **duplicated algorithms** (loot sorting, KIA resolution)
-- Create **data-driven profiles** for enemy tiers, combat passives, medical mechanics
-- Split `data.ts` into **content** (items, maps) and **tuning** (balance, config)
-
-### Expected Outcomes
-
-- ✅ Remove ~100+ lines of duplication
-- ✅ Reduce raidSimulation.ts from 335 → 200 lines (40% smaller)
-- ✅ Enable balance tweaking without touching engine logic
-- ✅ Improve testability (pure functions on config)
-- ✅ Lower onboarding friction for new developers
+### The Architectural Requirement
+Because **the game engine *is* the player**, control flow cannot be a static display loop. The architecture must natively support:
+1. **Step-by-step Interception**: Yield points where human players, external AI agents, or UI visualizers can observe state, pause simulation, or intercept choices (e.g., deciding whether to push cover or flee).
+2. **Deterministic Intent Settlement**: Guaranteed atomic state transitions so that actions can be dry-run, previewed, or cleanly cancelled without corrupting entity state.
+3. **Isolated Balance Tuning**: A pure data layer allowing game designers or automated AI balance agents to tweak ammo ballistics, spawn weights, and class passives without touching core simulation code.
 
 ---
 
-## Detailed Analysis
+## Act II: The Evolution — How Rapid Prototyping Created Structural Friction
 
-### 1. RAIDSIMIULATION.TS: The God Function (335 lines)
+### Phase 1: The Rapid Prototype
+To get TARCOS playable quickly, mechanics were implemented imperatively inside centralized engine functions. Early code directly mutated global state objects:
+- `raidSimulation.ts` handled time, nutrition decay, combat triggers, looting, quest finalization, level-up loops, and extraction in a single function (`runRaidTick`).
+- `combat.ts` handled initiative, action selection, reload math, cover, burst calculations, armor penetration, bleed chances, and death inline.
 
-#### Problem: Too Many Concerns
+### Phase 2: Feature Growth & The Tipping Point
+As features multiplied (5 PMC classes, 3 enemy tiers, 100+ items, hideout workstations, medical maintenance), code expanded into monoliths:
+- `raidSimulation.ts` (336 lines)
+- `combat.ts` (309 lines)
+- `spawning.ts` (161 lines)
+- `maintenance.ts` (164 lines)
+- `loot.ts` (115 lines)
+- `data.ts` (560 lines)
 
-`runRaidTick()` handles:
+### Phase 3: The Four Concrete Code Pains
 
-1. **Nutrition/hydration decay** (lines 28–52)
-   - Decay rate application
-   - Skill-based reduction
-   - Hideout modifier application
+#### Pain 1: The Intelligence Center Bug (Code Duplication Divergence)
+* **Location**: [loot.ts:L76](file:///d:/DOWNLOADS/VSCode/tarkov-zero-player-roguelike/src/engine/loot.ts#L76) vs [raidSimulation.ts:L186](file:///d:/DOWNLOADS/VSCode/tarkov-zero-player-roguelike/src/engine/raidSimulation.ts#L186)
+* **The Code Pain**: `loot.ts:L76` hardcodes `const secureCap = 4` (ignoring `hideout.intelligenceCenter.level`), while `raidSimulation.ts` calculates `secureCap` dynamically as 4, 6, or 9 based on hideout level. Both files repeat 25 lines of identical value-sorting loot distribution logic ([loot.ts:L79-101](file:///d:/DOWNLOADS/VSCode/tarkov-zero-player-roguelike/src/engine/loot.ts#L79-L101)).
+* **Causal Link**: When Intelligence Center stash upgrades were added to `raidSimulation.ts`, `loot.ts` was missed, causing in-raid scavenging to silently cap secure containers at 4 slots regardless of hideout upgrades.
 
-2. **KIA status transitions** (3x: lines 43, 111, dehydration path)
-   - Secured loot saving
-   - XP/skill leveling
-   - Survival rate calculation
-   - **Entire 60-line block repeated**
+#### Pain 2: Duplicated KIA State Processing
+* **Location**: [raidSimulation.ts:L55-103](file:///d:/DOWNLOADS/VSCode/tarkov-zero-player-roguelike/src/engine/raidSimulation.ts#L55-L103) & [L111-158](file:///d:/DOWNLOADS/VSCode/tarkov-zero-player-roguelike/src/engine/raidSimulation.ts#L111-L158)
+* **The Code Pain**: A 48-line block handling player death (stash item saving, level-up loops, skill XP rewards, quest finalization, survival rate calculation) is repeated verbatim in two places: Dehydration KIA (L55) and Combat KIA (L111).
+* **Causal Link**: Any update to death mechanics (e.g. insured item recovery or death penalties) required updating both blocks. Missing one block caused dehydration and combat deaths to diverge in game behavior.
 
-3. **Combat orchestration** (lines 106–242)
-   - Combat round delegation
-   - Death handling
-   - Reinforcement spawning
-   - Loot distribution from kills
+#### Pain 3: Scattered PMC Class Passives
+* **Location**: [combat.ts:L141, L177, L200, L240, L277](file:///d:/DOWNLOADS/VSCode/tarkov-zero-player-roguelike/src/engine/combat.ts#L141)
+* **The Code Pain**: PMC class passives are hardcoded across 5 separate conditionals in core combat code:
+  - `combat.ts:L141`: `SURVIVOR` class reload forces `actionChosen = "fire"`.
+  - `combat.ts:L177`: `SCOUT` class alters SMG burst ranges (3–7 vs 1–5).
+  - `combat.ts:L200`: `SCOUT` class applies 2.0x dodge multipliers.
+  - `combat.ts:L240`: `SOLDIER` class applies +20% damage dealing / -15% damage taking.
+  - `combat.ts:L277`: `LUCKY` class prevents fatal damage 15% of the time.
+* **Causal Link**: Adding a new PMC class (e.g., `MARKSMAN` or `MEDIC`) required editing 5 different places inside a 309-line nested combat loop.
 
-4. **Loot distribution logic** (lines 186–222)
-   - Secure container sorting
-   - Backpack capacity checks
-   - **Duplicated from loot.ts**
+#### Pain 4: Full State Deep-Cloning & Lock-in Synchronous Loops
+* **Location**: [raidSimulation.ts:L20](file:///d:/DOWNLOADS/VSCode/tarkov-zero-player-roguelike/src/engine/raidSimulation.ts#L20)
+* **The Code Pain**: `runRaidTick()` executes `const newState = JSON.parse(JSON.stringify(state))` on **every single tick** out of mutation anxiety (`pmc.energy -= 1`, `curWep.currentMagRounds--`). Combat rounds run synchronously to completion without yield points.
+* **Causal Link**: Deep-cloning global state every tick creates heavy CPU/GC overhead. Synchronous loops prevent UI debuggers or external AI agents from stepping through combat rounds turn-by-turn.
 
-5. **Raid end conditions** (lines 248–317)
-   - Extraction handling
-   - Quest finalization
-   - Armor durability reset
+---
 
-6. **Encounter spawning** (lines 321–332)
-   - Enemy roll logic
+## Act III: The Crisis — Human & AI-Agent Development Friction
 
-#### Specific Issues
+```
+                     ┌──────────────────────────────────────────────┐
+                     │          HUMAN DEVELOPER FRICTION            │
+                     │  • High cognitive load when rebalancing      │
+                     │  • Fragile edits in 350+ line monoliths     │
+                     │  • Fear of breaking combat control flow     │
+                     └──────────────────────┬───────────────────────┘
+                                            │
+   MONOLITHIC IMPERATIVE                    │          TARGET AGENTIC ARCHITECTURE
+   ENGINE INFRASTRUCTURE ───────────────────┼────────────────────────────────────────►
+   (Current TARCOS State)                   │          • Isolated Data Tuning Layer
+                                            │          • Async Generator Interceptors
+                                            │          • Intent Settlement Queue
+                     ┌──────────────────────┴───────────────────────┐
+                     │            AI AGENTIC CODING FRICTION        │
+                     │  • Context window bloat (350+ line files)    │
+                     │  • Hallucination risk on duplicated logic    │
+                     │  • Cannot intercept synchronous loops        │
+                     └──────────────────────────────────────────────┘
+```
 
-**Issue 1: Duplicated KIA Handling**
+### 1. Human Developer Friction
+- **Rebalancing Overhead**: Changing ammo penetration or Scout dodge multipliers requires editing TypeScript source code in `combat.ts` and re-running full test suites.
+- **High Regression Risk**: Modifying combat or looting logic often introduces side-effect bugs in unrelated sub-systems due to direct state mutations.
+
+### 2. AI Coding Agent Friction (Pair Programming & Autonomous Tuning)
+- **Context Window Bloat**: AI agents (like Gemini, Claude, or Copilot) must ingest entire 350+ line files to perform minor edits, wasting tokens and increasing latency.
+- **Hallucination & Partial Edit Risks**: When logic is duplicated (e.g. KIA processing or container sorting), AI agents routinely update one instance and miss the other, creating subtle runtime bugs.
+- **Step Lock-in**: Synchronous `while` loops prevent AI agents or bot algorithms from inspecting state mid-round or injecting tactical decisions.
+
+---
+
+## Act IV: The Solution — The Dual-Pillar Target Architecture
+
+To solve both human and AI development friction, TARCOS is migrating to a **Dual-Pillar Target Architecture**.
+
+```
+                           ┌─────────────────────────────────────────┐
+                           │      DUAL-PILLAR TARGET ARCHITECTURE    │
+                           └────────────────────┬────────────────────┘
+                                                │
+                     ┌──────────────────────────┴──────────────────────────┐
+                     ▼                                                     ▼
+    ┌──────────────────────────────────┐                  ┌──────────────────────────────────┐
+    │  PILLAR A: DATA-DRIVEN SUBSTRATE │                  │  PILLAR B: AGENTIC INTENT ENGINE │
+    ├──────────────────────────────────┤                  ├──────────────────────────────────┤
+    │ • Split data.ts (content/tuning) │                  │ • EngineContext Inversion        │
+    │ • Centralize Loot Management     │                  │ • Intent Settlement Queue        │
+    │ • Centralize KIA Resolution      │                  │ • AsyncGenerator Interceptors    │
+    │ • Pure Config Balancing          │                  │ • BehaviorModule Strategy Spec   │
+    └──────────────────────────────────┘                  └──────────────────────────────────┘
+```
+
+### Pillar A: Grounded Data-Driven Substrate
+
+#### 1. Split `data.ts` into Content vs. Tuning
+- `src/data/content/`: Items (`items.ts`), Maps (`maps.ts`), Quests (`quests.ts`), Weapons (`weapons.ts`), Hideout (`hideout.ts`).
+- `src/data/tuning/`: `raidConfig.ts` (decay rates, status thresholds), `combatBalance.ts` (ballistics, class passives, armor), `enemySpawning.ts` (tier profiles), `medicalConfig.ts` (heal costs, search predicates), `lootConfig.ts` (rarity weights).
+
+#### 2. Deduplicate Algorithms into Single Sources of Truth
+- **`src/engine/lootManagement.ts`**: Exports `sortLootIntoContainers(allLoot, secureCap)` and `SECURE_CONTAINER_CAPACITY(hideoutLevel)`. Used identically by `loot.ts` and `raidSimulation.ts`.
+- **`src/engine/raidResolution.ts`**: Exports `handleKIA(state: GameState, reason: KIAReason, metadata?: Record<string, unknown>): GameState` and `handleExtraction(state)`. Removes 48 lines of duplicated code in `raidSimulation.ts`.
+  
+  The `KIAReason` enum is designed to be future-proof across all present and planned death paths:
+  ```typescript
+  export type KIAReason =
+    | 'COMBAT_BALLISTICS'     // Fatal damage from enemy bullet or melee hit
+    | 'DEHYDRATION'          // Hydration depleted to 0 causing fatal collapse
+    | 'STARVATION'           // Energy depleted to 0 causing fatal collapse
+    | 'BLEED_OUT'            // Uncontrolled arterial bleed depleted head/thorax HP
+    | 'OVERDOSE_TOXICITY'    // Medical item overdose, toxicity, or side-effect threshold
+    | 'ENVIRONMENTAL_HAZARD' // Landmines, radiation, or environmental hazard
+    | 'MIA_TIMEOUT';         // Raid timer expired before reaching extraction
+  ```
+  *Why this solves future duplication*: Whenever a new death cause is added (e.g. arterial bleed-out or medical toxicity), developers simply pass the appropriate `KIAReason` to `handleKIA()`. The underlying stash recovery, quest finalization, skill XP awards, level-up loops, and survival statistics run through a single, central pipeline.
+- **`src/engine/medicalConfig.ts`**: Centralizes backup item search predicates (`findBackupMedical`) and cost constants.
+
+---
+
+### Pillar B: Agentic Interceptor & Intent Pipeline
+
+#### 1. Inversion of Control via `EngineContext`
+Direct mutations (`pmc.xp += earnedXp`, `defender.bodyParts.head.current = 1`) are replaced by intent emission via `EngineContext`. State changes are accumulated and applied **atomically** at deterministic settlement points between tick yields.
+
+#### 2. Target TypeScript Interfaces ([src/engine/types.ts](file:///d:/DOWNLOADS/VSCode/tarkov-zero-player-roguelike/src/engine/types.ts))
 
 ```typescript
-// Path 1: Dehydration KIA (lines 55–103)
-if (pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0) {
-  raid.status = "kia";
-  pmc.kiaCount++;
-  pmc.raidsCount++;
-  newState.pastRaidOutcomes.push("kia");
-  raid.isActive = false;
+export type KIAReason =
+  | 'COMBAT_BALLISTICS'     // Fatal damage from enemy bullet or melee hit
+  | 'DEHYDRATION'          // Hydration depleted to 0 causing fatal collapse
+  | 'STARVATION'           // Energy depleted to 0 causing fatal collapse
+  | 'BLEED_OUT'            // Uncontrolled arterial bleed depleted head/thorax HP
+  | 'OVERDOSE_TOXICITY'    // Medical item overdose, toxicity, or side-effect threshold
+  | 'ENVIRONMENTAL_HAZARD' // Landmines, radiation, or environmental hazard
+  | 'MIA_TIMEOUT';         // Raid timer expired before reaching extraction
+
+export interface EngineContext {
+  readonly currentTick: number;
+  emitIntent(intent: IntentPayload): void;
+  queryEnvironment(query: EnvironmentQuery): EnvironmentResult;
+}
+
+export interface InterruptHook {
+  readonly sourceEntityId: string;
+  readonly hookType: 'BEFORE_ACTION' | 'AFTER_DAMAGE' | 'BEFORE_LEAVE_COVER' | 'AFTER_RAID_END';
+  readonly metadata: Record<string, unknown>;
+}
+
+export type IntentPayload =
+  | { targetEntityId: string; type: 'DAMAGE'; value: { bodyPart: string; amount: number } }
+  | { targetEntityId: string; type: 'STATUS_EFFECT'; value: 'BLEED_START' | 'HEAL' }
+  | { targetEntityId: string; type: 'POSITION_CHANGE'; value: { to: string } }
+  | { targetEntityId: string; type: 'XP'; value: number }
+  | { targetEntityId: string; type: 'STASH_ADD'; value: { itemId: string; quantity: number } };
+
+export interface BehaviorModule<TActor = any, TTarget = any> {
+  readonly id: string;
+  canExecute(actor: TActor, target: TTarget, context: EngineContext): boolean;
+  canInterrupt(actor: TActor, hook: InterruptHook, context: EngineContext): boolean;
+  execute(actor: TActor, target: TTarget, context: EngineContext): AsyncGenerator<InterruptHook, void, unknown>;
+}
+
+export interface TickTelemetry {
+  readonly tick: number;
+  readonly phase: 'COMBAT' | 'LOOT' | 'MAINTENANCE' | 'NUTRITION_DECAY';
+  readonly sourceEntityId: string;
+  readonly emittedIntents: IntentPayload[];
+  readonly appliedPatches: Record<string, unknown>[];
+  readonly yieldedHooks: InterruptHook[];
+}
+
+export type InterceptorDirective =
+  | { type: 'CONTINUE' }                            // Resume simulation normally
+  | { type: 'INJECT_INTENT'; intent: IntentPayload }   // Inject custom Intent into current settlement batch
+  | { type: 'CANCEL_ACTION'; reason: string };      // Abort pending action (e.g. force flee)
+```
+
+#### 3. Async Generator Interceptors
+Combat and raid execution loops become yieldable generator functions:
+```typescript
+// Example: Action execution stream yielding interception points
+export async function* executeCombatAction(
+  actor: Entity,
+  target: Entity,
+  context: EngineContext
+): AsyncGenerator<InterruptHook, void, unknown> {
+  yield {
+    sourceEntityId: actor.id,
+    hookType: 'BEFORE_ACTION',
+    metadata: { action: 'fire', weaponId: actor.weapon.id }
+  };
   
-  raid.secureContainerSaved.forEach((containerEntry) => {
-    const stashEntry = newState.stash.items.find(i => i.item.id === containerEntry.item.id);
-    if (stashEntry) stashEntry.quantity += containerEntry.quantity;
-    else newState.stash.items.push({ item: containerEntry.item, quantity: containerEntry.quantity });
+  // Calculate damage and emit Intent instead of direct mutation
+  context.emitIntent({
+    targetEntityId: target.id,
+    type: 'DAMAGE',
+    value: { bodyPart: 'thorax', amount: 45 }
   });
-  
-  const { logs: questLogs, earnedXp } = finalizeQuestsAndXP(newState, false, newState.hideout);
-  pmc.xp += earnedXp;
-  raid.logs.push(...questLogs);
-  
-  const perception = pmc.skills.perception;
-  perception.xp += 25;
-  if (perception.xp >= perception.maxXp) {
-    perception.level++;
-    perception.xp -= perception.maxXp;
-    raid.logs.push(createLog(`SKILL INCREASE: Perception reached Level ${perception.level}!`, "info", raid.elapsedSeconds));
-  }
-  
-  while (pmc.xp >= pmc.maxXp) {
-    pmc.level++;
-    pmc.xp -= pmc.maxXp;
-    pmc.maxXp = pmc.level * 200;
-    // Skill distribution...
-  }
-}
 
-// Path 2: Combat KIA (lines 111–158) — IDENTICAL
-if (pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0) {
-  // ... same 40+ lines
-}
-```
-
-**→ Fix:** Extract to `handleKIA(state, reason)` function
-
----
-
-**Issue 2: Hardcoded Decay Rates**
-
-```typescript
-// Lines 36–37: Magic numbers with unclear intent
-if (Math.random() < 0.25 * drainModifier) pmc.energy = Math.max(0, pmc.energy - 1);
-if (Math.random() < 0.30 * drainModifier) pmc.hydration = Math.max(0, pmc.hydration - 1);
-
-// Lines 31–33: Hidden formula
-const rateReduction = newState.hideout.nutritionUnit.level >= 3 ? 0.8 : 1.0;
-const skillReduction = Math.max(0.5, 1 - enduranceLevel * 0.015);
-const drainModifier = rateReduction * skillReduction;
-```
-
-**Questions:**
-- Why 0.25 for energy, 0.30 for hydration?
-- Where does 0.015 (constitution multiplier) come from?
-- Why is nutritionUnit level 3 = 0.8 reduction?
-
-**→ Fix:** Move to `raidConfig.ts`:
-
-```typescript
-export const RAID_CONFIGURATION = {
-  nutrition: {
-    energyDecayChance: 0.25,
-    hydrationDecayChance: 0.30,
-    decayAmount: 1,
-    nutritionUnitReduction: {
-      0: 1.0,
-      1: 1.0,
-      2: 1.0,
-      3: 0.8,
-    },
-    constitutionReductionRate: 0.015,
-    constitutionReductionMin: 0.5,
-  },
-};
-```
-
----
-
-**Issue 3: Scattered Status Thresholds**
-
-```typescript
-// Lines 48–52: Warning thresholds (where else are they defined?)
-if (pmc.hydration <= 0) {
-  // KIA condition
-} else if (pmc.hydration < 25 && raid.status !== "combat") {
-  if (Math.random() < 0.15) raid.logs.push(createLog("Player is severely dehydrated!"));
-} else if (pmc.hydration < 50 && raid.status !== "combat") {
-  if (Math.random() < 0.15) raid.logs.push(createLog("Player is thirsty"));
-}
-```
-
-**→ Fix:** Centralize in config:
-
-```typescript
-export const RAID_CONFIGURATION = {
-  status: {
-    dehydrationThreshold: 0,
-    severeDehydrationLevel: 25,
-    dehydrationWarningLevel: 50,
-    severeDehydrationWarningChance: 0.15,
-    dehydrationWarningChance: 0.15,
-  },
-};
-```
-
----
-
-**Issue 4: Loot Distribution Logic Duplicated**
-
-```typescript
-// In raidSimulation.ts, lines 186–222
-const allLoot = [...raid.lootFound, ...raid.secureContainerSaved];
-const singleItems: GameItem[] = [];
-allLoot.forEach(e => {
-  for (let q = 0; q < e.quantity; q++) singleItems.push(e.item);
-});
-singleItems.sort((a, b) => b.value - a.value);
-
-const secureSorted: { [id: string]: { item: GameItem; quantity: number } } = {};
-const backpackSorted: { [id: string]: { item: GameItem; quantity: number } } = {};
-
-singleItems.forEach((single, idx) => {
-  if (idx < secureCap) {
-    if (!secureSorted[single.id]) secureSorted[single.id] = { item: single, quantity: 0 };
-    secureSorted[single.id].quantity++;
-  } else {
-    if (!backpackSorted[single.id]) backpackSorted[single.id] = { item: single, quantity: 0 };
-    backpackSorted[single.id].quantity++;
-  }
-});
-
-raid.secureContainerSaved = Object.values(secureSorted);
-raid.lootFound = Object.values(backpackSorted);
-```
-
-This **exact same logic** appears in `loot.ts` lines 78–101.
-
-**→ Fix:** Extract to `lootManagement.ts`
-
----
-
-### 2. COMBAT.TS: Algorithmic Coupling (309 lines)
-
-#### Problem: Class Passives & Game Balance Scattered Throughout
-
-**Issue 1: Class Passives Hardcoded in Combat Logic**
-
-```typescript
-// Line 141–143: SURVIVOR passive
-if (attacker.type === "pmc" && pmc.classType === ClassType.SURVIVOR) {
-  actionChosen = "fire";
-  roundLogs.push(createLog("SURVIVOR PASSIVE: Free Reload triggered!", "info", elapsedSeconds));
-} else {
-  continue;
-}
-
-// Line 177–179: SCOUT burst range
-const isScoutSMG = attacker.type === "pmc" && pmc.classType === ClassType.SCOUT;
-const minBurst = isScoutSMG ? 3 : 1;
-const maxBurst = isScoutSMG ? 7 : 5;
-
-// Line 200–201: SCOUT dodge bonus
-const dodgeMult = (attacker.type === "enemy" && pmc.classType === ClassType.SCOUT) ? 2.0 : 1.0;
-
-// Line 240–241: SOLDIER damage bonus
-if (attacker.type === "pmc" && pmc.classType === ClassType.SOLDIER) bulletDmg = Math.floor(bulletDmg * 1.20);
-else if (attacker.type === "enemy" && pmc.classType === ClassType.SOLDIER) bulletDmg = Math.floor(bulletDmg * 0.85);
-
-// Line 277–280: LUCKY survival passive
-if (pmc.classType === ClassType.LUCKY && Math.random() < 0.15) {
-  defender.bodyParts.head.current = 1;
-  defender.bodyParts.thorax.current = 1;
-  roundLogs.push(createLog("LUCKY PASSIVE TRIGGERED!", "warning", elapsedSeconds));
-}
-```
-
-**Problems:**
-- 5+ class checks scattered across 300 lines
-- Changing SCOUT dodge from 2.0 → 2.5 requires code modification
-- New class addition requires editing combat.ts
-- Passives not visible in one place
-
----
-
-**Issue 2: Ballistics Table Embedded as Conditionals**
-
-```typescript
-// Lines 216–221: Bullet penetration values
-let bulletPen = 20;
-if (curWep.caliber === "7.62x39mm") bulletPen = 34;
-else if (curWep.caliber === "9x19mm") bulletPen = isScoutSMG ? 32 : 20;
-else if (curWep.caliber === "12x70mm") bulletPen = 18;
-else if (curWep.caliber === "7.62x54mm") bulletPen = 45;
-else if (curWep.caliber === "9x18mm") bulletPen = 15;
-```
-
-**Problem:** Ballistics data mixed with logic. No single source for "9x19mm pen = 20".
-
----
-
-**Issue 3: Armor Mechanics Formula Hardcoded**
-
-```typescript
-// Lines 226–237: Armor effectiveness
-const effectiveArmor = activeArmor.armorClass * (activeArmor.durability / activeArmor.maxDurability);
-const armorThreshold = effectiveArmor * 10;
-if (bulletPen < armorThreshold) {
-  dmgMultiplier = 0.20;
-  activeArmor.durability = Math.max(0, activeArmor.durability - 5);
-} else {
-  dmgMultiplier = 0.60;
-  activeArmor.durability = Math.max(0, activeArmor.durability - 10);
-}
-```
-
-**Questions:**
-- Why multiply by 10 for threshold?
-- Why 20% vs 60% damage multiplier?
-- Why 5 vs 10 durability loss?
-- What if we want to adjust armor balance?
-
----
-
-**Issue 4: Bleed Chance Formula Scattered**
-
-```typescript
-// Line 262: Bleed chance formula
-let bleedChance = Math.max(5, 35 - defender.skills.constitution.level * 1.0);
-if (defender.hydration < 25) bleedChance += 10;
-else if (defender.hydration < 50) bleedChance += 5;
-
-if (Math.random() * 100 < bleedChance) {
-  defender.isBleeding = true;
-}
-```
-
-**Problem:** Base chance (35), min (5), skill reduction (1.0), hydration penalties (10/5) are magic numbers.
-
----
-
-#### Proposed Data-Driven Combat
-
-```typescript
-// src/data/tuning/combatBalance.ts
-
-export const CLASS_COMBAT_PASSIVE: Record<ClassType, CombatPassive> = {
-  [ClassType.SOLDIER]: {
-    name: "disciplined_fire",
-    description: "Deal 20% more damage, take 15% less damage",
-    effects: {
-      outgoingDmgMultiplier: 1.20,
-      incomingDmgMultiplier: 0.85,
-    },
-  },
-  [ClassType.SURVIVOR]: {
-    name: "free_reload",
-    description: "After reload, immediately fire for free",
-    triggerAfter: "reload",
-    actionChosen: "fire",
-  },
-  [ClassType.SCOUT]: {
-    name: "burst_specialist",
-    description: "Burst 3-7 with SMGs, 2x dodge vs enemies",
-    burstConfig: { minRounds: 3, maxRounds: 7 },
-    dodgeMultiplier: 2.0,
-  },
-  [ClassType.MARKSMAN]: {
-    name: "steady_aim",
-    description: "Highest base accuracy, slower ROF",
-    accuracyBonus: 15,
-    burstConfig: { minRounds: 1, maxRounds: 3 },
-  },
-  [ClassType.LUCKY]: {
-    name: "fortitude",
-    description: "Survive fatal blow 15% of the time",
-    survivalChance: 0.15,
-    survivesAt: 1, // HP restored to
-  },
-};
-
-export const BALLISTICS_TABLE: Record<string, BallisticsProfile> = {
-  "7.62x39mm": { penetration: 34, baseDamage: 50, velocity: "medium" },
-  "9x19mm": { penetration: 20, baseDamage: 28, velocity: "medium" },
-  "12x70mm": { penetration: 18, baseDamage: 65, velocity: "low" },
-  "7.62x54mm": { penetration: 45, baseDamage: 75, velocity: "high" },
-  "9x18mm": { penetration: 15, baseDamage: 25, velocity: "low" },
-};
-
-export const ARMOR_MECHANICS = {
-  blockDmgMultiplier: 0.20,
-  penetrateDmgMultiplier: 0.60,
-  durabilityLossBlocked: 5,
-  durabilityLosPenetrated: 10,
-  armorThresholdFormula: (armorClass: number, durabilityRatio: number) => 
-    armorClass * durabilityRatio * 10,
-};
-
-export const BLEED_MECHANICS = {
-  baseChance: 35,
-  minChance: 5,
-  constitutionReduction: 1.0,
-  hydrationPenalty: {
-    under25: 10,
-    under50: 5,
-  },
-  blockCondition: "armor_blocked_fully", // Don't bleed if armor fully stops shot
-};
-
-export const ACCURACY_CALCULATION = {
-  burstDecayRate: { pmc: 2.5, enemy: 3.0 },
-  coverPenalty: 20,
-  hydrationPenalty: {
-    under25: 10,
-    under50: 5,
-  },
-  shootingRangeBonus: (level: number) => {
-    const bonusMap = { 1: 1, 2: 3, 3: 6 };
-    return bonusMap[level] ?? 0;
-  },
-};
-```
-
----
-
-### 3. SPAWNING.TS: Duplicated Tier Profiles (161 lines)
-
-#### Problem: Enemy Attributes Defined 3 Times (Boss, PMC, Scav)
-
-```typescript
-// Lines 20–25: Boss stats
-initiativeRange = [13, 17];
-agilityRange = [11, 15];
-weaponSkillRange = [15, 20];
-perceptionRange = [11, 14];
-constitutionRange = [6, 9];
-baseAccuracy = 40;
-
-// Lines 56–61: PMC stats (different ranges)
-initiativeRange = [10, 14];
-agilityRange = [9, 13];
-weaponSkillRange = [11, 16];
-perceptionRange = [9, 12];
-constitutionRange = [4, 7];
-baseAccuracy = 30;
-
-// Lines 81–86: Scav stats (different ranges)
-initiativeRange = [8, 12];
-agilityRange = [7, 11];
-weaponSkillRange = [1, 5];
-perceptionRange = [7, 11];
-constitutionRange = [2, 5];
-baseAccuracy = 30;
-```
-
-**Problem:** Adding a new tier (e.g., "Raider") requires adding 50+ lines of if/else.
-
----
-
-**Issue 2: Equipment Pools Scattered**
-
-```typescript
-// Lines 42–48: Boss equipment
-const bossWeapons = [ClassType.SOLDIER, ClassType.MARKSMAN, ClassType.LUCKY];
-equippedWeapon = JSON.parse(JSON.stringify(INITIAL_WEAPONS[chosenW]));
-equippedArmor = Math.random() < 0.5 ? JSON.parse(...ALL_ITEMS.armor_killa) : JSON.parse(...armor_glukhar);
-equippedHelmet = Math.random() < 0.5 ? JSON.parse(...ALL_ITEMS.altyn) : JSON.parse(...helmet_6b47);
-
-// Lines 68–74: PMC equipment
-if (Math.random() < 0.70) {
-  equippedArmor = Math.random() < 0.5 ? JSON.parse(...armor_6b13) : JSON.parse(...armor_6b13_heavy);
-}
-if (Math.random() < 0.60) {
-  const helmets = [ALL_ITEMS.helmet_6b47, ALL_ITEMS.ulach, ALL_ITEMS.fast_mt, ALL_ITEMS.tor_team];
-  equippedHelmet = JSON.parse(JSON.stringify(helmets[...]));
-}
-
-// Lines 88–110: Scav weapons
-if (rollWeapon < 0.50) {
-  equippedWeapon = { id: "pistol", /* inline definition */ };
-} else {
-  const scavWeapons = [ClassType.SURVIVOR, ClassType.SCOUT, ClassType.SOLDIER];
-  equippedWeapon = JSON.parse(...INITIAL_WEAPONS[classWeapon]);
-}
-```
-
----
-
-#### Proposed Data-Driven Spawning
-
-```typescript
-// src/data/tuning/enemySpawning.ts
-
-export const ENEMY_SPAWN_PROFILES: Record<"Boss" | "PMC" | "Scav", EnemyProfile> = {
-  Boss: {
-    tier: "Boss",
-    namePool: ["Killa", "Glukhar", "Tagilla", "Reshala", "Shturman"],
-    levelOffset: (pmcLevel) => pmcLevel + 5,
-    levelCap: 65,
-    skills: {
-      initiative: [13, 17],
-      agility: [11, 15],
-      weaponSkill: [15, 20],
-      perception: [11, 14],
-      constitution: [6, 9],
-    },
-    baseAccuracy: 40,
-    armor: {
-      pool: ["armor_killa", "armor_glukhar"],
-      spawnChance: 1.0,
-    },
-    helmet: {
-      pool: ["altyn", "helmet_6b47"],
-      spawnChance: 1.0,
-    },
-    weaponClasses: ["SOLDIER", "MARKSMAN", "LUCKY"],
-    xpReward: 80,
-  },
-  PMC: {
-    tier: "PMC",
-    namePool: ["Ghost", "Hammer", "Viking", "Frost", "Viper", "Raven", "Slayer", "Sherpa", "DormChad"],
-    levelOffset: (pmcLevel) => pmcLevel + Math.floor(Math.random() * 11) - 5,
-    levelCap: 60,
-    skills: {
-      initiative: [10, 14],
-      agility: [9, 13],
-      weaponSkill: [11, 16],
-      perception: [9, 12],
-      constitution: [4, 7],
-    },
-    baseAccuracy: 30,
-    armor: {
-      pool: ["armor_6b13", "armor_6b13_heavy"],
-      spawnChance: 0.70,
-    },
-    helmet: {
-      pool: ["helmet_6b47", "ulach", "fast_mt", "tor_team"],
-      spawnChance: 0.60,
-    },
-    weaponClasses: ["SOLDIER", "LUCKY"],
-    weaponDistribution: [0.75, 0.25], // 75% SOLDIER, 25% LUCKY
-    xpReward: 45,
-  },
-  Scav: {
-    tier: "Scav",
-    namePool: ["Bomzh", "Gopnik", "Tushonka", "Ded", "Cheeki", "Breeki", "Serega", "Kolya", "Morozov"],
-    levelOffset: (pmcLevel) => pmcLevel - (Math.floor(Math.random() * 11) + 5),
-    levelCap: 99,
-    skills: {
-      initiative: [8, 12],
-      agility: [7, 11],
-      weaponSkill: [1, 5],
-      perception: [7, 11],
-      constitution: [2, 5],
-    },
-    baseAccuracy: 30,
-    armor: {
-      pool: ["paca"],
-      spawnChance: 0.40,
-    },
-    helmet: {
-      pool: ["untar", "ssh68"],
-      spawnChance: 0.20,
-    },
-    weaponClasses: ["SOLDIER", "SCOUT", "SURVIVOR"],
-    weaponDistribution: [0.5, 0.25, 0.25],
-    hasPistolFallback: true, // 50% chance of pistol instead
-    xpReward: 20,
-  },
-};
-```
-
-Then refactored spawning:
-
-```typescript
-// src/engine/spawning.ts (simplified)
-
-export const spawnEnemy = (map: MapData, pmcLevel: number): EnemyState => {
-  const tierRoll = Math.random();
-  const isBoss = tierRoll < map.bossSpawnChance;
-  const isPMC = !isBoss && tierRoll < (map.bossSpawnChance + map.pmcSpawnChance);
-  const tierKey: TierType = isBoss ? "Boss" : isPMC ? "PMC" : "Scav";
-  
-  const profile = ENEMY_SPAWN_PROFILES[tierKey];
-  const name = randomFromArray(profile.namePool);
-  const level = clampLevel(profile.levelOffset(pmcLevel), profile.levelCap);
-  
-  const skills = rollSkillsFromProfile(profile);
-  const bodyParts = calculateBodyParts(skills.constitution.level);
-  const equippedWeapon = rollWeaponFromProfile(profile);
-  const equippedArmor = rollFromPool(profile.armor, profile.armor.pool);
-  const equippedHelmet = rollFromPool(profile.helmet, profile.helmet.pool);
-  
-  return {
-    name,
-    tier: tierKey,
-    level,
-    bodyParts,
-    skills,
-    baseAccuracy: profile.baseAccuracy,
-    equippedWeapon,
-    equippedArmor,
-    equippedHelmet,
-    isBleeding: false,
-    isCovered: false,
-    isDead: false,
+  yield {
+    sourceEntityId: target.id,
+    hookType: 'AFTER_DAMAGE',
+    metadata: { damageDealt: 45 }
   };
-};
-```
-
----
-
-### 4. MAINTENANCE.TS: Backup Item Search Duplication (164 lines)
-
-#### Problem: 3 Near-Identical Backup Searches
-
-```typescript
-// Path 1: Surgical kit backup (lines 25–36)
-const backupEntryIdx = raid.lootFound.findIndex(
-  e => e.item.type === "medical" && e.item.id.includes("kit") && e.item.resourceCurrent && e.item.resourceCurrent > 0
-);
-
-// Path 2: Medkit backup (lines 49–61)
-const backupIdx = raid.lootFound.findIndex(
-  e => e.item.type === "medical" && e.item.resourceCurrent && e.item.resourceCurrent >= 20
-);
-
-// Path 3: Provision backup (lines 144–157)
-const backupIdx = raid.lootFound.findIndex(
-  e => e.item.type === "provision" && e.item.resourceCurrent && e.item.resourceCurrent > 0
-);
-```
-
-**Problems:**
-- 3 similar predicates (inconsistent)
-- Different resource thresholds (>= 20 vs > 0)
-- Code duplication after finding backup
-
----
-
-**Issue 2: Hardcoded Medical Costs**
-
-```typescript
-// Line 44: Where does 20 come from?
-if (pmc.equippedMedkit && pmc.equippedMedkit.resourceCurrent && pmc.equippedMedkit.resourceCurrent >= 20) {
-  pmc.equippedMedkit.resourceCurrent -= 20;
-  pmc.isBleeding = false;
 }
 ```
 
----
+#### 4. Stateful Hideout Plugin System
+Hideout modules act as stateful plugins loaded at runtime:
+- **Scavenger Workstation**: Listens for `AFTER_RAID_END`, checks cooldown, and emits `STASH_ADD` intents.
+- **Shooting Range / Training Minigame**: Runs as an `AsyncGenerator` flow yielding `MINIGAME_STEP` hooks for the UI, emitting permanent skill XP intents upon completion.
 
-#### Proposed Medical Config
+#### 5. Agentic Telemetry & Interceptor Protocol (Agent Control Surfaces)
 
+To enable external AI agents, autonomous test runners, and UI step-debuggers to validate simulation ticks deterministically, `EngineContext` exposes **3 programmatic control surfaces**:
+
+##### A. Structured Telemetry Stream (`TickTelemetry`)
+Rather than forcing agents to parse natural language UI strings (e.g. `"SURVIVOR PASSIVE: Free Reload triggered!"`), every tick emits a structured JSON telemetry log:
 ```typescript
-// src/data/tuning/medicalConfig.ts
-
-export const MEDICAL_MECHANICS = {
-  bleeds topCost: 20,
-  surgeryTargetOrder: ["stomach", "leftLeg", "rightLeg", "leftArm", "rightArm"],
-  healOrder: ["head", "thorax", "stomach", "leftLeg", "rightLeg", "leftArm", "rightArm"],
-  maxHealAttempts: 5,
-  defaultHealPerUse: 25,
-};
-
-export const findBackupMedical = (
-  loot: { item: GameItem; quantity: number }[],
-  type: "surgical" | "medkit" | "provision"
-): { index: number; item: GameItem } | null => {
-  const predicates: Record<string, (e: GameItem) => boolean> = {
-    surgical: (e) => e.type === "medical" && e.medicalSubType === "surgical" && 
-                     e.resourceCurrent && e.resourceCurrent > 0,
-    medkit: (e) => e.type === "medical" && e.medicalSubType === "medkit" && 
-                   e.resourceCurrent && e.resourceCurrent >= MEDICAL_MECHANICS.bleeds topCost,
-    provision: (e) => e.type === "provision" && 
-                      e.resourceCurrent && e.resourceCurrent > 0,
-  };
-  
-  const idx = loot.findIndex(entry => predicates[type](entry.item));
-  return idx !== -1 ? { index: idx, item: loot[idx].item } : null;
-};
-
-export const consumeBackupMedical = (
-  loot: { item: GameItem; quantity: number }[],
-  index: number
-): void => {
-  if (loot[index].quantity > 1) {
-    loot[index].quantity--;
-  } else {
-    loot.splice(index, 1);
-  }
-};
+export interface TickTelemetry {
+  readonly tick: number;
+  readonly phase: 'COMBAT' | 'LOOT' | 'MAINTENANCE' | 'NUTRITION_DECAY';
+  readonly sourceEntityId: string;
+  readonly emittedIntents: IntentPayload[];
+  readonly appliedPatches: Record<string, unknown>[];
+  readonly yieldedHooks: InterruptHook[];
+}
 ```
 
----
-
-### 5. LOOT.TS & RAIDSIMIULATION.TS: Secure Container Logic Duplication
-
-#### Problem: Same Sorting Algorithm in 2 Places
-
-**In raidSimulation.ts (lines 186–222):**
+##### B. Interceptor Directives (`InterceptorDirective`)
+When an `InterruptHook` yields at a control point (`BEFORE_ACTION`, `AFTER_DAMAGE`, `BEFORE_LEAVE_COVER`, `AFTER_RAID_END`), an observing agent or test harness can return an explicit control directive to manipulate execution:
 ```typescript
-const secureCap = newState.hideout.intelligenceCenter.level >= 3 ? 9 : 
-                 newState.hideout.intelligenceCenter.level >= 2 ? 6 : 4;
-// ... sorting logic
-raid.secureContainerSaved = Object.values(secureSorted);
-raid.lootFound = Object.values(backpackSorted);
+export type InterceptorDirective =
+  | { type: 'CONTINUE' }                            // Resume simulation normally
+  | { type: 'INJECT_INTENT'; intent: IntentPayload }   // Inject custom Intent into current settlement batch
+  | { type: 'CANCEL_ACTION'; reason: string };      // Abort pending action (e.g. force flee)
 ```
 
-**In loot.ts (lines 78–101):**
-```typescript
-const secureCap = 4; // HARDCODED! Doesn't check hideout level
-// ... identical sorting logic
-raid.secureContainerSaved = Object.values(secureSorted);
-raid.lootFound = Object.values(backpackSorted);
-```
-
-**Bug:** loot.ts doesn't check hideout level, so secure container is always 4 slots.
+##### C. Seeded Determinism & Read-Only Query Surface
+- **RNG Seed Injection**: `EngineContext` accepts an optional `seed: number` to guarantee 100% reproducible random rolls across combat ballistics, dodge chances, and loot generation.
+- **Read-Only Query Boundary**: `context.queryEnvironment(query)` allows validating agents to inspect ammo reserves, armor durability, or map tile hazards without mutating engine state.
 
 ---
 
-#### Proposed Loot Management
+## Act V: Presentation Blueprint & Causal Feature Mapping
 
-```typescript
-// src/engine/lootManagement.ts
+### 1. Causal Feature-Architecture Matrix
 
-export const SECURE_CONTAINER_CAPACITY = (intelligenceCenterLevel: number): number => {
-  const config = {
-    0: 4,
-    1: 4,
-    2: 6,
-    3: 9,
-  };
-  return config[intelligenceCenterLevel] ?? 4;
-};
-
-/**
- * Single source of truth for loot partitioning
- * Splits items by value, prioritizing secure container
- */
-export const sortLootIntoContainers = (
-  allLoot: { item: GameItem; quantity: number }[],
-  secureCap: number
-): { secure: typeof allLoot; backpack: typeof allLoot } => {
-  const singleItems: GameItem[] = [];
-  
-  // Flatten quantities
-  allLoot.forEach(entry => {
-    for (let q = 0; q < entry.quantity; q++) {
-      singleItems.push(entry.item);
-    }
-  });
-  
-  // Sort by value descending
-  singleItems.sort((a, b) => b.value - a.value);
-  
-  // Partition by index
-  const secure: { [id: string]: { item: GameItem; quantity: number } } = {};
-  const backpack: { [id: string]: { item: GameItem; quantity: number } } = {};
-  
-  singleItems.forEach((item, idx) => {
-    const target = idx < secureCap ? secure : backpack;
-    if (!target[item.id]) target[item.id] = { item, quantity: 0 };
-    target[item.id].quantity++;
-  });
-  
-  return {
-    secure: Object.values(secure),
-    backpack: Object.values(backpack),
-  };
-};
-```
-
-Then use in both places:
-
-```typescript
-// In raidSimulation.ts (line 192+):
-const secureCap = SECURE_CONTAINER_CAPACITY(newState.hideout.intelligenceCenter.level);
-const { secure, backpack } = sortLootIntoContainers(
-  [...raid.lootFound, ...raid.secureContainerSaved],
-  secureCap
-);
-raid.secureContainerSaved = secure;
-raid.lootFound = backpack;
-
-// In loot.ts (line 80+):
-const secureCap = SECURE_CONTAINER_CAPACITY(hideout.intelligenceCenter.level); // NOW CORRECT!
-const { secure, backpack } = sortLootIntoContainers(allLoot, secureCap);
-raid.secureContainerSaved = secure;
-raid.lootFound = backpack;
-```
+| TARCOS Game Feature | Current Code Pain | Target Architecture Decision | Benefit to Human & AI Developers |
+| :--- | :--- | :--- | :--- |
+| **Hideout Stash Upgrades** | `loot.ts:L76` hardcodes `secureCap = 4` due to duplicate sorting code in `raidSimulation.ts`. | **Data-Driven `lootManagement.ts`**: Centralized container capacity & value sorting. | Eliminates silent divergence bugs; stash upgrades apply consistently. |
+| **PMC Class Passives** | Passives hardcoded across 5 conditionals in `combat.ts:L141-277`. | **`BehaviorModule` Strategy Pattern + `combatBalance.ts`**: Decoupled passive modules. | New classes added as standalone files; balance tweaks are pure data edits. |
+| **Zero-Player Autonomous Simulation** | Combat executes in synchronous `while` loops with direct inline mutations. | **`AsyncGenerator` Interceptors + `InterruptHook` System**: Yieldable tick generator. | AI agents, bots, or UI debuggers can hook into ticks, inspect state, and yield seamlessly. |
+| **Raid Health & Death Outcomes** | 48 lines of identical KIA processing duplicated across dehydration & combat death paths (`raidSimulation.ts`). | **Centralized `raidResolution.ts` (`handleKIA`) + Intent Settlement Queue**: Atomic intent settlement. | Guarantees zero state corruption; quest finalization and XP rewards are 100% uniform. |
+| **Dynamic Ammo Ballistics & Enemy Tiers** | Armor threshold formulas and tier stat ranges scattered in ternary logic (`combat.ts`, `spawning.ts`). | **Data-Driven Tuning (`data/tuning/*`)**: Decoupled config files. | Automated LLM balance tuning and human design tweaks occur in pure JSON-like config files. |
 
 ---
 
-### 6. DATA.TS: Monolithic Configuration File (560 lines)
-
-#### Problem: Mixed Content + Tuning
-
-```typescript
-// Lines 9–106: Item definitions (CONTENT)
-export const ALL_ITEMS: { [id: string]: GameItem } = { /* 100+ items */ };
-
-// Lines 119–190: Map definitions (CONTENT)
-export const ALL_MAPS: MapData[] = [ /* 5 maps */ ];
-
-// Lines 324–330: Archetype weights (TUNING!)
-export const ARCHETYPE_WEIGHTS = {
-  [ClassType.SOLDIER]: { weaponSkill: 30, constitution: 25, ... },
-};
-
-// Lines 333–350: Skill distribution (TUNING!)
-export const distributeStartingSkills = (classType: ClassType, skills, points) => {
-  // Game balance logic
-};
-```
-
-**Problem:** Gameplay content mixed with balance tuning makes it hard to:
-- Update item descriptions without affecting balance
-- Rebalance skills without modifying content
-- Review what's "tunable" vs "fixed"
-
----
-
-## Refactoring Roadmap
-
-### Proposed File Structure
+### 2. Slide Deck Outline (8-Slide Presentation Blueprint)
 
 ```
-src/
-├── data/
-│   ├── content/
-│   │   ├── items.ts                  # ALL_ITEMS (no tuning)
-│   │   ├── maps.ts                   # ALL_MAPS
-│   │   ├── quests.ts                 # ALL_QUESTS
-│   │   ├── weapons.ts                # INITIAL_WEAPONS
-│   │   └── hideout.ts                # Hideout module definitions
-│   └── tuning/
-│       ├── raidConfig.ts             # Decay, thresholds, XP formulas
-│       ├── combatBalance.ts          # Class passives, ballistics, armor, bleed
-│       ├── enemySpawning.ts          # Tier profiles, stat ranges
-│       ├── medicalConfig.ts          # Medical costs, backup search rules
-│       └── lootConfig.ts             # Rarity weights, container capacity
-├── engine/
-│   ├── raidSimulation.ts             # 200 lines (down from 335)
-│   ├── raidResolution.ts             # NEW: KIA, extraction handlers
-│   ├── combat.ts                     # 250 lines (down from 309)
-│   ├── combatActions.ts              # NEW: Fire, reload, cover actions
-│   ├── spawning.ts                   # 80 lines (down from 161)
-│   ├── maintenance.ts                # 120 lines (down from 164)
-│   ├── lootManagement.ts             # NEW: Loot sorting, backup search
-│   ├── loot.ts                       # Simplified using lootManagement
-│   ├── progression.ts                # No change
-│   └── utils.ts                      # No change
+┌───────────────────────────────────────────────────────────────────────────────────┐
+│ SLIDE 1: Title & Vision                                                           │
+│ Title: TARCOS Engine Architecture — From Monolith to Autonomous Agentic Substrate │
+│ Bullet Points:                                                                    │
+│ • What is TARCOS? Zero-player extraction roguelike driven by autonomous simulation.│
+│ • Core Challenge: The engine IS the player — control flow must be yieldable.       │
+└───────────────────────────────────────────────────────────────────────────────────┘
+                                         │
+                                         ▼
+┌───────────────────────────────────────────────────────────────────────────────────┐
+│ SLIDE 2: The Prototyping Trap & Code Scaling                                      │
+│ Title: How Rapid Prototyping Created Structural Friction                          │
+│ Bullet Points:                                                                    │
+│ • Imperative beginnings: direct mutations inside orchestrators.                   │
+│ • Scaling to 5 classes, 3 tiers, 100+ items created 350+ line monoliths.          │
+│ • Mutation Fear: Heavy JSON.parse(JSON.stringify(state)) on every tick.           │
+└───────────────────────────────────────────────────────────────────────────────────┘
+                                         │
+                                         ▼
+┌───────────────────────────────────────────────────────────────────────────────────┐
+│ SLIDE 3: Grounded Case Studies of Failure                                         │
+│ Title: Concrete Code Pains in TARCOS                                              │
+│ Bullet Points:                                                                    │
+│ • Intelligence Center Bug: loot.ts hardcodes container size 4 vs raidSimulation.ts.│
+│ • Duplicated KIA Logic: 48 lines repeated verbatim across death paths.            │
+│ • Scattered Class Passives: 5 conditionals embedded in combat ballistics loops.   │
+└───────────────────────────────────────────────────────────────────────────────────┘
+                                         │
+                                         ▼
+┌───────────────────────────────────────────────────────────────────────────────────┐
+│ SLIDE 4: The Developer & AI Coding Friction                                       │
+│ Title: Why the Monolith Stifles Human & AI Collaboration                          │
+│ Bullet Points:                                                                    │
+│ • Human Friction: Rebalancing requires code edits & complex regression testing.   │
+│ • AI Agent Friction: Large prompt context bloat & hallucination risk on duplicate code.│
+│ • Step Lock-in: Synchronous loops prevent mid-round interception.                  │
+└───────────────────────────────────────────────────────────────────────────────────┘
+                                         │
+                                         ▼
+┌───────────────────────────────────────────────────────────────────────────────────┐
+│ SLIDE 5: The Dual-Pillar Solution                                                 │
+│ Title: Architecture Overview — Data Substrate + Intent Pipeline                   │
+│ Bullet Points:                                                                    │
+│ • Pillar A: Data-Driven Substrate (split data.ts, centralize algorithms).         │
+│ • Pillar B: Agentic Intent Engine (EngineContext, Intent queue, AsyncGenerators). │
+└───────────────────────────────────────────────────────────────────────────────────┘
+                                         │
+                                         ▼
+┌───────────────────────────────────────────────────────────────────────────────────┐
+│ SLIDE 6: Grounded Feature-Architecture Mapping                                    │
+│ Title: Connecting Game Features to Architectural Patterns                         │
+│ Bullet Points:                                                                    │
+│ • Hideout Stash Upgrades -> Data-Driven lootManagement.ts                         │
+│ • Class Passives -> BehaviorModule Strategy Interfaces                            │
+│ • Autonomous Rounds -> AsyncGenerator Interceptor Hooks                           │
+└───────────────────────────────────────────────────────────────────────────────────┘
+                                         │
+                                         ▼
+┌───────────────────────────────────────────────────────────────────────────────────┐
+│ SLIDE 7: Phased Migration Roadmap                                                 │
+│ Title: 5-Phase Refactoring Plan                                                   │
+│ Bullet Points:                                                                    │
+│ • Phase 1: Data-driven tuning extraction & deduplication.                         │
+│ • Phase 2: EngineContext & Intent settlement queue.                               │
+│ • Phase 3: AsyncGenerator interceptor pipeline.                                   │
+│ • Phase 4: BehaviorModule & Hideout plugin migration.                             │
+│ • Phase 5: Verification & unit testing.                                           │
+└───────────────────────────────────────────────────────────────────────────────────┘
+                                         │
+                                         ▼
+┌───────────────────────────────────────────────────────────────────────────────────┐
+│ SLIDE 8: Expected ROI & Future Agentic Capabilities                               │
+│ Title: Transformation Outcomes                                                    │
+│ Bullet Points:                                                                    │
+│ • 95% reduction in code duplication; 40% reduction in orchestrator size.           │
+│ • Zero-risk balance tweaking via pure data config edits.                          │
+│ • Native yield points for AI bots, step-debuggers, and rich UI visualizations.     │
+└───────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-### Phase-Based Migration Strategy
+## Act VI: Agentic Maintainability Guardrails — Governance for AI-Assisted Development
 
-#### Phase 1: Extract Raid Configuration (Low Risk)
-- Create `raidConfig.ts` with decay rates, thresholds
-- Update `raidSimulation.ts` to use config values
-- **No logic changes**, only data extraction
-- **Time:** 1-2 hours
+> **The AI-Assisted Architecture Dilemma**: TARCOS is an experiment in whether a greenfield codebase can remain maintainable despite being built rapidly with AI coding assistance. AI agents (including LLM assistants and autonomous coding subagents) lack human "maintainer discomfort"—they do not feel friction when appending 50 lines to a 350-line file, copying code snippets inline, or inventing bespoke abstractions. Without structural guardrails, AI-assisted development accelerates technical debt at the same speed it generates features.
 
-**Files affected:** raidSimulation.ts → new raidConfig.ts
+The following 6 guardrails govern all future human and AI-agent contributions to TARCOS:
 
----
+### Guardrail 1: Pre-Defined Module Boundaries & Enforced Scope Caps
+- **The Principle**: Module boundaries and import directions must be established before code is written, backed by explicit size budgets so growth past intended scope fails loudly instead of accumulating silently.
+- **TARCOS Grounding**: `raidSimulation.ts` ballooned to 336 lines and `combat.ts` to 309 lines because AI agents repeatedly took the locally-easy path of appending new features (combat rounds, death handling, looting, decay) into orchestrators.
+- **Enforcement Rule**: Orchestrator modules have a strict budget cap of ~200 lines. The import direction is strictly uni-directional:
+  $$\text{data/content \& data/tuning} \longrightarrow \text{engine/modules} \longrightarrow \text{engine/orchestrators} \longrightarrow \text{UI}$$
+  Any PR or agent edit that violates import hierarchy or pushes an orchestrator over 200 lines must trigger an automated lint/CI failure requiring modular extraction.
 
-#### Phase 2: Centralize KIA Resolution (Medium Risk)
-- Create `raidResolution.ts` with `handleKIA()`, `handleExtraction()`
-- Remove 60-line duplication from raidSimulation.ts
-- Update raidSimulation.ts to call new functions
-- **Behavioral change:** None (refactor only)
-- **Time:** 2-3 hours
+### Guardrail 2: Structural Single Source of Truth (Make Duplication Harder Than Importing)
+- **The Principle**: Any algorithm or domain calculation that could plausibly be reimplemented inline must have exactly one exported source of truth. Importing that function must present lower friction than writing it inline.
+- **TARCOS Grounding**: In [loot.ts:L76](file:///d:/DOWNLOADS/vscode/tarkov-zero-player-roguelike/src/engine/loot.ts#L76), an AI agent hardcoded `const secureCap = 4` and reimplemented container value sorting because re-writing the sorting loop inline was locally "easier" than searching for `raidSimulation.ts`'s container sorting code. This caused the Intelligence Center stash upgrade bug.
+- **Enforcement Rule**: Centralize domain algorithms into dedicated single-responsibility utility modules (`lootManagement.ts`, `raidResolution.ts`). Functions like `sortLootIntoContainers()` and `handleKIA()` must be structured so that calling them requires fewer lines of code and zero cognitive overhead compared to writing inline logic.
 
-**Files affected:** raidSimulation.ts → new raidResolution.ts
+### Guardrail 3: Strict Isolation of Balance Tuning from Engine Logic
+- **The Principle**: Game balance values and tuning formulas belong exclusively in `src/data/tuning/*`, never in engine conditionals. Changing game balance must never require touching core execution logic.
+- **TARCOS Grounding**: Ballistics penetration tables ([combat.ts:L216](file:///d:/DOWNLOADS/vscode/tarkov-zero-player-roguelike/src/engine/combat.ts#L216)), Scout dodge multipliers ([combat.ts:L200](file:///d:/DOWNLOADS/vscode/tarkov-zero-player-roguelike/src/engine/combat.ts#L200)), and nutrition decay probabilities ([raidSimulation.ts:L36](file:///d:/DOWNLOADS/vscode/tarkov-zero-player-roguelike/src/engine/raidSimulation.ts#L36)) were written as inline ternary chains and magic numbers directly inside simulation loops.
+- **Enforcement Rule**: Engine orchestrators (`combat.ts`, `raidSimulation.ts`) and behavior modules are strictly forbidden from defining magic numbers or class-name strings. All balance values must be imported from `src/data/tuning/*` (`combatBalance.ts`, `raidConfig.ts`, `enemySpawning.ts`). An AI agent tasked with "rebalancing ammo" MUST edit a config file, not engine logic.
 
----
+### Guardrail 4: Standardize on Conventional Patterns over Bespoke Abstractions
+- **The Principle**: When a conventional, widely-understood pattern and a custom bespoke abstraction solve the same problem, default to the conventional pattern. Bespoke abstractions force every new contributor and fresh AI agent session to re-learn custom rules.
+- **TARCOS Grounding**: To handle mutation fear during ticks, early code introduced custom inline deep-cloning (`JSON.parse(JSON.stringify(state))` at [raidSimulation.ts:L20](file:///d:/DOWNLOADS/vscode/tarkov-zero-player-roguelike/src/engine/raidSimulation.ts#L20)) and bespoke state mutation patterns rather than standard TypeScript design patterns.
+- **Enforcement Rule**: Standardize TARCOS architecture on established Gang-of-Four and language-native idioms: Async Generator iterators for interruptible execution, Strategy Pattern `BehaviorModule` for class passives, and standard Command/Intent queues (`IntentPayload`) for state settlement. Avoid introducing custom state management frameworks or bespoke mini-engines.
 
-#### Phase 3: Extract Combat Balance (Medium Risk)
-- Create `combatBalance.ts` with CLASS_COMBAT_PASSIVE, BALLISTICS_TABLE, etc.
-- Refactor `combat.ts` to read from config
-- Create `combatActions.ts` for action resolution
-- **Behavioral change:** Enable tuning without code edits
-- **Time:** 3-4 hours
+### Guardrail 5: Executable Contract & Characterization Tests over Static Documentation
+- **The Principle**: Documentation alone does not stop an AI agent from breaking contracts or introducing regressions; only executable automated tests do. High-risk refactors require pre-existing characterization tests (Golden Master baselines), and single-source functions require contract tests.
+- **TARCOS Grounding**: Documentation in `arch_todo.md` did not prevent duplicated 48-line death processing blocks across `raidSimulation.ts:L55` and `L111`. AI agents routinely missed one block because no contract test failed.
+- **Enforcement Rule**: High-risk refactors (specifically Phase 3's `AsyncGenerator` migration) REQUIRE writing deterministic Characterization Tests against the current baseline *before* modifying code. Core utility exports (`handleKIA`, `sortLootIntoContainers`) must have unit contract tests. An agent cannot declare a task complete without running `npm test`.
 
-**Files affected:** combat.ts → combatBalance.ts + combatActions.ts
-
----
-
-#### Phase 4: Extract Enemy Spawning Config (Low Risk)
-- Create `enemySpawning.ts` with ENEMY_SPAWN_PROFILES
-- Simplify `spawning.ts` to iterate profiles
-- Add function to pick weapons from distribution
-- **Behavioral change:** None (refactor only)
-- **Time:** 2-3 hours
-
-**Files affected:** spawning.ts → new enemySpawning.ts
+### Guardrail 6: Micro-Diff Enforcement (One File, One Intent per Edit)
+- **The Principle**: Changes must remain small, focused, and reviewable. Large multi-file diffs make duplicate logic, silent divergence bugs, and unintended side-effects trivial to miss during review.
+- **TARCOS Grounding**: Multi-file refactors during early prototyping allowed the `loot.ts` secure container size bug to slip past undetected.
+- **Enforcement Rule**: Every AI-agent task or PR must address a single, discrete intent affecting minimal files. An agent must not mix balance tweaking, algorithm deduplication, and control flow refactoring into a single mega-edit.
 
 ---
 
-#### Phase 5: Centralize Loot & Medical Logic (Low Risk)
-- Create `lootManagement.ts` with secure container sorting
-- Create `medicalConfig.ts` with backup search predicates
-- Update `loot.ts` and `maintenance.ts` to use centralized functions
-- **Behavioral change:** Fix bug where loot.ts doesn't check hideout level
-- **Time:** 2 hours
+## Phased Master Implementation Roadmap & Checklist
 
-**Files affected:** loot.ts, maintenance.ts, raidSimulation.ts → new lootManagement.ts, medicalConfig.ts
+### Phase 1: Data-Driven Tuning Extraction & Code Deduplication
+- [ ] Create `src/data/tuning/raidConfig.ts` (decay rates, status thresholds).
+- [ ] Create `src/engine/raidResolution.ts` with `handleKIA(state, reason)` & `handleExtraction(state)`. Remove 48-line duplicate block from `raidSimulation.ts`.
+- [x] Create `src/engine/lootManagement.ts` with `sortLootIntoContainers` & `SECURE_CONTAINER_CAPACITY`. Fix `loot.ts:L76` bug.
+- [ ] Create `src/data/tuning/enemySpawning.ts` with `ENEMY_SPAWN_PROFILES`.
+- [ ] Create `src/data/tuning/medicalConfig.ts` with `findBackupMedical` helper.
 
----
+### Completed Work Log
 
-#### Phase 6: Split data.ts into Content + Tuning (Low Risk)
-- Move ALL_ITEMS, ALL_MAPS, ALL_QUESTS, INITIAL_WEAPONS to `data/content/`
-- Move ARCHETYPE_WEIGHTS, skill distribution to `data/tuning/`
-- Update imports across codebase
-- **Behavioral change:** None (import reorganization)
-- **Time:** 1-2 hours
+#### 2026-07-31 — Phase 1 Slice: `lootManagement.ts` Centralization
+- **Intent**: Single source of truth for secure-container capacity & value sorting; fix the Intelligence Center bug.
+- **Changes**:
+  - Created `src/engine/lootManagement.ts` (`SECURE_CONTAINER_CAPACITY`, `sortLootIntoContainers`).
+  - Rewired `loot.ts` — replaced hardcoded `secureCap = 4` with `SECURE_CONTAINER_CAPACITY(intelligenceCenterLevel)` and the 22-line inline sort with the shared call (fixes the Intelligence Center stash-upgrade bug).
+  - Rewired `raidSimulation.ts` — removed the inline cap ternary and the identical 22-line sort; both `executeLootPhase` call sites now pass `hideout.intelligenceCenter.level`.
+  - Added `src/engine/lootManagement.test.ts` (7 deterministic contract tests: cap mapping, value-order partitioning, quantity aggregation, edge cases).
+  - Added barrel export in `gameEngine.ts`.
+- **Behavior**: Verbatim port of the existing algorithm; the only behavior change is the bug fix. No RNG involvement, no semantic drift.
+- **Verification**: `npm test` — 14/14 pass; `npm run lint` (`tsc --noEmit`) — clean.
+- **Residual duplication** (remaining Phase 1 slices): KIA resolution pipeline ×3 sites, medical backup search predicates ×3 sites in `maintenance.ts`.
 
-**Files affected:** data.ts → split into data/content/* + data/tuning/*
+### Phase 2: EngineContext & Intent Settlement Queue Core
+- [ ] Create `src/engine/types.ts` defining `EngineContext`, `IntentPayload`, `InterruptHook`, `BehaviorModule`.
+- [ ] Implement runtime `EngineContext` adapter in `src/engine/engineContext.ts` with atomic intent accumulation & settlement step.
+- [ ] Convert direct mutations in `combat.ts` and `raidSimulation.ts` to `context.emitIntent()`.
 
----
+### Phase 3: Async Generator Action Pipeline & Interceptors (HIGH-RISK PHASE)
 
-## Complexity Reduction Summary
+> [!WARNING]
+> **High-Risk Phase**: Converting synchronous `while` loops (`simulateCombatRound`, `runRaidTick`) into yieldable `AsyncGenerator` flows touches every call site across the UI and test suites. Strict risk mitigation is required.
 
-### Metrics
+- [ ] **PREREQUISITE — Characterization Testing Baseline**:
+  - Before modifying control flow, write deterministic **Characterization Tests** (Golden Master snapshot tests using fixed RNG seeds).
+  - Record the exact tick-by-tick state transitions, inventory outcomes, and log outputs of the current engine across combat, scavenging, and extraction scenarios.
+  - *Purpose*: This baseline allows developers to clearly distinguish **intentional bug fixes** (e.g., container cap fix, unified KIA processing) from **unintended regressions** in tick timing or state mutation ordering.
+- [ ] Convert primary simulation ticks (`runRaidTick` and `simulateCombatRound`) into `AsyncGenerator` flows yielding `InterruptHook` objects at `BEFORE_ACTION` and `AFTER_DAMAGE`.
+- [ ] Update engine callers (UI loop / test harness) to consume generator flows.
+- [ ] **State Mutation Semantics Audit & Immutable Settlement Transition**:
+  - *Audit*: Before removing `JSON.parse(JSON.stringify(state))` at `raidSimulation.ts:L20`, audit all UI state handlers, log previewers, and test harnesses that rely on `runRaidTick` treating input state as an immutable reference.
+  - *Replacement Mechanism*: Ensure `EngineContext` settlement produces a fresh state reference atomically via structural patching (or shallow `Object.assign`/`Immer` patches) at the end of settlement steps, replacing full-tree stringify deep cloning without breaking caller immutability expectations.
 
-| Metric | Current | Proposed | Improvement |
-|--------|---------|----------|-------------|
-| **Total engine lines** | 1,290 | ~1,050 | -19% |
-| **raidSimulation.ts lines** | 335 | 200 | -40% |
-| **combat.ts lines** | 309 | 250 | -19% |
-| **spawning.ts lines** | 161 | 80 | -50% |
-| **maintenance.ts lines** | 164 | 120 | -27% |
-| **Duplicated code** | ~100 | ~5 | -95% |
-| **Hardcoded values** | 50+ | 5 | -90% |
-| **Class checks in combat** | 5 | 1 (in config) | -80% |
-| **Tier definitions** | 3 (duplicated) | 1 (config) | -67% |
+### Phase 4: BehaviorModule Refactoring & Hideout Plugin System
+- [ ] Extract PMC class passives (`SURVIVOR`, `SCOUT`, `SOLDIER`, `LUCKY`) into `src/engine/behaviors/`.
+- [ ] Implement Hideout plugin adapter interface (`ModuleInstance`) and convert Scavenger workstation to `AFTER_RAID_END` hook listener.
 
-### Cognitive Load Reduction
-
-| Task | Current | Proposed | Improvement |
-|------|---------|----------|-------------|
-| Find "SOLDIER deals 20% damage" | Search entire codebase | Open combatBalance.ts | -95% time |
-| Rebalance bleed chance | Edit combat.ts + understand formula | Edit bleedConfig | -80% friction |
-| Add new enemy tier | Edit spawning.ts, add 50+ lines | Add entry to ENEMY_SPAWN_PROFILES | -90% effort |
-| Understand nutrition decay | Read 15 lines of formula | Check raidConfig.ts | -60% time |
-
----
-
-## Migration Checklist
-
-### Pre-Refactor
-- [ ] All tests passing (npm test)
-- [ ] No uncommitted changes
-- [ ] Create feature branch: `feat/engine-refactoring`
-
-### Phase 1: Raid Configuration
-- [ ] Create `src/data/tuning/raidConfig.ts`
-- [ ] Extract decay rates, thresholds, XP formulas
-- [ ] Update `raidSimulation.ts` to import config
-- [ ] Test: `npm test` + manual raid play
-- [ ] Commit: "refactor: extract raid configuration to data-driven config"
-
-### Phase 2: KIA Resolution
-- [ ] Create `src/engine/raidResolution.ts`
-- [ ] Extract `handleKIA()` function
-- [ ] Extract `handleExtraction()` function
-- [ ] Update `raidSimulation.ts` to use new functions
-- [ ] Test: `npm test` + run raids (KIA, extraction)
-- [ ] Commit: "refactor: centralize KIA and extraction handling"
-
-### Phase 3: Combat Balance
-- [ ] Create `src/data/tuning/combatBalance.ts`
-- [ ] Move CLASS_COMBAT_PASSIVE, BALLISTICS_TABLE, etc.
-- [ ] Create `src/engine/combatActions.ts`
-- [ ] Refactor `combat.ts` to read from config
-- [ ] Test: `npm test` + run combat scenarios
-- [ ] Commit: "refactor: data-driven combat balance system"
-
-### Phase 4: Enemy Spawning
-- [ ] Create `src/data/tuning/enemySpawning.ts`
-- [ ] Move ENEMY_SPAWN_PROFILES (new data structure)
-- [ ] Simplify `spawning.ts`
-- [ ] Test: `npm test` + spawn enemies on each tier
-- [ ] Commit: "refactor: data-driven enemy spawning profiles"
-
-### Phase 5: Loot & Medical
-- [ ] Create `src/engine/lootManagement.ts`
-- [ ] Create `src/data/tuning/medicalConfig.ts`
-- [ ] Centralize backup search logic
-- [ ] Update `loot.ts` and `maintenance.ts`
-- [ ] Test: `npm test` + check loot sorting, medical usage
-- [ ] Commit: "refactor: centralize loot and medical logic"
-
-### Phase 6: Split data.ts
-- [ ] Create `src/data/content/` directory
-- [ ] Move items, maps, quests, weapons
-- [ ] Create `src/data/tuning/` directory
-- [ ] Move balance configs
-- [ ] Update imports across codebase
-- [ ] Test: `npm test` + ensure no regressions
-- [ ] Commit: "refactor: split data.ts into content and tuning layers"
-
-### Post-Refactor
-- [ ] All tests passing
-- [ ] Manual testing: full game loop (deploy, raid, loot, extract, upgrade hideout)
-- [ ] Create PR with summary of changes
-- [ ] Merge to main
+### Phase 5: Split `data.ts` & Final Verification
+- [ ] Split `src/data.ts` into `src/data/content/*` (`items`, `maps`, `quests`, `weapons`) and `src/data/tuning/*`.
+- [ ] Update imports across codebase.
+- [ ] Run `npm test` and execute full manual verification (deploy, raid, loot, extract, upgrade hideout).
 
 ---
 
-## Benefits
+## Metrics & Impact Summary
 
-### For Developers
-- ✅ **Easier onboarding:** "Where's the SOLDIER passive?" → combatBalance.ts
-- ✅ **Lower context switching:** Related code grouped by concern
-- ✅ **Faster debugging:** Reduced cognitive load, fewer places to search
-- ✅ **Testability:** Pure functions on config are easy to unit test
+> **Phase 1 (lootManagement) progress, as of 2026-07-31**: `raidSimulation.ts` 336 → 320 lines, `loot.ts` 115 → 98 lines, duplicated container-sort code 44 → 0 lines. Remaining targets below are unchanged.
 
-### For Game Designers
-- ✅ **No code edits for balance:** Tweak raidConfig.ts, combatBalance.ts directly
-- ✅ **Visible dependencies:** See how formulas interact (e.g., bleed chance depends on hydration)
-- ✅ **Version control:** Changes to balance are clear diffs
-- ✅ **Experimentation:** Try A/B variants by swapping config objects
-
-### For Maintenance
-- ✅ **DRY:** 95% reduction in duplication
-- ✅ **Reduced bug surface:** Fewer places where similar logic can diverge
-- ✅ **Scalability:** Adding new features doesn't require deep code edits
-- ✅ **Perf potential:** Data-driven approach enables config caching, precomputation
-
----
-
-## Risk Assessment
-
-| Phase | Risk Level | Mitigation |
-|-------|------------|-----------|
-| 1: Raid Config | Low | Config values match original code exactly; test decay behavior |
-| 2: KIA Resolution | Medium | Extract function first, then replace calls; test both KIA paths |
-| 3: Combat Balance | High | Most complex; use branch + comprehensive combat testing |
-| 4: Spawning | Low | Clear tier separation; test each tier independently |
-| 5: Loot & Medical | Low | Centralize duplicated logic; fix loot.ts bug |
-| 6: Split data.ts | Low | Import reorganization; watch for circular deps |
-
----
-
-## Next Steps
-
-1. **Review this analysis** with team
-2. **Prioritize phases** based on team capacity
-3. **Start Phase 1** on a feature branch
-4. **Add unit tests** for new functions as they're created
-5. **Document new structure** in README once complete
-
----
-
-## References
-
-- **God Object:** https://refactoring.guru/smells/lazy-class
-- **Duplicate Code:** https://refactoring.guru/smells/duplicate-code
-- **Magic Numbers:** https://refactoring.guru/smells/magic-number
-- **Data-Driven Design:** https://en.wikipedia.org/wiki/Data-driven_design
+| Metric | Baseline | Target | Improvement |
+| :--- | :--- | :--- | :--- |
+| **Total Engine Lines** | 1,290 lines | ~1,050 lines | **-19% reduction** |
+| **`raidSimulation.ts` Size** | 336 lines | ~200 lines | **-40% reduction** |
+| **`spawning.ts` Size** | 161 lines | ~80 lines | **-50% reduction** |
+| **Duplicated Code** | ~100 lines | ~5 lines | **-95% reduction** |
+| **Hardcoded Magic Numbers** | 50+ instances | 5 instances | **-90% reduction** |
+| **PMC Class Touchpoints** | 5 scattered conditionals | 1 modular config | **-80% coupling** |
+| **Tick State Deep-Clones** | 1 per tick (`JSON.parse`) | 0 (Atomic Settlement) | **100% eliminated** |
