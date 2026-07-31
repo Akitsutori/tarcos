@@ -9,7 +9,6 @@ import {
   ACCURACY_MAX,
   ACCURACY_WEAPON_WEIGHT,
   ACCURACY_SKILL_WEIGHT,
-  SHOOTING_RANGE_BONUS,
   COVER_ACCURACY_PENALTY,
   HYDRATION_PENALTY_BANDS,
   FLEE_CHANCE_BASE,
@@ -34,6 +33,7 @@ import {
   BLEED_CHANCE_CONSTITUTION_PER_LEVEL,
   BLEED_CHANCE_HYDRATION_MODS,
 } from "../data/tuning/combatConfig";
+import { SHOOTING_RANGE_BONUS } from "../data/tuning/hideoutConfig";
 
 const createDefaultWeapon = (): Weapon => ({
   id: "assault_rifle",

@@ -11,7 +11,8 @@ import { simulateCombatRoundGenerator } from "./combat";
 import { handleKIA, handleExtraction } from "./raidResolution";
 import { createEngineContext } from "./engineContext";
 import { InterruptHook } from "./types";
-import { TICK_SECONDS_MIN, TICK_SECONDS_MAX, ENERGY_DECAY_CHANCE, HYDRATION_DECAY_CHANCE, NUTRITION_UNIT_DECAY_RATE, SKILL_DECAY_REDUCTION_PER_LEVEL, SKILL_DECAY_REDUCTION_MIN, HYDRATION_STATUS, STATUS_WARNING_CHANCE } from "../data/tuning/raidConfig";
+import { TICK_SECONDS_MIN, TICK_SECONDS_MAX, ENERGY_DECAY_CHANCE, HYDRATION_DECAY_CHANCE, SKILL_DECAY_REDUCTION_PER_LEVEL, SKILL_DECAY_REDUCTION_MIN, HYDRATION_STATUS, STATUS_WARNING_CHANCE } from "../data/tuning/raidConfig";
+import { NUTRITION_UNIT_DECAY_RATE, NUTRITION_UNIT_DECAY_ACTIVE_FROM_LEVEL } from "../data/tuning/hideoutConfig";
 import { ENCOUNTER_CHANCE, REINFORCEMENT_MAX_PER_TILE, REINFORCEMENT_CHANCE } from "../data/tuning/enemySpawning";
 import { getLuckyLootRolls } from "./behaviors/classPassives";
 import { dispatchRaidEndModules } from "./behaviors/hideoutModules";
@@ -49,7 +50,7 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
   raid.elapsedSeconds += TICK_SECONDS_MIN + Math.floor(Math.random() * TICK_SECONDS_MAX);
 
   // Nutrition Decay
-  const rateReduction = newState.hideout.nutritionUnit.level >= 3 ? NUTRITION_UNIT_DECAY_RATE : 1.0;
+  const rateReduction = newState.hideout.nutritionUnit.level >= NUTRITION_UNIT_DECAY_ACTIVE_FROM_LEVEL ? NUTRITION_UNIT_DECAY_RATE : 1.0;
   const enduranceLevel = pmc.skills.constitution.level;
   const skillReduction = Math.max(SKILL_DECAY_REDUCTION_MIN, 1 - enduranceLevel * SKILL_DECAY_REDUCTION_PER_LEVEL);
   const drainModifier = rateReduction * skillReduction;

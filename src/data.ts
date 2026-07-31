@@ -6,12 +6,15 @@
 import { GameItem, Weapon, ClassType, HideoutModule, Skill, CharacterSkills, PMCCharacter, Hideout, PMCBodyParts } from "./types";
 import { CLASS_PASSIVES } from "./data/tuning/combatBalance";
 import { XP_PER_LEVEL } from "./data/tuning/progressionConfig";
+import { WORKBENCH_LEVEL_BONUS } from "./data/tuning/hideoutConfig";
+import { HIDE_OUT_MODULE_DEFINITIONS, HIDE_OUT_MODULE_MAX_LEVEL, HideoutModuleDefinition } from "./data/content/hideout";
 
 // Content barrel — static game data lives in src/data/content/*
 export { ALL_ITEMS } from "./data/content/items";
 export { ROOM_TEMPLATES, ALL_MAPS, buildProceduralMap } from "./data/content/maps";
 export { INITIAL_WEAPONS } from "./data/content/weapons";
 export { ALL_QUESTS } from "./data/content/quests";
+export { HIDE_OUT_MODULE_DEFINITIONS, HIDE_OUT_MODULE_MAX_LEVEL } from "./data/content/hideout";
 
 // Local import for construction logic below (PMC starting gear, etc.)
 import { ALL_ITEMS } from "./data/content/items";
@@ -123,91 +126,25 @@ export const createInitialPMC = (classType: ClassType): PMCCharacter => {
   };
 };
 
-// Create Initial Hideout
+// Create Initial Hideout (from static definitions in data/content/hideout)
 export const createInitialHideout = (): Hideout => {
-  const makeModule = (id: string, name: string, desc: string, icon: string, u1Bonus: string, u2Bonus: string, u3Bonus: string, reqs: { [lvl: number]: { cost: number, reqItems: { itemId: string; quantity: number }[] } }): HideoutModule => {
-    return {
-      id,
-      name,
-      description: desc,
-      level: 0,
-      maxLevel: 3,
-      iconName: icon,
-      upgrades: {
-        1: { cost: reqs[1].cost, requirements: reqs[1].reqItems, bonus: u1Bonus },
-        2: { cost: reqs[2].cost, requirements: reqs[2].reqItems, bonus: u2Bonus },
-        3: { cost: reqs[3].cost, requirements: reqs[3].reqItems, bonus: u3Bonus }
-      }
-    };
-  };
+  const buildModule = (def: HideoutModuleDefinition): HideoutModule => ({
+    id: def.id,
+    name: def.name,
+    description: def.description,
+    level: 0,
+    maxLevel: HIDE_OUT_MODULE_MAX_LEVEL,
+    iconName: def.iconName,
+    upgrades: def.upgrades,
+  });
 
   return {
-    medstation: makeModule(
-      "medstation", "Medstation", "Craft medkits and passive health recovery station.", "HeartPulse",
-      "Passive HP regeneration: +2 HP per tick out of raid",
-      "Craft advanced medical supplies & +5 HP per tick out of raid",
-      "Powerful passive HP regeneration: +12 HP per tick out of raid",
-      {
-        1: { cost: 15000, reqItems: [{ itemId: "bolts", quantity: 2 }, { itemId: "nuts", quantity: 2 }] },
-        2: { cost: 50000, reqItems: [{ itemId: "bolts", quantity: 4 }, { itemId: "nuts", quantity: 4 }, { itemId: "hose", quantity: 2 }] },
-        3: { cost: 120000, reqItems: [{ itemId: "hose", quantity: 4 }, { itemId: "circuit_board", quantity: 2 }, { itemId: "car_battery", quantity: 1 }] }
-      }
-    ),
-    workbench: makeModule(
-      "workbench", "Workbench", "Enables advanced weapon modification stat tuning and ammo assembly.", "Hammer",
-      "+5 Weapon Ergonomics and -3% Recoil across all weapons",
-      "+8 Weapon Ergonomics and -6% Recoil across all weapons",
-      "+12 Weapon Ergonomics and -10% Recoil on all weapons",
-      {
-        1: { cost: 20000, reqItems: [{ itemId: "bolts", quantity: 3 }, { itemId: "spark_plug", quantity: 2 }] },
-        2: { cost: 65000, reqItems: [{ itemId: "cpu_fan", quantity: 4 }, { itemId: "circuit_board", quantity: 3 }, { itemId: "wd40", quantity: 1 }] },
-        3: { cost: 180000, reqItems: [{ itemId: "circuit_board", quantity: 5 }, { itemId: "gpu", quantity: 1 }, { itemId: "wd40", quantity: 2 }] }
-      }
-    ),
-    intelligenceCenter: makeModule(
-      "intelligenceCenter", "Intelligence Center", "Reduces scav raid timers, increases raid rouble yield and search speed.", "FileText",
-      "+5% Experience gain from all sources",
-      "+10% Experience gain & Secure Container capacity increased (6 slots)",
-      "+15% Experience gain & Secure Container size increased to Gamma (9 slots)",
-      {
-        1: { cost: 30000, reqItems: [{ itemId: "circuit_board", quantity: 2 }, { itemId: "cpu_fan", quantity: 2 }] },
-        2: { cost: 90000, reqItems: [{ itemId: "cpu", quantity: 3 }, { itemId: "ledger", quantity: 1 }] },
-        3: { cost: 250000, reqItems: [{ itemId: "gpu", quantity: 1 }, { itemId: "ledger", quantity: 2 }, { itemId: "car_battery", quantity: 1 }] }
-      }
-    ),
-    shootingRange: makeModule(
-      "shootingRange", "Shooting Range", "Training ground. Increases PMC weapon skill through live practice.", "Target",
-      "+1 Weapon Skill point",
-      "+2 additional Weapon Skill points (total +3)",
-      "+3 additional Weapon Skill points (total +6)",
-      {
-        1: { cost: 180000, reqItems: [{ itemId: "bolts", quantity: 5 }, { itemId: "nuts", quantity: 5 }] },
-        2: { cost: 75000, reqItems: [{ itemId: "bolts", quantity: 10 }, { itemId: "nuts", quantity: 10 }, { itemId: "wd40", quantity: 1 }] },
-        3: { cost: 150000, reqItems: [{ itemId: "hose", quantity: 3 }, { itemId: "car_battery", quantity: 1 }] }
-      }
-    ),
-    nutritionUnit: makeModule(
-      "nutritionUnit", "Nutrition Unit", "Ensures PMC food and hydration decays slower and recovers faster.", "Apple",
-      "Passive energy and hydration recovery: +2 per tick out of raid",
-      "Passive energy and hydration recovery: +4 per tick out of raid",
-      "Hunger and Hydration decay 20% slower in raids",
-      {
-        1: { cost: 12000, reqItems: [{ itemId: "bolts", quantity: 2 }, { itemId: "nuts", quantity: 2 }] },
-        2: { cost: 45000, reqItems: [{ itemId: "hose", quantity: 2 }, { itemId: "cpu_fan", quantity: 3 }] },
-        3: { cost: 110000, reqItems: [{ itemId: "fuel_tank", quantity: 1 }, { itemId: "hose", quantity: 4 }] }
-      }
-    ),
-    scavengerWorkstation: makeModule(
-      "scavengerWorkstation", "Scavenger Workstation", "Salvages barter goods after every successful extraction.", "Wrench",
-      "Salvages loose parts after extraction (+2 bolts)",
-      "Improved salvaging: higher-value components recovered after extraction",
-      "Advanced salvaging: rare electronics recovered after extraction",
-      {
-        1: { cost: 25000, reqItems: [{ itemId: "bolts", quantity: 2 }, { itemId: "nuts", quantity: 2 }] },
-        2: { cost: 60000, reqItems: [{ itemId: "circuit_board", quantity: 2 }, { itemId: "spark_plug", quantity: 2 }] },
-        3: { cost: 150000, reqItems: [{ itemId: "wd40", quantity: 2 }, { itemId: "cpu", quantity: 1 }] }
-      }
-    )
+    medstation: buildModule(HIDE_OUT_MODULE_DEFINITIONS.medstation),
+    workbench: buildModule(HIDE_OUT_MODULE_DEFINITIONS.workbench),
+    intelligenceCenter: buildModule(HIDE_OUT_MODULE_DEFINITIONS.intelligenceCenter),
+    shootingRange: buildModule(HIDE_OUT_MODULE_DEFINITIONS.shootingRange),
+    nutritionUnit: buildModule(HIDE_OUT_MODULE_DEFINITIONS.nutritionUnit),
+    scavengerWorkstation: buildModule(HIDE_OUT_MODULE_DEFINITIONS.scavengerWorkstation),
   };
 };
 
@@ -241,17 +178,11 @@ export const getWeaponStats = (weapon: Weapon, workbenchLevel: number) => {
   }
 
   // Workbench levels
-  if (workbenchLevel >= 1) {
-    ergo += 5;
-    recoil = Math.max(10, recoil - Math.floor(recoil * 0.03));
-  }
-  if (workbenchLevel >= 2) {
-    ergo += 3;
-    recoil = Math.max(10, recoil - Math.floor(recoil * 0.03));
-  }
-  if (workbenchLevel >= 3) {
-    ergo += 4;
-    recoil = Math.max(10, recoil - Math.floor(recoil * 0.04));
+  for (let lvl = 1; lvl <= Math.min(HIDE_OUT_MODULE_MAX_LEVEL, workbenchLevel); lvl++) {
+    const bonus = WORKBENCH_LEVEL_BONUS[lvl];
+    if (!bonus) break;
+    ergo += bonus.ergoBonus;
+    recoil = Math.max(10, recoil - Math.floor(recoil * bonus.recoilReduction));
   }
 
   return {

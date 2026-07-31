@@ -1,9 +1,10 @@
 import { GameItem } from "../types";
+import { secureContainerCapacity } from "../data/tuning/hideoutConfig";
 
 export type LootStack = { item: GameItem; quantity: number }[];
 
 export const SECURE_CONTAINER_CAPACITY = (hideoutLevel: number): number =>
-  hideoutLevel >= 3 ? 9 : hideoutLevel >= 2 ? 6 : 4;
+  secureContainerCapacity(hideoutLevel);
 
 export const sortLootIntoContainers = (
   allLoot: LootStack,

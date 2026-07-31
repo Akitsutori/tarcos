@@ -6,6 +6,7 @@
 import React, { useState, useMemo } from "react";
 import { GameState, GameItem, ItemType, BodyPart } from "../types";
 import { ALL_ITEMS } from "../data/content/items";
+import { MEDSTATION_HEAL_PER_5S_BY_LEVEL } from "../data/tuning/hideoutConfig";
 import { BodyMap } from "./BodyMap";
 import { 
   Coins, PackageOpen, Heart, Zap, 
@@ -439,7 +440,7 @@ export const StashScreen: React.FC<StashScreenProps> = ({
             {totalCurrentHP < totalMaxHP && (
               <div className="mt-3 p-1.5 bg-emerald-950/20 border border-emerald-900/30 rounded text-[9px] font-mono text-emerald-400 flex items-center justify-center gap-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
-                <span>Passive recovery active (+{hideout.medstation?.level === 3 ? 12 : hideout.medstation?.level === 2 ? 5 : hideout.medstation?.level === 1 ? 2 : 1} HP/5s)</span>
+                <span>Passive recovery active (+{MEDSTATION_HEAL_PER_5S_BY_LEVEL[hideout.medstation?.level ?? 0]} HP/5s)</span>
               </div>
             )}
           </div>

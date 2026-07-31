@@ -7,6 +7,7 @@ import React, { useEffect, useRef } from "react";
 import { GameState, RaidLog, ClassType, PMCBodyParts, BodyPart } from "../types";
 import { getWeaponStats } from "../data";
 import { ALL_MAPS } from "../data/content/maps";
+import { SHOOTING_RANGE_BONUS } from "../data/tuning/hideoutConfig";
 import { BodyMap } from "./BodyMap";
 import { 
   Play, Pause, Heart, Zap, Droplet, Skull, 
@@ -201,9 +202,9 @@ export const RaidScreen: React.FC<RaidScreenProps> = ({
               <div>
                 <span className="text-slate-500">Eff. Accuracy</span>
                 <div className="text-slate-300 font-bold">
-                  {weaponStats.accuracy + pmc.skills.weaponSkill.level + (hideout.shootingRange.level >= 3 ? 6 : hideout.shootingRange.level === 2 ? 3 : hideout.shootingRange.level === 1 ? 1 : 0)}%
+                  {weaponStats.accuracy + pmc.skills.weaponSkill.level + SHOOTING_RANGE_BONUS[hideout.shootingRange.level]}%
                   <span className="text-[9px] text-emerald-400 font-normal ml-1">
-                    (+{pmc.skills.weaponSkill.level} skill{hideout.shootingRange.level > 0 ? ` +${hideout.shootingRange.level >= 3 ? 6 : hideout.shootingRange.level === 2 ? 3 : 1} range` : ""})
+                    (+{pmc.skills.weaponSkill.level} skill{hideout.shootingRange.level > 0 ? ` +${SHOOTING_RANGE_BONUS[hideout.shootingRange.level]} range` : ""})
                   </span>
                 </div>
               </div>

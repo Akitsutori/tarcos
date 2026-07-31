@@ -3,7 +3,6 @@ import {
   XP_KILL_BASE,
   XP_LOOT_VALUE_DIVISOR,
   XP_EXTRACTION_BONUS_MULTIPLIER,
-  XP_INTEL_MULTIPLIER_BY_LEVEL,
   XP_PER_LEVEL,
   PERCEPTION_XP_GAIN,
   ACTIVE_QUEST_POOL_SIZE,
@@ -14,10 +13,6 @@ describe('progressionConfig tuning locks', () => {
     expect(XP_KILL_BASE).toBe(10);
     expect(XP_LOOT_VALUE_DIVISOR).toBe(10);
     expect(XP_EXTRACTION_BONUS_MULTIPLIER).toBe(1.25);
-  });
-
-  it('intelligence center XP multipliers by level', () => {
-    expect(XP_INTEL_MULTIPLIER_BY_LEVEL).toEqual({ 1: 1.05, 2: 1.1, 3: 1.15 });
   });
 
   it('leveling, perception gain, and quest pool', () => {

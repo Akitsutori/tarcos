@@ -3,6 +3,7 @@ import { GameState, PMCBodyParts } from "../types";
 import { runRaidTickGenerator } from "../gameEngine";
 import { InterruptHook } from "../engine/types";
 import { STORAGE_KEY } from "./useGameSave";
+import { MEDSTATION_HEAL_PER_5S_BY_LEVEL, nutritionRecoveryPer5s } from "../data/tuning/hideoutConfig";
 
 /**
  * Hook to manage raid simulation ticks and passive out-of-raid recovery.
@@ -23,10 +24,7 @@ export const useRaidTick = (
 
         let hasUpdates = false;
 
-        let healAmount = 1;
-        if (medstationLvl === 1) healAmount = 2;
-        else if (medstationLvl === 2) healAmount = 5;
-        else if (medstationLvl === 3) healAmount = 12;
+        let healAmount = MEDSTATION_HEAL_PER_5S_BY_LEVEL[medstationLvl] ?? 1;
 
         let neededHeal = healAmount;
         const partIds: (keyof PMCBodyParts)[] = ["head", "thorax", "stomach", "leftLeg", "rightLeg", "leftArm", "rightArm"];
@@ -43,7 +41,7 @@ export const useRaidTick = (
         }
 
         if (nutritionLvl >= 1) {
-          const nutritionRecovery = nutritionLvl >= 2 ? 4 : 2;
+          const nutritionRecovery = nutritionRecoveryPer5s(nutritionLvl);
           if (pmc.energy < pmc.maxEnergy) {
             pmc.energy = Math.min(pmc.maxEnergy, pmc.energy + nutritionRecovery);
             hasUpdates = true;

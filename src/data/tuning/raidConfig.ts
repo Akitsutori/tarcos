@@ -17,9 +17,6 @@ export const TICK_SECONDS_MAX = 8;
 export const ENERGY_DECAY_CHANCE = 0.25;
 export const HYDRATION_DECAY_CHANCE = 0.30;
 
-// Hideout Nutrition Unit (level >= 3) reduces decay by this factor
-export const NUTRITION_UNIT_DECAY_RATE = 0.8;
-
 // Constitution skill reduces decay by SKILL_DECAY_REDUCTION_PER_LEVEL per level, floored at MIN
 export const SKILL_DECAY_REDUCTION_PER_LEVEL = 0.015;
 export const SKILL_DECAY_REDUCTION_MIN = 0.5;

@@ -5,7 +5,6 @@ import {
   ACCURACY_MAX,
   ACCURACY_WEAPON_WEIGHT,
   ACCURACY_SKILL_WEIGHT,
-  SHOOTING_RANGE_BONUS,
   COVER_ACCURACY_PENALTY,
   HYDRATION_PENALTY_BANDS,
   FLEE_CHANCE_BASE,
@@ -56,7 +55,6 @@ describe('combatConfig tuning locks', () => {
     expect(ACCURACY_MAX).toBe(95);
     expect(ACCURACY_WEAPON_WEIGHT).toBe(0.5);
     expect(ACCURACY_SKILL_WEIGHT).toBe(1.0);
-    expect(SHOOTING_RANGE_BONUS).toEqual({ 0: 0, 1: 1, 2: 3, 3: 6 });
     expect(COVER_ACCURACY_PENALTY).toBe(20);
     expect(HYDRATION_PENALTY_BANDS).toEqual([
       { below: 25, penalty: 10 },

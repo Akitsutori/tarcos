@@ -5,9 +5,9 @@ import {
   XP_KILL_BASE,
   XP_LOOT_VALUE_DIVISOR,
   XP_EXTRACTION_BONUS_MULTIPLIER,
-  XP_INTEL_MULTIPLIER_BY_LEVEL,
   ACTIVE_QUEST_POOL_SIZE,
 } from "../data/tuning/progressionConfig";
+import { XP_INTEL_MULTIPLIER_BY_LEVEL, XP_INTEL_MULTIPLIER_DEFAULT } from "../data/tuning/hideoutConfig";
 
 /**
  * Calculates snapshot progress for all active quests and distributes base XP.
@@ -35,7 +35,7 @@ export const finalizeQuestsAndXP = (state: GameState, isExtraction: boolean, hid
   // Intelligence Center XP multiplier
   const intelLevel = hideout.intelligenceCenter.level;
   if (intelLevel >= 1) {
-    const xpMultiplier = XP_INTEL_MULTIPLIER_BY_LEVEL[intelLevel] ?? 1.15;
+    const xpMultiplier = XP_INTEL_MULTIPLIER_BY_LEVEL[intelLevel] ?? XP_INTEL_MULTIPLIER_DEFAULT;
     baseXP = Math.floor(baseXP * xpMultiplier);
   }
 

@@ -17,7 +17,6 @@ export const ACCURACY_MIN = 5;
 export const ACCURACY_MAX = 95;
 export const ACCURACY_WEAPON_WEIGHT = 0.5;
 export const ACCURACY_SKILL_WEIGHT = 1.0;
-export const SHOOTING_RANGE_BONUS: Record<number, number> = { 0: 0, 1: 1, 2: 3, 3: 6 };
 export const COVER_ACCURACY_PENALTY = 20;
 export const HYDRATION_PENALTY_BANDS = [
   { below: 25, penalty: 10 },
