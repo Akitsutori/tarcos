@@ -1,6 +1,7 @@
 import { PMCCharacter, EnemyState, Weapon, RaidState, RaidLog, BodyPart, PMCBodyParts, ClassType, GameItem, CombatantView } from "../types";
 import { getWeaponStats } from "../data";
 import { createLog } from "./utils";
+import { EngineContext } from "./types";
 
 const createDefaultWeapon = (): Weapon => ({
   id: "assault_rifle",
@@ -58,7 +59,7 @@ const resolveBleeding = (actor: CombatantView, logs: RaidLog[], elapsedSeconds: 
 /**
  * Simulates a single round of combat using functional structural typing (CombatantView).
  */
-export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon: Weapon, weaponStats: any, elapsedSeconds: number, raid: RaidState, shootingRangeLevel: number): RaidLog[] => {
+export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon: Weapon, weaponStats: any, elapsedSeconds: number, raid: RaidState, shootingRangeLevel: number, context: EngineContext): RaidLog[] => {
   const roundLogs: RaidLog[] = [];
 
   // 1. Compose Views (Lenses)
@@ -240,7 +241,11 @@ export const simulateCombatRound = (pmc: PMCCharacter, enemy: EnemyState, weapon
         if (attacker.type === "pmc" && pmc.classType === ClassType.SOLDIER) bulletDmg = Math.floor(bulletDmg * 1.20);
         else if (attacker.type === "enemy" && pmc.classType === ClassType.SOLDIER) bulletDmg = Math.floor(bulletDmg * 0.85);
 
-        targetedPart.current = Math.max(0, targetedPart.current - bulletDmg);
+        context.emitIntent({
+          targetEntityId: defender.type === "pmc" ? "pmc" : "enemy",
+          type: "DAMAGE",
+          value: { bodyPart: targetedPartId, amount: bulletDmg },
+        });
         roundLogs.push(createLog(`[DMG] ${attacker.name} → ${defender.name} [${targetedPart.name.toUpperCase()}]: ${bulletDmg} dmg | Part HP: ${targetedPart.current}/${targetedPart.max}`, "combat_damage", elapsedSeconds));
 
         if (targetedPartId === "thorax" && targetedPart.current <= 0 && bulletDmg > targetedPart.current) {

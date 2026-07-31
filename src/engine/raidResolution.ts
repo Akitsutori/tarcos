@@ -1,0 +1,133 @@
+import { GameState, GameItem } from "../types";
+import { ARCHETYPE_WEIGHTS } from "../data";
+import { createLog } from "./utils";
+import { finalizeQuestsAndXP, refillQuests } from "./progression";
+
+/**
+ * Moves a single loot entry into the stash, merging with any existing stack.
+ */
+const moveIntoStash = (state: GameState, entry: { item: GameItem; quantity: number }) => {
+  const stashEntry = state.stash.items.find(st => st.item.id === entry.item.id);
+  if (stashEntry) stashEntry.quantity += entry.quantity;
+  else state.stash.items.push({ item: entry.item, quantity: entry.quantity });
+};
+
+/**
+ * Awards +25 Perception XP and levels the skill up if the threshold is crossed.
+ */
+const gainPerceptionXp = (state: GameState) => {
+  const pmc = state.pmc;
+  const raid = state.activeRaid;
+  const perception = pmc.skills.perception;
+  perception.xp += 25;
+  if (perception.xp >= perception.maxXp) {
+    perception.level++;
+    perception.xp -= perception.maxXp;
+    raid.logs.push(createLog(`SKILL INCREASE: Perception reached Level ${perception.level}!`, "info", raid.elapsedSeconds));
+  }
+};
+
+/**
+ * Rolls the PMC level-up loop until XP no longer meets the threshold,
+ * awarding a weighted skill point per level via ARCHETYPE_WEIGHTS.
+ */
+const levelUpLoop = (state: GameState) => {
+  const pmc = state.pmc;
+  const raid = state.activeRaid;
+  while (pmc.xp >= pmc.maxXp) {
+    pmc.level++;
+    pmc.xp -= pmc.maxXp;
+    pmc.maxXp = pmc.level * 200;
+    raid.logs.push(createLog(`PMC LEVELED UP! Level reached: ${pmc.level}!`, "info", raid.elapsedSeconds));
+
+    const weights = ARCHETYPE_WEIGHTS[pmc.classType];
+    const keys = Object.keys(weights) as (keyof typeof weights)[];
+    const sumWeights = keys.reduce((acc, k) => acc + (weights[k] as number), 0);
+    let rand = Math.random() * sumWeights;
+    for (const key of keys) {
+      rand -= (weights[key] as number);
+      if (rand <= 0) {
+        pmc.skills[key].level++;
+        raid.logs.push(createLog(`Skill Award: ${pmc.skills[key].name} upgraded to Level ${pmc.skills[key].level}!`, "info", raid.elapsedSeconds));
+        break;
+      }
+    }
+  }
+};
+
+/**
+ * Resolves a fatal raid outcome: flags the raid as KIA, transfers secure
+ * container contents to the stash, and runs the shared death XP pipeline.
+ *
+ * @param state The global GameState (mutated)
+ * @param reason Which fatality triggered the death pipeline
+ */
+export const handleKIA = (state: GameState, reason: "dehydration" | "combat"): void => {
+  const raid = state.activeRaid;
+  const pmc = state.pmc;
+
+  raid.status = "kia";
+  pmc.kiaCount++;
+  pmc.raidsCount++;
+  state.pastRaidOutcomes.push("kia");
+  raid.isActive = false;
+
+  raid.secureContainerSaved.forEach((containerEntry) => {
+    const stashEntry = state.stash.items.find(i => i.item.id === containerEntry.item.id);
+    if (stashEntry) stashEntry.quantity += containerEntry.quantity;
+    else state.stash.items.push({ item: containerEntry.item, quantity: containerEntry.quantity });
+  });
+
+  const { logs: questLogs, earnedXp } = finalizeQuestsAndXP(state, false, state.hideout);
+  pmc.xp += earnedXp;
+  raid.logs.push(...questLogs);
+
+  const deathMessage = reason === "dehydration"
+    ? "PMC KIA from dehydration/starvation!"
+    : "PMC KIA in combat!";
+  raid.logs.push(createLog(`${deathMessage} Earned +${earnedXp} cumulative XP in raid.`, "death", raid.elapsedSeconds));
+
+  gainPerceptionXp(state);
+  levelUpLoop(state);
+
+  pmc.survivalRate = Math.floor((pmc.survivedCount / pmc.raidsCount) * 100);
+};
+
+/**
+ * Resolves a successful raid: flags the raid as extracted, banks all loot,
+ * restores equipment durability, and runs the shared extraction XP pipeline.
+ *
+ * @param state The global GameState (mutated)
+ */
+export const handleExtraction = (state: GameState): void => {
+  const raid = state.activeRaid;
+  const pmc = state.pmc;
+
+  raid.status = "extracted";
+  pmc.survivedCount++;
+  pmc.raidsCount++;
+  state.pastRaidOutcomes.push("extracted");
+  raid.isActive = false;
+
+  const { logs: questLogs, earnedXp } = finalizeQuestsAndXP(state, true, state.hideout);
+  pmc.xp += earnedXp;
+  raid.logs.push(...questLogs);
+  raid.logs.push(createLog(`PMC extracted successfully! Earned +${earnedXp} cumulative XP in raid.`, "extract", raid.elapsedSeconds));
+
+  gainPerceptionXp(state);
+  levelUpLoop(state);
+
+  refillQuests(state);
+
+  raid.lootFound.forEach((entry) => moveIntoStash(state, entry));
+  raid.secureContainerSaved.forEach((entry) => moveIntoStash(state, entry));
+
+  if (pmc.equippedArmor && pmc.equippedArmor.durability !== undefined && pmc.equippedArmor.maxDurability !== undefined) {
+    pmc.equippedArmor.durability = pmc.equippedArmor.maxDurability;
+  }
+  if (pmc.equippedHelmet && pmc.equippedHelmet.durability !== undefined && pmc.equippedHelmet.maxDurability !== undefined) {
+    pmc.equippedHelmet.durability = pmc.equippedHelmet.maxDurability;
+  }
+
+  pmc.survivalRate = Math.floor((pmc.survivedCount / pmc.raidsCount) * 100);
+};

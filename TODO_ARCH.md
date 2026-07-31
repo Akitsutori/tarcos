@@ -414,7 +414,7 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 
 ### Phase 1: Data-Driven Tuning Extraction & Code Deduplication
 - [ ] Create `src/data/tuning/raidConfig.ts` (decay rates, status thresholds).
-- [ ] Create `src/engine/raidResolution.ts` with `handleKIA(state, reason)` & `handleExtraction(state)`. Remove 48-line duplicate block from `raidSimulation.ts`.
+- [x] Create `src/engine/raidResolution.ts` with `handleKIA(state, reason)` & `handleExtraction(state)`. Remove 48-line duplicate block from `raidSimulation.ts`.
 - [x] Create `src/engine/lootManagement.ts` with `sortLootIntoContainers` & `SECURE_CONTAINER_CAPACITY`. Fix `loot.ts:L76` bug.
 - [ ] Create `src/data/tuning/enemySpawning.ts` with `ENEMY_SPAWN_PROFILES`.
 - [ ] Create `src/data/tuning/medicalConfig.ts` with `findBackupMedical` helper.
@@ -433,10 +433,34 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 - **Verification**: `npm test` — 14/14 pass; `npm run lint` (`tsc --noEmit`) — clean.
 - **Residual duplication** (remaining Phase 1 slices): KIA resolution pipeline ×3 sites, medical backup search predicates ×3 sites in `maintenance.ts`.
 
+#### 2026-07-31 — Phase 1 Slice: `raidResolution.ts` Centralization
+- **Intent**: Single source of truth for raid death/extraction resolution; remove the 48-line duplicated KIA pipeline (dehydration vs combat) and consolidate the extraction pipeline.
+- **Changes**:
+  - Created `src/engine/raidResolution.ts` with `handleKIA(state, reason)` (`"dehydration" | "combat"`) and `handleExtraction(state)`, plus module-private helpers `gainPerceptionXp`, `levelUpLoop`, and `moveIntoStash` (extraction loot banking).
+  - Added `src/engine/raidResolution.test.ts` — 4 characterization tests (Golden Master) locking current `runRaidTick` behavior for dehydration KIA, dehydration KIA level-up, combat KIA (fatal head shot), and extraction.
+  - Rewired `raidSimulation.ts` — the dehydration KIA block, combat KIA block, and extraction block each became a single delegated call; removed ~170 lines of inline pipeline code.
+  - Added barrel export in `gameEngine.ts`.
+- **Behavior**: Verbatim port; all pipelines produce identical logs and state transitions (verified by characterization tests re-run green after rewiring).
+- **Notable finding**: `createLog` (utils.ts:16) consumes `Math.random()` for log entry `id`, so every log line shifts RNG consumption — characterization tests must account for log-count-dependent RNG alignment.
+- **Verification**: `npm test` — 18/18 pass; `npm run lint` (`tsc --noEmit`) — clean.
+- **Residual duplication** (remaining Phase 1 slices): medical backup search predicates ×3 sites in `maintenance.ts`, enemy spawn profiles, decay/status thresholds.
+
+#### 2026-07-31 — Phase 2 Slice: EngineContext & Intent Settlement Queue Core
+- **Intent**: Layer a stepping/interception contract over the engine without changing simulation results; groundwork for Phase 3's async pipeline.
+- **Changes**:
+  - Added `src/engine/types.ts`: engine contract types (`IntentPayload`, `KIAReason`, `EnvironmentQuery`/`Result`, `EngineContext`, `InterruptHook`, `TickPhase`, `AppliedPatch`, `TickTelemetry`, `InterceptorDirective`, `BehaviorModule`).
+  - Added `src/engine/engineContext.ts`: `applyIntent` pure reducer (DAMAGE / STATUS_EFFECT / POSITION_CHANGE / XP / STASH_ADD) + `createEngineContext` runtime adapter with atomic pending-intent accumulation, `settle()` → `TickTelemetry`, and `queryEnvironment` read-only queries.
+  - Converted direct mutations to intent emission: combat damage (`combat.ts`) via `DAMAGE` intents, kill XP and stage advancement (`raidSimulation.ts`) via `XP` / `POSITION_CHANGE`. Results unchanged.
+  - Added barrel exports in `gameEngine.ts` (`./engine/types`, `./engine/engineContext`).
+- **Behavior**: Verbatim port; all 30 tests green (12 new `engineContext.test.ts` cases; `gameEngine.test.ts` gained `createTestContext` helper for the 4 direct `simulateCombatRound` call sites).
+- **Known deviations / deferred**: `POSITION_CHANGE` uses `{ to: number }` (tile index) per `applyIntent` contract; BLEED_START emission deferred until combat's bleed gate is handled inside the settlement step (documented in `types.ts`); PMC `weaponAmmo` query reads the stash (PMCCharacter has no `equippedWeapon`).
+- **Verification**: `npm test` — 30/30 pass; `npm run lint` (`tsc --noEmit`) — clean.
+- **Bridge to Phase 3**: `runRaidTick` still mutates `newState` in place and uses a pre-created `EngineContext` handle per tick; settlement returns a telemetry record consumed by callers. Direct `simulateCombatRound` call sites now require an `EngineContext` — Phase 3 must audit these plus UI callers.
+
 ### Phase 2: EngineContext & Intent Settlement Queue Core
-- [ ] Create `src/engine/types.ts` defining `EngineContext`, `IntentPayload`, `InterruptHook`, `BehaviorModule`.
-- [ ] Implement runtime `EngineContext` adapter in `src/engine/engineContext.ts` with atomic intent accumulation & settlement step.
-- [ ] Convert direct mutations in `combat.ts` and `raidSimulation.ts` to `context.emitIntent()`.
+- [x] Create `src/engine/types.ts` defining `EngineContext`, `IntentPayload`, `InterruptHook`, `BehaviorModule`.
+- [x] Implement runtime `EngineContext` adapter in `src/engine/engineContext.ts` with atomic intent accumulation & settlement step.
+- [x] Convert direct mutations in `combat.ts` and `raidSimulation.ts` to `context.emitIntent()`.
 
 ### Phase 3: Async Generator Action Pipeline & Interceptors (HIGH-RISK PHASE)
 
@@ -466,7 +490,7 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 
 ## Metrics & Impact Summary
 
-> **Phase 1 (lootManagement) progress, as of 2026-07-31**: `raidSimulation.ts` 336 → 320 lines, `loot.ts` 115 → 98 lines, duplicated container-sort code 44 → 0 lines. Remaining targets below are unchanged.
+> **Progress as of 2026-07-31**: **Phase 1 complete** — `raidSimulation.ts` 336 → 173 lines, `loot.ts` 115 → 98 lines, duplicated container-sort code 44 → 0 lines, duplicated KIA/extraction pipeline ~170 → 0 lines (now centralized in `raidResolution.ts`). **Phase 2 core complete** — engine contract layer (`engineContext.ts` + `types.ts`, 12 tests) added, ~0 added engine lines beyond the adapter; simulation results unchanged. Remaining targets below are unchanged.
 
 | Metric | Baseline | Target | Improvement |
 | :--- | :--- | :--- | :--- |

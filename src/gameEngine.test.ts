@@ -1,7 +1,23 @@
 import { describe, it, expect } from 'vitest';
 import { spawnEnemy, getBackpackCapacity, rollLootItem, simulateCombatRound } from './gameEngine';
-import { ALL_MAPS, ALL_ITEMS, INITIAL_WEAPONS, getWeaponStats, createInitialPMC } from './data';
-import { ClassType, RaidState } from './types';
+import { ALL_MAPS, ALL_ITEMS, INITIAL_WEAPONS, getWeaponStats, createInitialPMC, createInitialHideout } from './data';
+import { ClassType, RaidState, GameState, PMCCharacter, EnemyState, Weapon } from './types';
+import { createEngineContext } from './engine/engineContext';
+import { EngineContext } from './engine/types';
+
+const createTestContext = (pmc: PMCCharacter, enemy: EnemyState, weapon: Weapon, raid: RaidState): EngineContext => {
+  const state: GameState = {
+    pmc,
+    stash: { items: [], roubles: 0, weapons: [weapon], equippedWeaponId: weapon.id },
+    hideout: createInitialHideout(),
+    activeRaid: raid,
+    selectedMapId: ALL_MAPS[0].id,
+    activeQuests: [],
+    completedQuestIds: [],
+    pastRaidOutcomes: [],
+  };
+  return createEngineContext(state).context;
+};
 
 describe('GameEngine Basics', () => {
   it('calculates backpack capacity correctly based on constitution', () => {
@@ -65,7 +81,9 @@ describe('Combat Diagnostics', () => {
 
     for (let round = 0; round < 20; round++) {
       const raid = createMockRaid();
-      const logs = simulateCombatRound(pmc, enemy, weapon, weaponStats, 60 + round * 15, raid, 0);
+      raid.combatTarget = enemy;
+      const context = createTestContext(pmc, enemy, weapon, raid);
+      const logs = simulateCombatRound(pmc, enemy, weapon, weaponStats, 60 + round * 15, raid, 0, context);
 
       totalBurstLogs += logs.filter(l => l.message.includes('burst spray')).length;
       totalAccLogs += logs.filter(l => l.message.includes('[ACC]')).length;
@@ -96,7 +114,9 @@ describe('Combat Diagnostics', () => {
 
     for (let i = 0; i < 20; i++) {
       const raid = createMockRaid();
-      simulateCombatRound(pmc, enemy, weapon, weaponStats, 60 + i * 15, raid, 0);
+      raid.combatTarget = enemy;
+      const context = createTestContext(pmc, enemy, weapon, raid);
+      simulateCombatRound(pmc, enemy, weapon, weaponStats, 60 + i * 15, raid, 0, context);
       const pmcDead = pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0;
       const enemyDead = enemy.bodyParts.head.current <= 0 || enemy.bodyParts.thorax.current <= 0;
       if (pmcDead || enemyDead) break;
@@ -123,7 +143,9 @@ describe('Combat Diagnostics', () => {
     let roundLogs: string[] = [];
     for (let i = 0; i < 20; i++) {
       const raid = createMockRaid();
-      const logs = simulateCombatRound(pmc, enemy, weapon, weaponStats, 60 + i * 15, raid, 0);
+      raid.combatTarget = enemy;
+      const context = createTestContext(pmc, enemy, weapon, raid);
+      const logs = simulateCombatRound(pmc, enemy, weapon, weaponStats, 60 + i * 15, raid, 0, context);
       const rounds = logs.filter(l => l.type === "combat_round");
       rounds.forEach(l => roundLogs.push(l.message));
 
@@ -147,7 +169,9 @@ describe('Combat Diagnostics', () => {
     let combatResolved = false;
     for (let tick = 0; tick < 100; tick++) {
       const raid = createMockRaid();
-      simulateCombatRound(pmc, enemy, weapon, weaponStats, 60 + tick * 15, raid, 0);
+      raid.combatTarget = enemy;
+      const context = createTestContext(pmc, enemy, weapon, raid);
+      simulateCombatRound(pmc, enemy, weapon, weaponStats, 60 + tick * 15, raid, 0, context);
 
       const pmcDead = pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0;
       const enemyDead = enemy.bodyParts.head.current <= 0 || enemy.bodyParts.thorax.current <= 0;

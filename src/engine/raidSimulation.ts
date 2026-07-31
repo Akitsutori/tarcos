@@ -1,12 +1,13 @@
-import { GameState, ClassType, GameItem } from "../types";
-import { getWeaponStats, ARCHETYPE_WEIGHTS, buildProceduralMap } from "../data";
+import { GameState, ClassType } from "../types";
+import { getWeaponStats, buildProceduralMap } from "../data";
 import { createLog } from "./utils";
 import { spawnEnemy } from "./spawning";
 import { executeLootPhase, rollLootItem, getBackpackCapacity } from "./loot";
 import { SECURE_CONTAINER_CAPACITY, sortLootIntoContainers } from "./lootManagement";
 import { executeMaintenancePhase } from "./maintenance";
-import { finalizeQuestsAndXP, refillQuests } from "./progression";
 import { simulateCombatRound } from "./combat";
+import { handleKIA, handleExtraction } from "./raidResolution";
+import { createEngineContext } from "./engineContext";
 
 /**
  * Executes a single simulation tick for the active raid.
@@ -19,6 +20,8 @@ export const runRaidTick = (state: GameState): GameState => {
   if (!state.activeRaid.isActive || !state.activeRaid.map) return state;
 
   const newState = JSON.parse(JSON.stringify(state)) as GameState;
+  const engine = createEngineContext(newState);
+  const context = engine.context;
   const raid = newState.activeRaid;
   const pmc = newState.pmc;
   const map = raid.map!;
@@ -54,108 +57,18 @@ export const runRaidTick = (state: GameState): GameState => {
 
   // Dehydration KIA Handling
   if (pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0) {
-    raid.status = "kia";
-    pmc.kiaCount++;
-    pmc.raidsCount++;
-    newState.pastRaidOutcomes.push("kia");
-    raid.isActive = false;
-
-    raid.secureContainerSaved.forEach((containerEntry) => {
-      const stashEntry = newState.stash.items.find(i => i.item.id === containerEntry.item.id);
-      if (stashEntry) stashEntry.quantity += containerEntry.quantity;
-      else newState.stash.items.push({ item: containerEntry.item, quantity: containerEntry.quantity });
-    });
-
-    const { logs: questLogs, earnedXp } = finalizeQuestsAndXP(newState, false, newState.hideout);
-    pmc.xp += earnedXp;
-    raid.logs.push(...questLogs);
-    raid.logs.push(createLog(`PMC KIA from dehydration/starvation! Earned +${earnedXp} cumulative XP in raid.`, "death", raid.elapsedSeconds));
-
-    const perception = pmc.skills.perception;
-    perception.xp += 25;
-    if (perception.xp >= perception.maxXp) {
-      perception.level++;
-      perception.xp -= perception.maxXp;
-      raid.logs.push(createLog(`SKILL INCREASE: Perception reached Level ${perception.level}!`, "info", raid.elapsedSeconds));
-    }
-
-    while (pmc.xp >= pmc.maxXp) {
-      pmc.level++;
-      pmc.xp -= pmc.maxXp;
-      pmc.maxXp = pmc.level * 200;
-      raid.logs.push(createLog(`PMC LEVELED UP! Level reached: ${pmc.level}!`, "info", raid.elapsedSeconds));
-
-      const weights = ARCHETYPE_WEIGHTS[pmc.classType];
-      const keys = Object.keys(weights) as (keyof typeof weights)[];
-      const sumWeights = keys.reduce((acc, k) => acc + (weights[k] as number), 0);
-      let rand = Math.random() * sumWeights;
-      for (const key of keys) {
-        rand -= (weights[key] as number);
-        if (rand <= 0) {
-          pmc.skills[key].level++;
-          raid.logs.push(createLog(`Skill Award: ${pmc.skills[key].name} upgraded to Level ${pmc.skills[key].level}!`, "info", raid.elapsedSeconds));
-          break;
-        }
-      }
-    }
-
-    pmc.survivalRate = Math.floor((pmc.survivedCount / pmc.raidsCount) * 100);
+    handleKIA(newState, "dehydration");
     return newState;
   }
 
   // Combat State
   if (raid.status === "combat" && raid.combatTarget) {
     const enemy = raid.combatTarget;
-    const combatLogs = simulateCombatRound(pmc, enemy, equippedWeapon, weaponStats, raid.elapsedSeconds, raid, newState.hideout.shootingRange.level);
+    const combatLogs = simulateCombatRound(pmc, enemy, equippedWeapon, weaponStats, raid.elapsedSeconds, raid, newState.hideout.shootingRange.level, context);
     raid.logs.push(...combatLogs);
 
     if (pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0) {
-      raid.status = "kia";
-      pmc.kiaCount++;
-      pmc.raidsCount++;
-      newState.pastRaidOutcomes.push("kia");
-      raid.isActive = false;
-
-      raid.secureContainerSaved.forEach((containerEntry) => {
-        const stashEntry = newState.stash.items.find(i => i.item.id === containerEntry.item.id);
-        if (stashEntry) stashEntry.quantity += containerEntry.quantity;
-        else newState.stash.items.push({ item: containerEntry.item, quantity: containerEntry.quantity });
-      });
-
-      const { logs: questLogs, earnedXp } = finalizeQuestsAndXP(newState, false, newState.hideout);
-      pmc.xp += earnedXp;
-      raid.logs.push(...questLogs);
-      raid.logs.push(createLog(`PMC KIA in combat! Earned +${earnedXp} cumulative XP in raid.`, "death", raid.elapsedSeconds));
-
-      const perception = pmc.skills.perception;
-      perception.xp += 25;
-      if (perception.xp >= perception.maxXp) {
-        perception.level++;
-        perception.xp -= perception.maxXp;
-        raid.logs.push(createLog(`SKILL INCREASE: Perception reached Level ${perception.level}!`, "info", raid.elapsedSeconds));
-      }
-
-      while (pmc.xp >= pmc.maxXp) {
-        pmc.level++;
-        pmc.xp -= pmc.maxXp;
-        pmc.maxXp = pmc.level * 200;
-        raid.logs.push(createLog(`PMC LEVELED UP! Level reached: ${pmc.level}!`, "info", raid.elapsedSeconds));
-
-        const weights = ARCHETYPE_WEIGHTS[pmc.classType];
-        const keys = Object.keys(weights) as (keyof typeof weights)[];
-        const sumWeights = keys.reduce((acc, k) => acc + (weights[k] as number), 0);
-        let rand = Math.random() * sumWeights;
-        for (const key of keys) {
-          rand -= (weights[key] as number);
-          if (rand <= 0) {
-            pmc.skills[key].level++;
-            raid.logs.push(createLog(`Skill Award: ${pmc.skills[key].name} upgraded to Level ${pmc.skills[key].level}!`, "info", raid.elapsedSeconds));
-            break;
-          }
-        }
-      }
-
-      pmc.survivalRate = Math.floor((pmc.survivedCount / pmc.raidsCount) * 100);
+      handleKIA(newState, "combat");
       return newState;
     }
 
@@ -169,7 +82,7 @@ export const runRaidTick = (state: GameState): GameState => {
       }
 
       const targetXP = enemy.tier === "Boss" ? 80 : enemy.tier === "PMC" ? 45 : 20;
-      pmc.xp += targetXP;
+      context.emitIntent({ targetEntityId: "pmc", type: "XP", value: targetXP });
       raid.logs.push(createLog(`Neutralized target of tier ${enemy.tier}. Earned +${targetXP} XP.`, "info", raid.elapsedSeconds));
 
       const weaponSkill = pmc.skills.weaponSkill;
@@ -221,7 +134,7 @@ export const runRaidTick = (state: GameState): GameState => {
         executeMaintenancePhase(pmc, raid, equippedWeapon);
         executeLootPhase(pmc, raid, map, newState.hideout.intelligenceCenter.level);
 
-        raid.currentStage++;
+        context.emitIntent({ targetEntityId: "raid", type: "POSITION_CHANGE", value: { to: raid.currentStage + 1 } });
       }
     }
     return newState;
@@ -240,64 +153,7 @@ export const runRaidTick = (state: GameState): GameState => {
   }
 
   if (!currentTile || currentTile.type === "extraction" || raid.currentStage >= raid.tiles.length) {
-    raid.status = "extracted";
-    pmc.survivedCount++;
-    pmc.raidsCount++;
-    newState.pastRaidOutcomes.push("extracted");
-    raid.isActive = false;
-
-    const { logs: questLogs, earnedXp } = finalizeQuestsAndXP(newState, true, newState.hideout);
-    pmc.xp += earnedXp;
-    raid.logs.push(...questLogs);
-    raid.logs.push(createLog(`PMC extracted successfully! Earned +${earnedXp} cumulative XP in raid.`, "extract", raid.elapsedSeconds));
-
-    const perception = pmc.skills.perception;
-    perception.xp += 25;
-    if (perception.xp >= perception.maxXp) {
-      perception.level++;
-      perception.xp -= perception.maxXp;
-      raid.logs.push(createLog(`SKILL INCREASE: Perception reached Level ${perception.level}!`, "info", raid.elapsedSeconds));
-    }
-
-    while (pmc.xp >= pmc.maxXp) {
-      pmc.level++;
-      pmc.xp -= pmc.maxXp;
-      pmc.maxXp = pmc.level * 200;
-      raid.logs.push(createLog(`PMC LEVELED UP! Level reached: ${pmc.level}!`, "info", raid.elapsedSeconds));
-
-      const weights = ARCHETYPE_WEIGHTS[pmc.classType];
-      const keys = Object.keys(weights) as (keyof typeof weights)[];
-      const sumWeights = keys.reduce((acc, k) => acc + (weights[k] as number), 0);
-      let rand = Math.random() * sumWeights;
-      for (const key of keys) {
-        rand -= (weights[key] as number);
-        if (rand <= 0) {
-          pmc.skills[key].level++;
-          raid.logs.push(createLog(`Skill Award: ${pmc.skills[key].name} upgraded to Level ${pmc.skills[key].level}!`, "info", raid.elapsedSeconds));
-          break;
-        }
-      }
-    }
-
-    refillQuests(newState);
-
-    const moveIntoStash = (entry: { item: GameItem; quantity: number }) => {
-      const stashEntry = newState.stash.items.find(st => st.item.id === entry.item.id);
-      if (stashEntry) stashEntry.quantity += entry.quantity;
-      else newState.stash.items.push({ item: entry.item, quantity: entry.quantity });
-    };
-
-    raid.lootFound.forEach(moveIntoStash);
-    raid.secureContainerSaved.forEach(moveIntoStash);
-
-    if (pmc.equippedArmor && pmc.equippedArmor.durability !== undefined && pmc.equippedArmor.maxDurability !== undefined) {
-      pmc.equippedArmor.durability = pmc.equippedArmor.maxDurability;
-    }
-    if (pmc.equippedHelmet && pmc.equippedHelmet.durability !== undefined && pmc.equippedHelmet.maxDurability !== undefined) {
-      pmc.equippedHelmet.durability = pmc.equippedHelmet.maxDurability;
-    }
-
-    pmc.survivalRate = Math.floor((pmc.survivedCount / pmc.raidsCount) * 100);
+    handleExtraction(newState);
     return newState;
   }
 
@@ -313,7 +169,7 @@ export const runRaidTick = (state: GameState): GameState => {
   } else {
     executeLootPhase(pmc, raid, map, newState.hideout.intelligenceCenter.level);
     executeMaintenancePhase(pmc, raid, equippedWeapon);
-    raid.currentStage++;
+    context.emitIntent({ targetEntityId: "raid", type: "POSITION_CHANGE", value: { to: raid.currentStage + 1 } });
   }
 
   return newState;

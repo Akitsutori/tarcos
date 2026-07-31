@@ -5,4 +5,7 @@ export * from "./engine/lootManagement";
 export * from "./engine/progression";
 export * from "./engine/combat";
 export * from "./engine/maintenance";
+export * from "./engine/raidResolution";
 export * from "./engine/raidSimulation";
+export * from "./engine/types";
+export * from "./engine/engineContext";
