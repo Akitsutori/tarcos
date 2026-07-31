@@ -1,4 +1,4 @@
-import { PMCCharacter, EnemyState, Weapon, RaidState, RaidLog, BodyPart, PMCBodyParts, ClassType, GameItem, CombatantView } from "../types";
+import { PMCCharacter, EnemyState, Weapon, WeaponStats, RaidState, RaidLog, BodyPart, PMCBodyParts, ClassType, GameItem, CombatantView } from "../types";
 import { getWeaponStats } from "../data/construction";
 import { createLog } from "./utils";
 import { BODY_PART_ORDER, DAMAGE_SPILLOVER_ORDER } from "./bodyParts";
@@ -101,7 +101,7 @@ const resolveBleeding = (actor: CombatantView, logs: RaidLog[], elapsedSeconds: 
  * reproduces the original synchronous combat round byte-for-byte.
  */
 export const simulateCombatRoundGenerator = function* (
-  pmc: PMCCharacter, enemy: EnemyState, weapon: Weapon, weaponStats: any, elapsedSeconds: number, raid: RaidState, shootingRangeLevel: number, context: EngineContext
+  pmc: PMCCharacter, enemy: EnemyState, weapon: Weapon, weaponStats: WeaponStats, elapsedSeconds: number, raid: RaidState, shootingRangeLevel: number, context: EngineContext
 ): Generator<InterruptHook, RaidLog[], unknown> {
   const roundLogs: RaidLog[] = [];
 
@@ -376,7 +376,7 @@ export const simulateCombatRoundGenerator = function* (
 
 /** Synchronously drains the combat generator and returns the round logs. */
 export const simulateCombatRound = (
-  pmc: PMCCharacter, enemy: EnemyState, weapon: Weapon, weaponStats: any, elapsedSeconds: number, raid: RaidState, shootingRangeLevel: number, context: EngineContext
+  pmc: PMCCharacter, enemy: EnemyState, weapon: Weapon, weaponStats: WeaponStats, elapsedSeconds: number, raid: RaidState, shootingRangeLevel: number, context: EngineContext
 ): RaidLog[] => {
   const gen = simulateCombatRoundGenerator(pmc, enemy, weapon, weaponStats, elapsedSeconds, raid, shootingRangeLevel, context);
   let result = gen.next();

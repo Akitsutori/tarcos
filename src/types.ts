@@ -165,6 +165,15 @@ export interface Weapon {
   maxReserveMags: number;
 }
 
+/** Computed weapon stats after mods and workbench level (see getWeaponStats). */
+export interface WeaponStats {
+  ergo: number;
+  recoil: number;
+  dmg: number;
+  accuracy: number;
+  critBonus: number;
+}
+
 export interface Stash {
   items: {
     item: GameItem;

@@ -76,14 +76,15 @@ export const useGameSave = () => {
         if (parsed.pmc.isCovered === undefined) parsed.pmc.isCovered = false;
         if (parsed.pmc.isDead === undefined) parsed.pmc.isDead = false;
 
-        // Migrate old RaidState fields to PMCCharacter (Phase 2 migration)
-        if ((parsed.activeRaid as any)?.pmcIsBleeding !== undefined) {
-          parsed.pmc.isBleeding = parsed.pmc.isBleeding || (parsed.activeRaid as any).pmcIsBleeding;
-          delete (parsed.activeRaid as any).pmcIsBleeding;
+        // Migrate old RaidState fields to PMCCharacter (legacy save-schema migration)
+        const legacyRaid = parsed.activeRaid as unknown as { pmcIsBleeding?: boolean; pmcIsCovered?: boolean };
+        if (legacyRaid.pmcIsBleeding !== undefined) {
+          parsed.pmc.isBleeding = parsed.pmc.isBleeding || legacyRaid.pmcIsBleeding;
+          delete legacyRaid.pmcIsBleeding;
         }
-        if ((parsed.activeRaid as any)?.pmcIsCovered !== undefined) {
-          parsed.pmc.isCovered = parsed.pmc.isCovered || (parsed.activeRaid as any).pmcIsCovered;
-          delete (parsed.activeRaid as any).pmcIsCovered;
+        if (legacyRaid.pmcIsCovered !== undefined) {
+          parsed.pmc.isCovered = parsed.pmc.isCovered || legacyRaid.pmcIsCovered;
+          delete legacyRaid.pmcIsCovered;
         }
         if (!parsed.stash) parsed.stash = defaultState.stash;
         if (!parsed.hideout) parsed.hideout = defaultState.hideout;

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { GameItem, Weapon, ClassType, HideoutModule, Skill, CharacterSkills, PMCCharacter, Hideout, PMCBodyParts } from "../types";
+import { GameItem, Weapon, WeaponStats, ClassType, HideoutModule, Skill, CharacterSkills, PMCCharacter, Hideout, PMCBodyParts } from "../types";
 import { CLASS_PASSIVES } from "./tuning/combatBalance";
 import { XP_PER_LEVEL } from "./tuning/progressionConfig";
 import { WORKBENCH_LEVEL_BONUS } from "./tuning/hideoutConfig";
@@ -148,7 +148,7 @@ export const createInitialHideout = (): Hideout => {
 };
 
 // Get computed weapon stats (incorporating modifications and hideout workbench level)
-export const getWeaponStats = (weapon: Weapon, workbenchLevel: number) => {
+export const getWeaponStats = (weapon: Weapon, workbenchLevel: number): WeaponStats => {
   if (!weapon) {
     return {
       ergo: 50,
