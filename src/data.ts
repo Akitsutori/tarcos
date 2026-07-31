@@ -4,6 +4,7 @@
  */
 
 import { GameItem, Weapon, WeaponModCategory, ClassType, MapData, HideoutModule, Skill, CharacterSkills, PMCCharacter, Hideout, Quest, PMCBodyParts, BodyPart, RoomTile } from "./types";
+import { getStartingArmorId } from "./engine/behaviors/classPassives";
 
 // All static items database — plain objects, all properties explicit, rarity set directly
 export const ALL_ITEMS: { [id: string]: GameItem } = {
@@ -364,8 +365,9 @@ export const createInitialPMC = (classType: ClassType): PMCCharacter => {
   let startingSurgical: GameItem | null = { ...ALL_ITEMS.cms_kit };
   let startingProvision: GameItem | null = { ...ALL_ITEMS.water_bottle };
 
-  if (classType === ClassType.LUCKY) {
-    startingArmor = { ...ALL_ITEMS.armor_6b23 }; // Class 3
+  const startingArmorId = getStartingArmorId(classType);
+  if (startingArmorId) {
+    startingArmor = { ...ALL_ITEMS[startingArmorId] }; // e.g. LUCKY: armor_6b23 (Class 3)
   }
 
   return {

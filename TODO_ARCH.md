@@ -517,6 +517,17 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 - **Verification**: `npm test` — 64/64 pass; `npm run lint` (`tsc --noEmit`) — clean.
 - **Bridge to Phase 4**: `BehaviorModule.execute` and the hook stream are ready for interceptor plugins; `settle()` telemetry and the immutable state contract are in place for the hideout `ModuleInstance` adapter.
 
+#### 2026-07-31 — Phase 4 Slice: PMC Class Passives → `src/engine/behaviors/`
+- **Intent**: Close the "scattered PMC class passives" coupling — replace every inline `classType === ClassType.X` passive conditional in the engine with reads through a single Strategy-pattern registry whose values live in the tuning data layer.
+- **Changes**:
+  - Added `src/data/tuning/combatBalance.ts` (pure data, imports only `ClassType` — no `data.ts` cycle): `ClassPassiveConfig` + `CLASS_PASSIVES: Record<ClassType, ClassPassiveConfig>` covering all 5 enum keys (MARKSMAN = `{}`, no passives). All pre-existing magic numbers preserved exactly: SOLDIER 1.2/0.85, SCOUT burst 3–7 / 9x19 pen 32 / dodge x2.0, SURVIVOR free reload, LUCKY 0.15 fatal-survive / +1 loot / `armor_6b23`.
+  - Added `src/engine/behaviors/classPassives.ts` (registry facade): `getClassPassive`, `isFreeReloader`, `isSmgPassive`, `getBurstRange`, `getSmgPenetration`, `getDodgeMultiplier`, `getDamageMultipliers`, `getFatalSurviveChance`, `getLuckyLootRolls`, `getStartingArmorId`. Defaults reproduce baseline behavior (burst 1–5, pen 20, dodge x1.0, neutral multipliers, no passives).
+  - Rewired 8 touchpoints: `combat.ts` (free reload, SMG burst sizing, 9x19 pen, defender dodge, SOLDIER outgoing/incoming damage, LUCKY fatal-survive), `raidSimulation.ts` (LUCKY +1 loot roll), `data.ts` (LUCKY starting armor via `ALL_ITEMS[id]`). SOLDIER/SCOUT lookups stay keyed on `pmc.classType` direction-aware (passive applies even when the enemy is the actor).
+  - Added `combatBalance.test.ts` (6 tests): config completeness for all 5 `ClassType`s, per-class passive value locks, MARKSMAN-empty, and registry-helper fallback behavior.
+- **Behavior**: Byte-for-byte parity — goldens NOT regenerated and still pass against the committed transcripts (70/70 suite green: constants-for-constants replacement, no RNG-order drift).
+- **Verification**: `npm test` — 70/70 pass; `npm run lint` (`tsc --noEmit`) — clean. Grep confirms zero `ClassType.` passive conditionals remain in `combat.ts`/`raidSimulation.ts`/`data.ts` (only legitimate per-class data keys: `INITIAL_WEAPONS`, `ARCHETYPE_WEIGHTS`, default-weapon `signatureClass`).
+- **Bridge to Phase 4 item 2**: class passives deliberately remain a Strategy config layer (NOT the `BehaviorModule` async-interceptor contract — that is reserved for the hideout `ModuleInstance` adapter); the hideout plugin system can now consume the same `AFTER_RAID_END` hook stream without re-architecting the combat hot loop.
+
 ### Phase 3: Async Generator Action Pipeline & Interceptors (HIGH-RISK PHASE)
 
 > [!WARNING]
@@ -533,7 +544,7 @@ The following 6 guardrails govern all future human and AI-agent contributions to
   - *Replacement Mechanism*: Ensure `EngineContext` settlement produces a fresh state reference atomically via structural patching (or shallow `Object.assign`/`Immer` patches) at the end of settlement steps, replacing full-tree stringify deep cloning without breaking caller immutability expectations.
 
 ### Phase 4: BehaviorModule Refactoring & Hideout Plugin System
-- [ ] Extract PMC class passives (`SURVIVOR`, `SCOUT`, `SOLDIER`, `LUCKY`) into `src/engine/behaviors/`.
+- [x] Extract PMC class passives (`SURVIVOR`, `SCOUT`, `SOLDIER`, `LUCKY`) into `src/engine/behaviors/`.
 - [ ] Implement Hideout plugin adapter interface (`ModuleInstance`) and convert Scavenger workstation to `AFTER_RAID_END` hook listener.
 
 ### Phase 5: Split `data.ts` & Final Verification
@@ -545,7 +556,7 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 
 ## Metrics & Impact Summary
 
-> **Progress as of 2026-07-31**: **Phase 1 complete** — `raidSimulation.ts` 336 → 173 lines, `loot.ts` 115 → 98 lines, duplicated container-sort code 44 → 0 lines, duplicated KIA/extraction pipeline ~170 → 0 lines (centralized in `raidResolution.ts`); all raid/nutrition/enemy-spawn/medical balance values moved into `src/data/tuning/` (`raidConfig.ts`, `enemySpawning.ts`, `medicalConfig.ts`). **Phase 2 core complete** — engine contract layer (`engineContext.ts` + `types.ts`, 12 tests) added; simulation results unchanged. **Phase 3 prerequisite complete** — Golden Master characterization baseline (`goldenHarness.ts` + `goldenMaster.test.ts`, 3 committed transcripts under `src/engine/__golden__/`) freezes `runRaidTick` behavior for extraction/combat/dehydration scenarios. **Phase 3 control-flow conversion complete** — `simulateCombatRound` and `runRaidTick` are both yieldable generators (sync drainer + `return yield*` async variant); the tick generator forwards combat hooks and emits `AFTER_RAID_END` on KIA/extraction, verified byte-for-byte against the un-regenerated goldens; also fixed a shared-`ALL_ITEMS` armor/helmet template mutation leak in `spawnEnemy` (armored enemies now start with full durability). **Phase 3 complete** — UI tick loop drains the generator flow, and per-tick state settlement switched from `JSON.parse(JSON.stringify)` full-tree cloning to Immer copy-on-write (`createDraft`/`finishDraft`, `immer@11.1.15`): input never mutated, output fresh/structurally-shared/frozen, atomic at the `finishDraft` boundary. 64/64 tests green. Remaining targets below are unchanged.
+> **Progress as of 2026-07-31**: **Phase 1 complete** — `raidSimulation.ts` 336 → 173 lines, `loot.ts` 115 → 98 lines, duplicated container-sort code 44 → 0 lines, duplicated KIA/extraction pipeline ~170 → 0 lines (centralized in `raidResolution.ts`); all raid/nutrition/enemy-spawn/medical balance values moved into `src/data/tuning/` (`raidConfig.ts`, `enemySpawning.ts`, `medicalConfig.ts`). **Phase 2 core complete** — engine contract layer (`engineContext.ts` + `types.ts`, 12 tests) added; simulation results unchanged. **Phase 3 prerequisite complete** — Golden Master characterization baseline (`goldenHarness.ts` + `goldenMaster.test.ts`, 3 committed transcripts under `src/engine/__golden__/`) freezes `runRaidTick` behavior for extraction/combat/dehydration scenarios. **Phase 3 control-flow conversion complete** — `simulateCombatRound` and `runRaidTick` are both yieldable generators (sync drainer + `return yield*` async variant); the tick generator forwards combat hooks and emits `AFTER_RAID_END` on KIA/extraction, verified byte-for-byte against the un-regenerated goldens; also fixed a shared-`ALL_ITEMS` armor/helmet template mutation leak in `spawnEnemy` (armored enemies now start with full durability). **Phase 3 complete** — UI tick loop drains the generator flow, and per-tick state settlement switched from `JSON.parse(JSON.stringify)` full-tree cloning to Immer copy-on-write (`createDraft`/`finishDraft`, `immer@11.1.15`): input never mutated, output fresh/structurally-shared/frozen, atomic at the `finishDraft` boundary. **Phase 4 item 1 complete** — PMC class passives extracted into `src/engine/behaviors/classPassives.ts` (Strategy registry) with all balance values moved to `src/data/tuning/combatBalance.ts`; 8 scattered class conditionals (5 combat + 1 loot + 1 starting-gear + SCOUT pen) replaced by config-driven reads with byte-parity (goldens untouched). 70/70 tests green. Remaining targets below are unchanged.
 
 | Metric | Baseline | Target | Improvement |
 | :--- | :--- | :--- | :--- |
@@ -554,5 +565,5 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 | **`spawning.ts` Size** | 161 lines | ~80 lines | **-50% reduction** |
 | **Duplicated Code** | ~100 lines | ~5 lines | **-95% reduction** |
 | **Hardcoded Magic Numbers** | 50+ instances | 5 instances | **-90% reduction** |
-| **PMC Class Touchpoints** | 5 scattered conditionals | 1 modular config | **-80% coupling** |
+| **PMC Class Touchpoints** | 8 scattered conditionals | 1 modular config (`classPassives.ts` + `combatBalance.ts`) | **Done — ~-90% coupling** |
 | **Tick State Deep-Clones** | 1 per tick (`JSON.parse`) | 0 (Atomic Settlement) | **100% eliminated** (Immer COW, `finishDraft` boundary) |

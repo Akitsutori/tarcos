@@ -2,6 +2,7 @@ import { PMCCharacter, EnemyState, Weapon, RaidState, RaidLog, BodyPart, PMCBody
 import { getWeaponStats } from "../data";
 import { createLog } from "./utils";
 import { EngineContext, InterruptHook } from "./types";
+import { isFreeReloader, isSmgPassive, getBurstRange, getSmgPenetration, getDodgeMultiplier, getDamageMultipliers, getFatalSurviveChance } from "./behaviors/classPassives";
 
 const createDefaultWeapon = (): Weapon => ({
   id: "assault_rifle",
@@ -151,7 +152,7 @@ export const simulateCombatRoundGenerator = function* (
       curWep.currentMagRounds = curWep.maxMagSize;
       curWep.reserveMags--;
       roundLogs.push(createLog(`${attacker.name} reloaded. Mag: ${curWep.currentMagRounds}, Reserves: ${curWep.reserveMags}.`, "info", elapsedSeconds));
-      if (attacker.type === "pmc" && pmc.classType === ClassType.SURVIVOR) {
+      if (attacker.type === "pmc" && isFreeReloader(pmc.classType)) {
         actionChosen = "fire";
         roundLogs.push(createLog("SURVIVOR PASSIVE: Free Reload triggered!", "info", elapsedSeconds));
       } else {
@@ -187,9 +188,10 @@ export const simulateCombatRoundGenerator = function* (
         roundLogs.push(createLog(`${attacker.name} broke cover to engage.`, "info", elapsedSeconds));
       }
 
-      const isScoutSMG = attacker.type === "pmc" && pmc.classType === ClassType.SCOUT;
-      const minBurst = isScoutSMG ? 3 : 1;
-      const maxBurst = isScoutSMG ? 7 : 5;
+      const isScoutSMG = attacker.type === "pmc" && isSmgPassive(pmc.classType);
+      const burstRange = isScoutSMG ? getBurstRange(pmc.classType) : { min: 1, max: 5 };
+      const minBurst = burstRange.min;
+      const maxBurst = burstRange.max;
       const maxPossible = Math.min(curWep.currentMagRounds, maxBurst);
       const burstCount = Math.floor(Math.random() * (maxPossible - minBurst + 1)) + minBurst;
 
@@ -210,7 +212,7 @@ export const simulateCombatRoundGenerator = function* (
         if (Math.random() * 100 >= finalAccuracy) continue;
 
         const dodgeFactor = 0.0025;
-        const dodgeMult = (attacker.type === "enemy" && pmc.classType === ClassType.SCOUT) ? 2.0 : 1.0;
+        const dodgeMult = attacker.type === "enemy" ? getDodgeMultiplier(pmc.classType) : 1.0;
         if (Math.random() < defender.skills.agility.level * dodgeFactor * dodgeMult) {
           roundLogs.push(createLog(`${defender.name} dynamically dodged the incoming bullet!`, "info", elapsedSeconds));
           continue;
@@ -228,7 +230,7 @@ export const simulateCombatRoundGenerator = function* (
 
         let bulletPen = 20;
         if (curWep.caliber === "7.62x39mm") bulletPen = 34;
-        else if (curWep.caliber === "9x19mm") bulletPen = isScoutSMG ? 32 : 20;
+        else if (curWep.caliber === "9x19mm") bulletPen = getSmgPenetration(pmc.classType, 20);
         else if (curWep.caliber === "12x70mm") bulletPen = 18;
         else if (curWep.caliber === "7.62x54mm") bulletPen = 45;
         else if (curWep.caliber === "9x18mm") bulletPen = 15;
@@ -250,8 +252,9 @@ export const simulateCombatRoundGenerator = function* (
         }
 
         let bulletDmg = Math.floor(activeWeaponStats.dmg * dmgMultiplier);
-        if (attacker.type === "pmc" && pmc.classType === ClassType.SOLDIER) bulletDmg = Math.floor(bulletDmg * 1.20);
-        else if (attacker.type === "enemy" && pmc.classType === ClassType.SOLDIER) bulletDmg = Math.floor(bulletDmg * 0.85);
+        const dmgMultipliers = getDamageMultipliers(pmc.classType);
+        if (attacker.type === "pmc") bulletDmg = Math.floor(bulletDmg * dmgMultipliers.outgoing);
+        else if (attacker.type === "enemy") bulletDmg = Math.floor(bulletDmg * dmgMultipliers.incoming);
 
         context.emitIntent({
           targetEntityId: defender.type === "pmc" ? "pmc" : "enemy",
@@ -303,7 +306,7 @@ export const simulateCombatRoundGenerator = function* (
             roundLogs.push(createLog(`PMC neutralized ${defender.name} with a fatal shot!`, "combat_kill", elapsedSeconds));
             defender.isDead = true;
           } else {
-            if (pmc.classType === ClassType.LUCKY && Math.random() < 0.15) {
+            if (getFatalSurviveChance(pmc.classType) > 0 && Math.random() < getFatalSurviveChance(pmc.classType)) {
               defender.bodyParts.head.current = 1;
               defender.bodyParts.thorax.current = 1;
               roundLogs.push(createLog("LUCKY PASSIVE TRIGGERED! PMC bypassed a fatal hit and survived at 1 HP!", "warning", elapsedSeconds));

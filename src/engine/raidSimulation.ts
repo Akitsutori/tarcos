@@ -1,4 +1,4 @@
-import { GameState, ClassType } from "../types";
+import { GameState } from "../types";
 import { createDraft, finishDraft } from "immer";
 import { getWeaponStats, buildProceduralMap } from "../data";
 import { createLog } from "./utils";
@@ -12,6 +12,7 @@ import { createEngineContext } from "./engineContext";
 import { InterruptHook } from "./types";
 import { TICK_SECONDS_MIN, TICK_SECONDS_MAX, ENERGY_DECAY_CHANCE, HYDRATION_DECAY_CHANCE, NUTRITION_UNIT_DECAY_RATE, SKILL_DECAY_REDUCTION_PER_LEVEL, SKILL_DECAY_REDUCTION_MIN, HYDRATION_STATUS, STATUS_WARNING_CHANCE } from "../data/tuning/raidConfig";
 import { ENCOUNTER_CHANCE, REINFORCEMENT_MAX_PER_TILE, REINFORCEMENT_CHANCE } from "../data/tuning/enemySpawning";
+import { getLuckyLootRolls } from "./behaviors/classPassives";
 
 /**
  * Executes a single simulation tick for the active raid as a synchronous
@@ -110,7 +111,7 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
       }
 
       const baseLootRolls = enemy.tier === "Boss" ? 3 : enemy.tier === "PMC" ? 2 : 1;
-      const luckyBonus = pmc.classType === ClassType.LUCKY ? 1 : 0;
+      const luckyBonus = getLuckyLootRolls(pmc.classType);
       const lootRollCount = baseLootRolls + luckyBonus;
 
       for (let i = 0; i < lootRollCount; i++) {
