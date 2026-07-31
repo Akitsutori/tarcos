@@ -20,6 +20,26 @@ import {
 
 import { useGameSave, STORAGE_KEY } from "./hooks/useGameSave";
 import { useRaidTick } from "./hooks/useRaidTick";
+import { produce, current } from "immer";
+
+/**
+ * Deep-clones a fresh GameItem template from the static ALL_ITEMS catalog so
+ * that equipped/consumed instances never alias the catalog.
+ */
+const cloneItem = (item: GameItem): GameItem => structuredClone(item);
+
+/**
+ * If the active medical/provision kit is depleted but a backup copy remains
+ * in the stash entry, swap to the backup (consume one quantity, refresh the
+ * resource pool). No-op unless the kit was actually used this pass.
+ */
+const advanceToBackupKit = (entry: { item: GameItem; quantity: number }, used: boolean): void => {
+  const { item, quantity } = entry;
+  if (used && item.resourceCurrent !== undefined && item.resourceCurrent <= 0 && quantity > 0) {
+    entry.quantity -= 1;
+    item.resourceCurrent = item.resourceMax;
+  }
+};
 
 export default function App() {
   const { gameState, setGameState, resetProgress } = useGameSave();
@@ -36,9 +56,11 @@ export default function App() {
   // Speed adjustment control
   const handleChangeSpeed = (speed: number) => {
     setGameState((prev) => {
-      const newState = { ...prev };
-      newState.activeRaid = { ...prev.activeRaid, playSpeed: speed };
-      return newState;
+      const next = produce(prev, (draft) => {
+        draft.activeRaid.playSpeed = speed;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
     });
   };
 
@@ -80,10 +102,13 @@ export default function App() {
     };
 
     setGameState((prev) => {
-      const newState = { ...prev, activeRaid: startingRaidState, selectedMapId: mapId };
-      newState.pmc.isDead = false;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-      return newState;
+      const next = produce(prev, (draft) => {
+        draft.activeRaid = startingRaidState;
+        draft.selectedMapId = mapId;
+        draft.pmc.isDead = false;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
     });
 
     setIsPlaying(true);
@@ -97,31 +122,32 @@ export default function App() {
     }
 
     setGameState((prev) => {
-      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
-      const raid = newState.activeRaid;
-      const pmc = newState.pmc;
+      const next = produce(prev, (draft) => {
+        const raid = draft.activeRaid;
+        const pmc = draft.pmc;
 
-      raid.status = "kia";
-      pmc.bodyParts.head.current = 0;
-      pmc.bodyParts.thorax.current = 0;
-      pmc.kiaCount++;
-      pmc.raidsCount++;
-      newState.pastRaidOutcomes.push("kia");
-      raid.isActive = false;
+        raid.status = "kia";
+        pmc.bodyParts.head.current = 0;
+        pmc.bodyParts.thorax.current = 0;
+        pmc.kiaCount++;
+        pmc.raidsCount++;
+        draft.pastRaidOutcomes.push("kia");
+        raid.isActive = false;
 
-      // Secure container saved
-      raid.secureContainerSaved.forEach((containerEntry) => {
-        const stashEntry = newState.stash.items.find(i => i.item.id === containerEntry.item.id);
-        if (stashEntry) {
-          stashEntry.quantity += containerEntry.quantity;
-        } else {
-          newState.stash.items.push({ item: containerEntry.item, quantity: containerEntry.quantity });
-        }
+        // Secure container saved
+        raid.secureContainerSaved.forEach((containerEntry) => {
+          const stashEntry = draft.stash.items.find(i => i.item.id === containerEntry.item.id);
+          if (stashEntry) {
+            stashEntry.quantity += containerEntry.quantity;
+          } else {
+            draft.stash.items.push({ item: containerEntry.item, quantity: containerEntry.quantity });
+          }
+        });
+
+        pmc.survivalRate = Math.floor((pmc.survivedCount / pmc.raidsCount) * 100);
       });
-
-      pmc.survivalRate = Math.floor((pmc.survivedCount / pmc.raidsCount) * 100);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-      return newState;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
     });
 
     setIsPlaying(false);
@@ -130,86 +156,105 @@ export default function App() {
   // SELL STASH ITEM
   const handleSellItem = (itemId: string, quantity: number) => {
     setGameState((prev) => {
-      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
-      const stashEntry = newState.stash.items.find((i) => i.item.id === itemId);
+      const next = produce(prev, (draft) => {
+        const stashEntry = draft.stash.items.find((i) => i.item.id === itemId);
 
-      if (stashEntry && stashEntry.quantity >= quantity) {
-        stashEntry.quantity -= quantity;
-        newState.stash.roubles += stashEntry.item.value * quantity;
+        if (stashEntry && stashEntry.quantity >= quantity) {
+          stashEntry.quantity -= quantity;
+          draft.stash.roubles += stashEntry.item.value * quantity;
 
-        // Clean out empty slots
-        newState.stash.items = newState.stash.items.filter((i) => i.quantity > 0);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-        return newState;
-      }
-      return prev;
+          // Clean out empty slots
+          draft.stash.items = draft.stash.items.filter((i) => i.quantity > 0);
+        }
+      });
+      if (next !== prev) localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
     });
   };
 
   // BUY ITEM FROM TRADER
   const handleBuyItem = (itemId: string, cost: number) => {
     setGameState((prev) => {
-      if (prev.stash.roubles < cost) return prev;
+      const next = produce(prev, (draft) => {
+        if (draft.stash.roubles < cost) return;
+        const targetItem = ALL_ITEMS[itemId];
+        if (!targetItem) return;
 
-      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
-      const targetItem = ALL_ITEMS[itemId];
-      if (!targetItem) return prev;
+        draft.stash.roubles -= cost;
 
-      newState.stash.roubles -= cost;
-
-      // Medical items: single entry, quantity = additional backup kits
-      if (targetItem.type === "medical" || targetItem.type === "provision") {
-        const existing = newState.stash.items.find((e) => e.item.id === itemId);
-        if (existing) {
-          existing.quantity++;
+        // Medical items: single entry, quantity = additional backup kits
+        if (targetItem.type === "medical" || targetItem.type === "provision") {
+          const existing = draft.stash.items.find((e) => e.item.id === itemId);
+          if (existing) {
+            existing.quantity++;
+          } else {
+            draft.stash.items.push({ item: cloneItem(targetItem), quantity: 0 });
+          }
         } else {
-          const newItem = JSON.parse(JSON.stringify(targetItem)) as GameItem;
-          newState.stash.items.push({ item: newItem, quantity: 0 });
+          const stashEntry = draft.stash.items.find((i) => i.item.id === itemId);
+          if (stashEntry) {
+            stashEntry.quantity++;
+          } else {
+            draft.stash.items.push({ item: cloneItem(targetItem), quantity: 1 });
+          }
         }
-      } else {
-        const stashEntry = newState.stash.items.find((i) => i.item.id === itemId);
-        if (stashEntry) {
-          stashEntry.quantity++;
-        } else {
-          newState.stash.items.push({ item: JSON.parse(JSON.stringify(targetItem)), quantity: 1 });
-        }
-      }
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-      return newState;
+      });
+      if (next !== prev) localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
     });
   };
 
   // OUT-OF-RAID CONSUMPTION
   const handleConsumeItem = (itemId: string) => {
     setGameState((prev) => {
-      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
+      const next = produce(prev, (draft) => {
+        const target = draft.stash.items.find(
+          (e) => e.item.id === itemId && (e.quantity > 0 || (e.item.resourceCurrent !== undefined && e.item.resourceCurrent > 0))
+        );
+        if (!target) return;
 
-      const target = newState.stash.items.find(
-        (e) => e.item.id === itemId && (e.quantity > 0 || (e.item.resourceCurrent !== undefined && e.item.resourceCurrent > 0))
-      );
-      if (!target) return prev;
+        const item = target.item;
+        let used = false;
 
-      const item = target.item;
-      let used = false;
+        const isSurgicalKit = item.medicalSubType === "surgical";
+        const isMedkit = item.medicalSubType === "medkit";
+        const isProvision = item.type === "provision";
 
-      const isSurgicalKit = item.medicalSubType === "surgical";
-      const isMedkit = item.medicalSubType === "medkit";
-      const isProvision = item.type === "provision";
+        if (isMedkit) {
+          const partIds = HEAL_PART_ORDER;
+          for (const partId of partIds) {
+            const part = draft.pmc.bodyParts[partId];
+            if (part.current <= 0 || part.current >= part.max) continue;
 
-      if (isMedkit) {
-        const partIds = HEAL_PART_ORDER;
-        for (const partId of partIds) {
-          const part = newState.pmc.bodyParts[partId];
-          if (part.current <= 0 || part.current >= part.max) continue;
+            let remaining = part.max - part.current;
+            while (remaining > 0) {
+              if (item.resourceCurrent !== undefined && item.resourceCurrent > 0) {
+                const heal = Math.min(remaining, item.resourceCurrent);
+                part.current += heal;
+                item.resourceCurrent -= heal;
+                remaining -= heal;
+                used = true;
+              } else if (target.quantity > 0) {
+                target.quantity--;
+                item.resourceCurrent = item.resourceMax;
+              } else {
+                break;
+              }
+            }
+            if (remaining > 0) break;
+          }
+          advanceToBackupKit(target, used);
+        }
 
-          let remaining = part.max - part.current;
-          while (remaining > 0) {
+        if (isSurgicalKit) {
+          const surgicalTargetOrder = SURGICAL_TARGET_ORDER;
+          for (const partId of surgicalTargetOrder) {
+            const part = draft.pmc.bodyParts[partId];
+            if (part.current !== 0) continue;
+
             if (item.resourceCurrent !== undefined && item.resourceCurrent > 0) {
-              const heal = Math.min(remaining, item.resourceCurrent);
-              part.current += heal;
-              item.resourceCurrent -= heal;
-              remaining -= heal;
+              part.current = 1;
+              item.resourceCurrent--;
               used = true;
             } else if (target.quantity > 0) {
               target.quantity--;
@@ -218,273 +263,237 @@ export default function App() {
               break;
             }
           }
-          if (remaining > 0) break;
+          advanceToBackupKit(target, used);
         }
-        // Advance to next backup kit if active is depleted
-        if (used && item.resourceCurrent !== undefined && item.resourceCurrent <= 0 && target.quantity > 0) {
-          target.quantity--;
-          item.resourceCurrent = item.resourceMax;
-        }
-      }
 
-      if (isSurgicalKit) {
-        const surgicalTargetOrder = SURGICAL_TARGET_ORDER;
-        for (const partId of surgicalTargetOrder) {
-          const part = newState.pmc.bodyParts[partId];
-          if (part.current !== 0) continue;
+        if (isProvision) {
+          const isHydration = item.provisionType === "hydration";
+          const maxStat = isHydration ? draft.pmc.maxHydration : draft.pmc.maxEnergy;
+          const currentStat = isHydration ? draft.pmc.hydration : draft.pmc.energy;
+          let remaining = maxStat - currentStat;
 
-          if (item.resourceCurrent !== undefined && item.resourceCurrent > 0) {
-            part.current = 1;
-            item.resourceCurrent--;
-            used = true;
-          } else if (target.quantity > 0) {
-            target.quantity--;
-            item.resourceCurrent = item.resourceMax;
-          } else {
-            break;
+          while (remaining > 0) {
+            if (item.resourceCurrent !== undefined && item.resourceCurrent > 0) {
+              const restore = Math.min(remaining, item.resourceCurrent);
+              if (isHydration) draft.pmc.hydration += restore;
+              else draft.pmc.energy += restore;
+              item.resourceCurrent -= restore;
+              remaining -= restore;
+              used = true;
+            } else if (target.quantity > 0) {
+              target.quantity--;
+              item.resourceCurrent = item.resourceMax;
+            } else {
+              break;
+            }
           }
+          advanceToBackupKit(target, used);
         }
-        // Advance to next backup kit if active is depleted
-        if (used && item.resourceCurrent !== undefined && item.resourceCurrent <= 0 && target.quantity > 0) {
-          target.quantity--;
-          item.resourceCurrent = item.resourceMax;
-        }
-      }
 
-      if (isProvision) {
-        const isHydration = item.provisionType === "hydration";
-        const maxStat = isHydration ? newState.pmc.maxHydration : newState.pmc.maxEnergy;
-        const currentStat = isHydration ? newState.pmc.hydration : newState.pmc.energy;
-        let remaining = maxStat - currentStat;
-
-        while (remaining > 0) {
-          if (item.resourceCurrent !== undefined && item.resourceCurrent > 0) {
-            const restore = Math.min(remaining, item.resourceCurrent);
-            if (isHydration) newState.pmc.hydration += restore;
-            else newState.pmc.energy += restore;
-            item.resourceCurrent -= restore;
-            remaining -= restore;
-            used = true;
-          } else if (target.quantity > 0) {
-            target.quantity--;
-            item.resourceCurrent = item.resourceMax;
-          } else {
-            break;
-          }
+        if (used) {
+          // Remove entries that are fully depleted (rc=0, qty=0)
+          draft.stash.items = draft.stash.items.filter(
+            (i) => i.quantity > 0 || (i.item.resourceCurrent !== undefined && i.item.resourceCurrent > 0)
+          );
         }
-        // Advance to next backup kit if active is depleted
-        if (used && item.resourceCurrent !== undefined && item.resourceCurrent <= 0 && target.quantity > 0) {
-          target.quantity--;
-          item.resourceCurrent = item.resourceMax;
-        }
-      }
-
-      if (used) {
-        // Remove entries that are fully depleted (rc=0, qty=0)
-        newState.stash.items = newState.stash.items.filter(
-          (i) => i.quantity > 0 || (i.item.resourceCurrent !== undefined && i.item.resourceCurrent > 0)
-        );
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-        return newState;
-      }
-      return prev;
+      });
+      if (next !== prev) localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
     });
   };
 
   // EQUIP WEAPON
   const handleEquipWeapon = (weaponId: string) => {
     setGameState((prev) => {
-      const newState = { ...prev };
-      newState.stash.equippedWeaponId = weaponId;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-      return newState;
+      const next = produce(prev, (draft) => {
+        draft.stash.equippedWeaponId = weaponId;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
     });
   };
 
   // EQUIP ARMOR / HELMET
   const handleEquipArmor = (itemId: string) => {
     setGameState((prev) => {
-      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
-      const item = ALL_ITEMS[itemId];
-      if (!item) return prev;
+      const next = produce(prev, (draft) => {
+        const item = ALL_ITEMS[itemId];
+        if (!item) return;
 
-      const stashEntry = newState.stash.items.find((e: { item: GameItem; quantity: number }) => e.item.id === itemId && e.quantity > 0);
-      if (!stashEntry) return prev;
+        const stashEntry = draft.stash.items.find((e: { item: GameItem; quantity: number }) => e.item.id === itemId && e.quantity > 0);
+        if (!stashEntry) return;
 
-      if (item.type === "helmet") {
-        const oldHelmet = newState.pmc.equippedHelmet;
-        newState.pmc.equippedHelmet = { ...item };
-        if (oldHelmet) {
-          const existing = newState.stash.items.find((e: { item: GameItem; quantity: number }) => e.item.id === oldHelmet.id);
-          if (existing) existing.quantity++;
-          else newState.stash.items.push({ item: oldHelmet, quantity: 1 });
+        if (item.type === "helmet") {
+          const oldHelmet = draft.pmc.equippedHelmet;
+          draft.pmc.equippedHelmet = cloneItem(item);
+          if (oldHelmet) {
+            const existing = draft.stash.items.find((e: { item: GameItem; quantity: number }) => e.item.id === oldHelmet.id);
+            if (existing) existing.quantity++;
+            else draft.stash.items.push({ item: oldHelmet, quantity: 1 });
+          }
+          stashEntry.quantity--;
+          if (stashEntry.quantity <= 0) {
+            const idx = draft.stash.items.indexOf(stashEntry);
+            draft.stash.items.splice(idx, 1);
+          }
+        } else if (item.type === "armor") {
+          const oldArmor = draft.pmc.equippedArmor;
+          draft.pmc.equippedArmor = cloneItem(item);
+          if (oldArmor) {
+            const existing = draft.stash.items.find((e: { item: GameItem; quantity: number }) => e.item.id === oldArmor.id);
+            if (existing) existing.quantity++;
+            else draft.stash.items.push({ item: oldArmor, quantity: 1 });
+          }
+          stashEntry.quantity--;
+          if (stashEntry.quantity <= 0) {
+            const idx = draft.stash.items.indexOf(stashEntry);
+            draft.stash.items.splice(idx, 1);
+          }
         }
-        stashEntry.quantity--;
-        if (stashEntry.quantity <= 0) {
-          const idx = newState.stash.items.indexOf(stashEntry);
-          newState.stash.items.splice(idx, 1);
-        }
-      } else if (item.type === "armor") {
-        const oldArmor = newState.pmc.equippedArmor;
-        newState.pmc.equippedArmor = { ...item };
-        if (oldArmor) {
-          const existing = newState.stash.items.find((e: { item: GameItem; quantity: number }) => e.item.id === oldArmor.id);
-          if (existing) existing.quantity++;
-          else newState.stash.items.push({ item: oldArmor, quantity: 1 });
-        }
-        stashEntry.quantity--;
-        if (stashEntry.quantity <= 0) {
-          const idx = newState.stash.items.indexOf(stashEntry);
-          newState.stash.items.splice(idx, 1);
-        }
-      }
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-      return newState;
+      });
+      if (next !== prev) localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
     });
   };
 
   // ATTACH WEAPON MOD PART
   const handleEquipMod = (weaponId: string, category: WeaponModCategory, modItem: GameItem) => {
     setGameState((prev) => {
-      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
-      const weapon = newState.stash.weapons.find((w) => w.id === weaponId);
-      const stashEntry = newState.stash.items.find((i) => i.item.id === modItem.id);
+      const next = produce(prev, (draft) => {
+        const weapon = draft.stash.weapons.find((w) => w.id === weaponId);
+        const stashEntry = draft.stash.items.find((i) => i.item.id === modItem.id);
 
-      if (weapon && stashEntry && stashEntry.quantity > 0) {
-        // Return existing mod to stash if present
-        const oldMod = weapon.mods[category];
-        if (oldMod) {
-          const oldStashEntry = newState.stash.items.find((i) => i.item.id === oldMod.id);
-          if (oldStashEntry) {
-            oldStashEntry.quantity++;
-          } else {
-            newState.stash.items.push({ item: oldMod, quantity: 1 });
+        if (weapon && stashEntry && stashEntry.quantity > 0) {
+          // Return existing mod to stash if present
+          const oldMod = weapon.mods[category];
+          if (oldMod) {
+            const oldStashEntry = draft.stash.items.find((i) => i.item.id === oldMod.id);
+            if (oldStashEntry) {
+              oldStashEntry.quantity++;
+            } else {
+              draft.stash.items.push({ item: oldMod, quantity: 1 });
+            }
           }
+
+          // Equip new mod
+          weapon.mods[category] = modItem;
+          stashEntry.quantity--;
+
+          // Clean empty entries
+          draft.stash.items = draft.stash.items.filter((i) => i.quantity > 0);
         }
-
-        // Equip new mod
-        weapon.mods[category] = modItem;
-        stashEntry.quantity--;
-
-        // Clean empty entries
-        newState.stash.items = newState.stash.items.filter((i) => i.quantity > 0);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-        return newState;
-      }
-      return prev;
+      });
+      if (next !== prev) localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
     });
   };
 
   // UNEQUIP WEAPON MOD PART
   const handleUnequipMod = (weaponId: string, category: WeaponModCategory) => {
     setGameState((prev) => {
-      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
-      const weapon = newState.stash.weapons.find((w) => w.id === weaponId);
-      if (!weapon) return prev;
+      const next = produce(prev, (draft) => {
+        const weapon = draft.stash.weapons.find((w) => w.id === weaponId);
+        if (!weapon) return;
 
-      const mod = weapon.mods[category];
-      if (mod) {
-        // Remove mod
-        weapon.mods[category] = null;
+        const mod = weapon.mods[category];
+        if (mod) {
+          // Remove mod
+          weapon.mods[category] = null;
 
-        // Return to stash
-        const stashEntry = newState.stash.items.find((i) => i.item.id === mod.id);
-        if (stashEntry) {
-          stashEntry.quantity++;
-        } else {
-          newState.stash.items.push({ item: mod, quantity: 1 });
+          // Return to stash
+          const stashEntry = draft.stash.items.find((i) => i.item.id === mod.id);
+          if (stashEntry) {
+            stashEntry.quantity++;
+          } else {
+            draft.stash.items.push({ item: mod, quantity: 1 });
+          }
         }
-
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-        return newState;
-      }
-      return prev;
+      });
+      if (next !== prev) localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
     });
   };
 
   // CHANGE PMC CLASS SPECIALIZATION
   const handleChangeClass = (classType: ClassType) => {
     setGameState((prev) => {
-      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
+      const next = produce(prev, (draft) => {
+        // Generate new class core stats but keep level, xp, and skills
+        const freshPMC = createInitialPMC(classType);
 
-      // Generate new class core stats but keep level, xp, and skills
-      const freshPMC = createInitialPMC(classType);
+        // Preserve level & skills progression
+        freshPMC.level = draft.pmc.level;
+        freshPMC.xp = draft.pmc.xp;
+        freshPMC.maxXp = draft.pmc.maxXp;
+        freshPMC.skills = current(draft.pmc.skills);
 
-      // Preserve level & skills progression
-      freshPMC.level = newState.pmc.level;
-      freshPMC.xp = newState.pmc.xp;
-      freshPMC.maxXp = newState.pmc.maxXp;
-      freshPMC.skills = newState.pmc.skills;
+        // Carry statistics
+        freshPMC.raidsCount = draft.pmc.raidsCount;
+        freshPMC.survivedCount = draft.pmc.survivedCount;
+        freshPMC.kiaCount = draft.pmc.kiaCount;
+        freshPMC.killsCount = draft.pmc.killsCount;
+        freshPMC.survivalRate = draft.pmc.survivalRate;
 
-      // Carry statistics
-      freshPMC.raidsCount = newState.pmc.raidsCount;
-      freshPMC.survivedCount = newState.pmc.survivedCount;
-      freshPMC.kiaCount = newState.pmc.kiaCount;
-      freshPMC.killsCount = newState.pmc.killsCount;
-      freshPMC.survivalRate = newState.pmc.survivalRate;
+        // Check if signature weapon is in stash, if not add it
+        const sigWeapon = INITIAL_WEAPONS[classType];
+        const hasWeapon = draft.stash.weapons.some((w) => w.id === sigWeapon.id);
 
-      // Check if signature weapon is in stash, if not add it
-      const sigWeapon = INITIAL_WEAPONS[classType];
-      const hasWeapon = newState.stash.weapons.some((w) => w.id === sigWeapon.id);
+        if (!hasWeapon) {
+          draft.stash.weapons.push({ ...sigWeapon });
+        }
 
-      if (!hasWeapon) {
-        newState.stash.weapons.push({ ...sigWeapon });
-      }
-
-      newState.pmc = freshPMC;
-      newState.stash.equippedWeaponId = sigWeapon.id;
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-      return newState;
+        draft.pmc = freshPMC;
+        draft.stash.equippedWeaponId = sigWeapon.id;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
     });
   };
 
   // HIDEOUT STATION UPGRADE
   const handleUpgradeModule = (moduleId: string) => {
     setGameState((prev) => {
-      const newState = JSON.parse(JSON.stringify(prev)) as GameState;
-      const module = newState.hideout[moduleId as keyof typeof newState.hideout];
-      if (!module || module.level >= module.maxLevel) return prev;
+      const next = produce(prev, (draft) => {
+        const module = draft.hideout[moduleId as keyof typeof draft.hideout];
+        if (!module || module.level >= module.maxLevel) return;
 
-      const nextLvl = module.level + 1;
-      const upgradeReqs = module.upgrades[nextLvl];
-      if (!upgradeReqs) return prev;
+        const nextLvl = module.level + 1;
+        const upgradeReqs = module.upgrades[nextLvl];
+        if (!upgradeReqs) return;
 
-      // Double-check funds
-      if (newState.stash.roubles < upgradeReqs.cost) return prev;
+        // Double-check funds
+        if (draft.stash.roubles < upgradeReqs.cost) return;
 
-      // Double-check barter quantities
-      let possible = true;
-      upgradeReqs.requirements.forEach((req) => {
-        const stashEntry = newState.stash.items.find((i) => i.item.id === req.itemId);
-        if (!stashEntry || stashEntry.quantity < req.quantity) {
-          possible = false;
-        }
-      });
-
-      if (possible) {
-        // Subtract roubles
-        newState.stash.roubles -= upgradeReqs.cost;
-
-        // Subtract barter requirements
+        // Double-check barter quantities
+        let possible = true;
         upgradeReqs.requirements.forEach((req) => {
-          const stashEntry = newState.stash.items.find((i) => i.item.id === req.itemId);
-          if (stashEntry) {
-            stashEntry.quantity -= req.quantity;
+          const stashEntry = draft.stash.items.find((i) => i.item.id === req.itemId);
+          if (!stashEntry || stashEntry.quantity < req.quantity) {
+            possible = false;
           }
         });
 
-        // Level up module
-        module.level = nextLvl;
+        if (possible) {
+          // Subtract roubles
+          draft.stash.roubles -= upgradeReqs.cost;
 
-        // Filter out empty items
-        newState.stash.items = newState.stash.items.filter((i) => i.quantity > 0);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-        return newState;
-      }
+          // Subtract barter requirements
+          upgradeReqs.requirements.forEach((req) => {
+            const stashEntry = draft.stash.items.find((i) => i.item.id === req.itemId);
+            if (stashEntry) {
+              stashEntry.quantity -= req.quantity;
+            }
+          });
 
-      return prev;
+          // Level up module
+          module.level = nextLvl;
+
+          // Filter out empty items
+          draft.stash.items = draft.stash.items.filter((i) => i.quantity > 0);
+        }
+      });
+      if (next !== prev) localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
     });
   };
 

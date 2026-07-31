@@ -28,7 +28,7 @@ export const rollLootItem = (map: MapData): GameItem => {
   for (const entry of lootTable) {
     roll -= entry.weight;
     if (roll <= 0) {
-      const cloned = JSON.parse(JSON.stringify(entry.item)) as GameItem;
+      const cloned = structuredClone(entry.item);
       if (cloned.type === "armor" || cloned.type === "helmet") {
         cloned.durability = cloned.maxDurability;
       }
@@ -38,7 +38,7 @@ export const rollLootItem = (map: MapData): GameItem => {
 
   // Fallback: erster Common
   const fallback = lootTable.find(e => e.item.rarity === "common");
-  return JSON.parse(JSON.stringify(fallback?.item ?? ALL_ITEMS.ai2)) as GameItem;
+  return structuredClone(fallback?.item ?? ALL_ITEMS.ai2);
 };
 
 /**

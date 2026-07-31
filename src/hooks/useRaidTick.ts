@@ -3,6 +3,7 @@ import { GameState } from "../types";
 import { runRaidTickGenerator } from "../gameEngine";
 import { InterruptHook } from "../engine/types";
 import { HEAL_PART_ORDER } from "../engine/bodyParts";
+import { produce } from "immer";
 import { STORAGE_KEY } from "./useGameSave";
 import { MEDSTATION_HEAL_PER_5S_BY_LEVEL, nutritionRecoveryPer5s } from "../data/tuning/hideoutConfig";
 
@@ -18,44 +19,40 @@ export const useRaidTick = (
       setGameState((prev) => {
         if (prev.activeRaid.isActive) return prev;
 
-        const newState = JSON.parse(JSON.stringify(prev)) as GameState;
-        const pmc = newState.pmc;
-        const medstationLvl = newState.hideout.medstation.level;
-        const nutritionLvl = newState.hideout.nutritionUnit.level;
+        const next = produce(prev, (draft) => {
+          const pmc = draft.pmc;
+          const medstationLvl = draft.hideout.medstation.level;
+          const nutritionLvl = draft.hideout.nutritionUnit.level;
 
-        let hasUpdates = false;
+          let healAmount = MEDSTATION_HEAL_PER_5S_BY_LEVEL[medstationLvl] ?? 1;
 
-        let healAmount = MEDSTATION_HEAL_PER_5S_BY_LEVEL[medstationLvl] ?? 1;
+          let neededHeal = healAmount;
+          const partIds = HEAL_PART_ORDER;
 
-        let neededHeal = healAmount;
-        const partIds = HEAL_PART_ORDER;
-        
-        for (const partId of partIds) {
-          if (neededHeal <= 0) break;
-          const part = pmc.bodyParts[partId];
-          if (part.current < part.max) {
-            const healable = Math.min(neededHeal, part.max - part.current);
-            part.current += healable;
-            neededHeal -= healable;
-            hasUpdates = true;
+          for (const partId of partIds) {
+            if (neededHeal <= 0) break;
+            const part = pmc.bodyParts[partId];
+            if (part.current < part.max) {
+              const healable = Math.min(neededHeal, part.max - part.current);
+              part.current += healable;
+              neededHeal -= healable;
+            }
           }
-        }
 
-        if (nutritionLvl >= 1) {
-          const nutritionRecovery = nutritionRecoveryPer5s(nutritionLvl);
-          if (pmc.energy < pmc.maxEnergy) {
-            pmc.energy = Math.min(pmc.maxEnergy, pmc.energy + nutritionRecovery);
-            hasUpdates = true;
+          if (nutritionLvl >= 1) {
+            const nutritionRecovery = nutritionRecoveryPer5s(nutritionLvl);
+            if (pmc.energy < pmc.maxEnergy) {
+              pmc.energy = Math.min(pmc.maxEnergy, pmc.energy + nutritionRecovery);
+            }
+            if (pmc.hydration < pmc.maxHydration) {
+              pmc.hydration = Math.min(pmc.maxHydration, pmc.hydration + nutritionRecovery);
+            }
           }
-          if (pmc.hydration < pmc.maxHydration) {
-            pmc.hydration = Math.min(pmc.maxHydration, pmc.hydration + nutritionRecovery);
-            hasUpdates = true;
-          }
-        }
+        });
 
-        if (hasUpdates) {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-          return newState;
+        if (next !== prev) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+          return next;
         }
 
         return prev;
