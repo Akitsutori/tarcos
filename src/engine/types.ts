@@ -1,4 +1,4 @@
-import { PMCBodyParts } from "../types";
+import { PMCBodyParts, GameState } from "../types";
 
 /**
  * A single, atomic, observable state change emitted during a raid tick.
@@ -89,4 +89,16 @@ export interface BehaviorModule<TActor = any, TTarget = any> {
   canExecute(actor: TActor, target: TTarget, context: EngineContext): boolean;
   canInterrupt(actor: TActor, hook: InterruptHook, context: EngineContext): boolean;
   execute(actor: TActor, target: TTarget, context: EngineContext): AsyncGenerator<InterruptHook, void, unknown>;
+}
+
+/**
+ * Hideout plugin seam: a single, synchronous listener invoked after a raid
+ * terminates. Registered instances live in the RAID_END_MODULES registry
+ * (behaviors/hideoutModules.ts); `canExecute` gates whether `onRaidEnd` runs.
+ * Deliberately simpler than BehaviorModule: no interception, no async work.
+ */
+export interface ModuleInstance {
+  readonly id: string;
+  canExecute(state: GameState): boolean;
+  onRaidEnd(state: GameState, hook: InterruptHook, context: EngineContext): void;
 }

@@ -2,7 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { runRaidTick, runRaidTickAsync, runRaidTickGenerator } from './raidSimulation';
 import { mulberry32, makeGoldenState, makeEnemy } from './characterization/goldenHarness';
 import { GameState } from '../types';
-import { InterruptHook } from './types';
+import { EngineContext, InterruptHook, ModuleInstance } from './types';
+import { RAID_END_MODULES } from './behaviors/hideoutModules';
 
 const VALID_ACTIONS = ["reload", "cover", "flee", "fire", "wait"] as const;
 const VALID_BODY_PARTS = ["head", "thorax", "stomach", "leftArm", "rightArm", "leftLeg", "rightLeg"] as const;
@@ -186,5 +187,27 @@ describe('runRaidTick Generator conversion', () => {
       expect(result).not.toBe(input);
       expect(Object.isFrozen(result)).toBe(true);
     });
+  });
+
+  it('dispatches registered raid-end modules at the terminal tick (extraction rewards, KIA blocked)', async () => {
+    const testModule: ModuleInstance = {
+      id: "test_module",
+      canExecute: (state: GameState) => state.activeRaid.status === "extracted",
+      onRaidEnd: vi.fn((_state: GameState, _hook: InterruptHook, context: EngineContext) => {
+        context.emitIntent({ targetEntityId: "stash", type: "STASH_ADD", value: { itemId: "ai2", quantity: 1 } });
+      }),
+    };
+    RAID_END_MODULES.push(testModule);
+    try {
+      const extraction = await withSeed(SCENARIOS.extraction.seed, async () => runAsyncTicks(SCENARIOS.extraction));
+      expect(testModule.onRaidEnd).toHaveBeenCalledTimes(1);
+      expect(extraction.state.stash.items.find(e => e.item.id === "ai2")?.quantity).toBe(1);
+
+      const dehydration = await withSeed(SCENARIOS.dehydration.seed, async () => runAsyncTicks(SCENARIOS.dehydration));
+      expect(testModule.onRaidEnd).toHaveBeenCalledTimes(1);
+      expect(dehydration.state.stash.items.find(e => e.item.id === "ai2")?.quantity).toBeUndefined();
+    } finally {
+      RAID_END_MODULES.splice(RAID_END_MODULES.indexOf(testModule), 1);
+    }
   });
 });

@@ -13,6 +13,7 @@ import { InterruptHook } from "./types";
 import { TICK_SECONDS_MIN, TICK_SECONDS_MAX, ENERGY_DECAY_CHANCE, HYDRATION_DECAY_CHANCE, NUTRITION_UNIT_DECAY_RATE, SKILL_DECAY_REDUCTION_PER_LEVEL, SKILL_DECAY_REDUCTION_MIN, HYDRATION_STATUS, STATUS_WARNING_CHANCE } from "../data/tuning/raidConfig";
 import { ENCOUNTER_CHANCE, REINFORCEMENT_MAX_PER_TILE, REINFORCEMENT_CHANCE } from "../data/tuning/enemySpawning";
 import { getLuckyLootRolls } from "./behaviors/classPassives";
+import { dispatchRaidEndModules } from "./behaviors/hideoutModules";
 
 /**
  * Executes a single simulation tick for the active raid as a synchronous
@@ -73,7 +74,9 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
   // Dehydration KIA Handling
   if (pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0) {
     handleKIA(newState, "dehydration");
-    yield { sourceEntityId: "raid", hookType: "AFTER_RAID_END", metadata: { status: raid.status } };
+    const hook: InterruptHook = { sourceEntityId: "raid", hookType: "AFTER_RAID_END", metadata: { status: raid.status } };
+    yield hook;
+    dispatchRaidEndModules(newState, hook, context);
     return finishDraft(newState);
   }
 
@@ -85,7 +88,9 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
 
     if (pmc.bodyParts.head.current <= 0 || pmc.bodyParts.thorax.current <= 0) {
       handleKIA(newState, "combat");
-      yield { sourceEntityId: "raid", hookType: "AFTER_RAID_END", metadata: { status: raid.status } };
+      const hook: InterruptHook = { sourceEntityId: "raid", hookType: "AFTER_RAID_END", metadata: { status: raid.status } };
+      yield hook;
+      dispatchRaidEndModules(newState, hook, context);
       return finishDraft(newState);
     }
 
@@ -171,7 +176,9 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
 
   if (!currentTile || currentTile.type === "extraction" || raid.currentStage >= raid.tiles.length) {
     handleExtraction(newState);
-    yield { sourceEntityId: "raid", hookType: "AFTER_RAID_END", metadata: { status: raid.status } };
+    const hook: InterruptHook = { sourceEntityId: "raid", hookType: "AFTER_RAID_END", metadata: { status: raid.status } };
+    yield hook;
+    dispatchRaidEndModules(newState, hook, context);
     return finishDraft(newState);
   }
 

@@ -167,11 +167,22 @@ describe('applyIntent (pure reducer)', () => {
     expect(patches).toEqual([{ entity: "stash", field: "items.med_kit", before: 2, after: 5 }]);
   });
 
-  it('STASH_ADD is a no-op for an unknown item (no patch emitted)', () => {
+  it('STASH_ADD creates a new stash entry for a known item not yet in the stash', () => {
     const state = makeState();
-    const patches = applyIntent(state, { targetEntityId: "stash", type: "STASH_ADD", value: { itemId: "does_not_exist", quantity: 1 } });
+    const stashCountBefore = state.stash.items.length;
 
-    expect(patches).toEqual([]);
+    const patches = applyIntent(state, { targetEntityId: "stash", type: "STASH_ADD", value: { itemId: "ai2", quantity: 2 } });
+
+    expect(state.stash.items).toHaveLength(stashCountBefore + 1);
+    expect(state.stash.items.find(e => e.item.id === "ai2")!.quantity).toBe(2);
+    expect(patches).toEqual([{ entity: "stash", field: "items.ai2", before: 0, after: 2 }]);
+  });
+
+  it('STASH_ADD throws for an unknown item id', () => {
+    const state = makeState();
+    expect(() =>
+      applyIntent(state, { targetEntityId: "stash", type: "STASH_ADD", value: { itemId: "does_not_exist", quantity: 1 } })
+    ).toThrow(/unknown item id/);
   });
 });
 

@@ -1,4 +1,5 @@
 import { GameState, PMCCharacter, EnemyState } from "../types";
+import { ALL_ITEMS } from "../data";
 import {
   AppliedPatch,
   EngineContext,
@@ -66,11 +67,19 @@ export const applyIntent = (state: GameState, intent: IntentPayload): AppliedPat
       return [{ entity: "pmc", field: "xp", before, after: pmc.xp }];
     }
     case "STASH_ADD": {
-      const stashEntry = state.stash.items.find(entry => entry.item.id === intent.value.itemId);
-      if (!stashEntry) return [];
-      const before = stashEntry.quantity;
-      stashEntry.quantity += intent.value.quantity;
-      return [{ entity: "stash", field: `items.${intent.value.itemId}`, before, after: stashEntry.quantity }];
+      const { itemId, quantity } = intent.value;
+      const stashEntry = state.stash.items.find(entry => entry.item.id === itemId);
+      if (stashEntry) {
+        const before = stashEntry.quantity;
+        stashEntry.quantity += quantity;
+        return [{ entity: "stash", field: `items.${itemId}`, before, after: stashEntry.quantity }];
+      }
+      const template = ALL_ITEMS[itemId];
+      if (!template) {
+        throw new Error(`[engineContext] STASH_ADD: unknown item id "${itemId}".`);
+      }
+      state.stash.items.push({ item: { ...template }, quantity });
+      return [{ entity: "stash", field: `items.${itemId}`, before: 0, after: quantity }];
     }
   }
 };
