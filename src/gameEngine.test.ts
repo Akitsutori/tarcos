@@ -1,12 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { spawnEnemy, getBackpackCapacity, rollLootItem, simulateCombatRound } from './gameEngine';
+import { spawnEnemy } from './engine/spawning';
+import { getBackpackCapacity, rollLootItem } from './engine/loot';
+import { simulateCombatRound } from './engine/combat';
 import { ALL_MAPS } from './data/content/maps';
 import { ALL_ITEMS } from './data/content/items';
 import { INITIAL_WEAPONS } from './data/content/weapons';
 import { getWeaponStats, createInitialPMC, createInitialHideout } from './data';
 import { ClassType, RaidState, GameState, PMCCharacter, EnemyState, Weapon } from './types';
 import { createEngineContext } from './engine/engineContext';
-import { EngineContext } from './engine/types';
+import { EngineContext } from './engine/contracts';
 
 const createTestContext = (pmc: PMCCharacter, enemy: EnemyState, weapon: Weapon, raid: RaidState): EngineContext => {
   const state: GameState = {

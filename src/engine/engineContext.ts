@@ -8,7 +8,7 @@ import {
   IntentPayload,
   TickPhase,
   TickTelemetry,
-} from "./types";
+} from "./contracts";
 
 /**
  * Resolves a target entity id to the live object inside the tick's GameState.

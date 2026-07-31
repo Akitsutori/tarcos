@@ -1,7 +1,7 @@
 import { GameState, GameItem } from "../types";
 import { ARCHETYPE_WEIGHTS } from "../data";
 import { createLog } from "./utils";
-import { KIAReason } from "./types";
+import { KIAReason } from "./contracts";
 import { finalizeQuestsAndXP, refillQuests } from "./progression";
 import { XP_PER_LEVEL, PERCEPTION_XP_GAIN } from "../data/tuning/progressionConfig";
 

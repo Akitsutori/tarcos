@@ -2,7 +2,7 @@ import { PMCCharacter, EnemyState, Weapon, RaidState, RaidLog, BodyPart, PMCBody
 import { getWeaponStats } from "../data";
 import { createLog } from "./utils";
 import { BODY_PART_ORDER, DAMAGE_SPILLOVER_ORDER } from "./bodyParts";
-import { EngineContext, InterruptHook } from "./types";
+import { EngineContext, InterruptHook } from "./contracts";
 import { isFreeReloader, isSmgPassive, getBurstRange, getSmgPenetration, getDodgeMultiplier, getDamageMultipliers, getFatalSurviveChance } from "./behaviors/classPassives";
 import {
   INITIATIVE_DIE,

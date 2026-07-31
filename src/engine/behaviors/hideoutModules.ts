@@ -15,7 +15,7 @@
  */
 
 import { GameState } from "../../types";
-import { EngineContext, InterruptHook, ModuleInstance } from "../types";
+import { EngineContext, InterruptHook, ModuleInstance } from "../contracts";
 import {
   computeScavengerWorkstationQuantity,
   SCAVENGER_WORKSTATION_COOLDOWN_RAIDS,

@@ -4,7 +4,7 @@ import { createEngineContext } from '../engineContext';
 import { makeGoldenState, installSeed } from '../characterization/goldenHarness';
 import { runRaidTick } from '../raidSimulation';
 import { GameState } from '../../types';
-import { EngineContext, InterruptHook, ModuleInstance } from '../types';
+import { EngineContext, InterruptHook, ModuleInstance } from '../contracts';
 import { computeScavengerWorkstationQuantity, SCAVENGER_WORKSTATION_REWARD_BY_LEVEL } from '../../data/tuning/hideoutConfig';
 
 const makeHook = (status: string): InterruptHook => ({

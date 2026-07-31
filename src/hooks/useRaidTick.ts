@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from "react";
 import { GameState } from "../types";
-import { runRaidTickGenerator } from "../gameEngine";
-import { InterruptHook } from "../engine/types";
+import { runRaidTickGenerator } from "../engine/raidSimulation";
+import { InterruptHook } from "../engine/contracts";
 import { HEAL_PART_ORDER } from "../engine/bodyParts";
 import { produce } from "immer";
 import { STORAGE_KEY } from "./useGameSave";

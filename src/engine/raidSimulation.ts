@@ -10,7 +10,7 @@ import { executeMaintenancePhase } from "./maintenance";
 import { simulateCombatRoundGenerator } from "./combat";
 import { handleKIA, handleExtraction } from "./raidResolution";
 import { createEngineContext } from "./engineContext";
-import { InterruptHook } from "./types";
+import { InterruptHook } from "./contracts";
 import { TICK_SECONDS_MIN, TICK_SECONDS_MAX, ENERGY_DECAY_CHANCE, HYDRATION_DECAY_CHANCE, SKILL_DECAY_REDUCTION_PER_LEVEL, SKILL_DECAY_REDUCTION_MIN, HYDRATION_STATUS, STATUS_WARNING_CHANCE } from "../data/tuning/raidConfig";
 import { NUTRITION_UNIT_DECAY_RATE, NUTRITION_UNIT_DECAY_ACTIVE_FROM_LEVEL, secureContainerCapacity } from "../data/tuning/hideoutConfig";
 import { ENCOUNTER_CHANCE, REINFORCEMENT_MAX_PER_TILE, REINFORCEMENT_CHANCE } from "../data/tuning/enemySpawning";

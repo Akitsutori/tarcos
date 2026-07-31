@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { runRaidTick, runRaidTickGenerator } from './raidSimulation';
 import { mulberry32, makeGoldenState, makeEnemy } from './characterization/goldenHarness';
 import { GameState } from '../types';
-import { EngineContext, InterruptHook, ModuleInstance } from './types';
+import { EngineContext, InterruptHook, ModuleInstance } from './contracts';
 import { RAID_END_MODULES } from './behaviors/hideoutModules';
 import { BODY_PART_ORDER } from './bodyParts';
 

@@ -7,7 +7,7 @@ import { INITIAL_WEAPONS } from '../data/content/weapons';
 import { getWeaponStats, createInitialPMC, createInitialHideout } from '../data';
 import { ClassType, RaidState, GameState, PMCCharacter, EnemyState, Weapon } from '../types';
 import { createEngineContext } from './engineContext';
-import { EngineContext, InterruptHook } from './types';
+import { EngineContext, InterruptHook } from './contracts';
 import { mulberry32, makeEnemy } from './characterization/goldenHarness';
 import { BODY_PART_ORDER } from './bodyParts';
 
