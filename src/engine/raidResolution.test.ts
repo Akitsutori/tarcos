@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { runRaidTick } from './raidSimulation';
-import { createInitialPMC, createInitialHideout } from '../data';
+import { createInitialPMC, createInitialHideout } from '../data/construction';
 import { ALL_MAPS } from '../data/content/maps';
 import { ALL_ITEMS } from '../data/content/items';
 import {

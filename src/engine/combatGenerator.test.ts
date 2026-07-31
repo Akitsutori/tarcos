@@ -4,7 +4,7 @@ import { spawnEnemy } from './spawning';
 import { ALL_MAPS } from '../data/content/maps';
 import { ALL_ITEMS } from '../data/content/items';
 import { INITIAL_WEAPONS } from '../data/content/weapons';
-import { getWeaponStats, createInitialPMC, createInitialHideout } from '../data';
+import { getWeaponStats, createInitialPMC, createInitialHideout } from '../data/construction';
 import { ClassType, RaidState, GameState, PMCCharacter, EnemyState, Weapon } from '../types';
 import { createEngineContext } from './engineContext';
 import { EngineContext, InterruptHook } from './contracts';

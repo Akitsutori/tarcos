@@ -8,7 +8,7 @@ import { GameState, RaidState, ClassType, GameItem, WeaponModCategory } from "./
 import { ALL_MAPS, buildProceduralMap } from "./data/content/maps";
 import { ALL_ITEMS } from "./data/content/items";
 import { INITIAL_WEAPONS } from "./data/content/weapons";
-import { createInitialPMC } from "./data";
+import { createInitialPMC } from "./data/construction";
 import { HEAL_PART_ORDER, SURGICAL_TARGET_ORDER } from "./engine/bodyParts";
 import { RaidScreen } from "./components/RaidScreen";
 import { StashScreen } from "./components/StashScreen";

@@ -5,7 +5,7 @@
 
 import React, { useEffect, useRef } from "react";
 import { GameState, RaidLog, ClassType, PMCBodyParts, BodyPart } from "../types";
-import { getWeaponStats } from "../data";
+import { getWeaponStats } from "../data/construction";
 import { ALL_MAPS } from "../data/content/maps";
 import { SHOOTING_RANGE_BONUS } from "../data/tuning/hideoutConfig";
 import { BodyMap } from "./BodyMap";

@@ -3,21 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { GameItem, Weapon, ClassType, HideoutModule, Skill, CharacterSkills, PMCCharacter, Hideout, PMCBodyParts } from "./types";
-import { CLASS_PASSIVES } from "./data/tuning/combatBalance";
-import { XP_PER_LEVEL } from "./data/tuning/progressionConfig";
-import { WORKBENCH_LEVEL_BONUS } from "./data/tuning/hideoutConfig";
-import { HIDE_OUT_MODULE_DEFINITIONS, HIDE_OUT_MODULE_MAX_LEVEL, HideoutModuleDefinition } from "./data/content/hideout";
+import { GameItem, Weapon, ClassType, HideoutModule, Skill, CharacterSkills, PMCCharacter, Hideout, PMCBodyParts } from "../types";
+import { CLASS_PASSIVES } from "./tuning/combatBalance";
+import { XP_PER_LEVEL } from "./tuning/progressionConfig";
+import { WORKBENCH_LEVEL_BONUS } from "./tuning/hideoutConfig";
+import { HIDE_OUT_MODULE_DEFINITIONS, HIDE_OUT_MODULE_MAX_LEVEL, HideoutModuleDefinition } from "./content/hideout";
+import { ALL_ITEMS } from "./content/items";
 
-// Content barrel — static game data lives in src/data/content/*
-export { ALL_ITEMS } from "./data/content/items";
-export { ROOM_TEMPLATES, ALL_MAPS, buildProceduralMap } from "./data/content/maps";
-export { INITIAL_WEAPONS } from "./data/content/weapons";
-export { ALL_QUESTS } from "./data/content/quests";
-export { HIDE_OUT_MODULE_DEFINITIONS, HIDE_OUT_MODULE_MAX_LEVEL } from "./data/content/hideout";
-
-// Local import for construction logic below (PMC starting gear, etc.)
-import { ALL_ITEMS } from "./data/content/items";
+/**
+ * Construction / factory layer: builds the initial PMC, hideout, skills, and
+ * computed weapon stats from the content and tuning layers.
+ *
+ * Static game data lives in src/data/content/* and balance numbers in
+ * src/data/tuning/* — this file imports both but defines no balance values.
+ */
 
 // Skill creation
 const createSkill = (id: string, name: string, description: string, bonus: string): Skill => ({

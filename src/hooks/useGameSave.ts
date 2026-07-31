@@ -3,7 +3,7 @@ import { GameState, ClassType, GameItem, WeaponModCategory, PMCBodyParts } from 
 import { 
   createInitialPMC, 
   createInitialHideout, calculateBodyParts 
-} from "../data";
+} from "../data/construction";
 import { ALL_ITEMS } from "../data/content/items";
 import { INITIAL_WEAPONS } from "../data/content/weapons";
 import { ALL_QUESTS } from "../data/content/quests";

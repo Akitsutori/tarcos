@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { ALL_ITEMS } from './items';
 import { HIDE_OUT_MODULE_DEFINITIONS, HIDE_OUT_MODULE_MAX_LEVEL } from './hideout';
-import { createInitialHideout } from '../../data';
+import { createInitialHideout } from '../construction';
 
 const HIDEOUT_KEYS = [
   'medstation',

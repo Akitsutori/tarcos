@@ -1,5 +1,5 @@
 import { GameState, GameItem } from "../types";
-import { ARCHETYPE_WEIGHTS } from "../data";
+import { ARCHETYPE_WEIGHTS } from "../data/construction";
 import { createLog } from "./utils";
 import { KIAReason } from "./contracts";
 import { finalizeQuestsAndXP, refillQuests } from "./progression";

@@ -1,5 +1,5 @@
 import { PMCCharacter, EnemyState, Weapon, RaidState, RaidLog, BodyPart, PMCBodyParts, ClassType, GameItem, CombatantView } from "../types";
-import { getWeaponStats } from "../data";
+import { getWeaponStats } from "../data/construction";
 import { createLog } from "./utils";
 import { BODY_PART_ORDER, DAMAGE_SPILLOVER_ORDER } from "./bodyParts";
 import { EngineContext, InterruptHook } from "./contracts";

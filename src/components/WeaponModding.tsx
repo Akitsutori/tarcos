@@ -5,7 +5,7 @@
 
 import React, { useState } from "react";
 import { GameState, Weapon, WeaponModCategory, GameItem } from "../types";
-import { getWeaponStats } from "../data";
+import { getWeaponStats } from "../data/construction";
 import { Eye, ShieldAlert, Crosshair, Disc, Crown, LayoutTemplate, PlusCircle, Trash2 } from "lucide-react";
 
 interface WeaponModdingProps {

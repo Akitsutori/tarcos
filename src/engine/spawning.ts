@@ -1,6 +1,6 @@
 import { MapData, EnemyState, Weapon, GameItem, CharacterSkills } from "../types";
 import { INITIAL_WEAPONS } from "../data/content/weapons";
-import { calculateBodyParts } from "../data";
+import { calculateBodyParts } from "../data/construction";
 import { ENEMY_SPAWN_PROFILES, LEVEL_STAT_SCALE, EnemyTier, LevelConfig, WeaponConfig, EquipmentConfig } from "../data/tuning/enemySpawning";
 
 /**

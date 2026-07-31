@@ -2,7 +2,7 @@ import { vi } from 'vitest';
 import { GameState, ClassType, RaidState, Stash, Weapon, EnemyState, GameItem, PMCBodyParts, RaidLog, Skill, CharacterSkills } from '../../types';
 import { ALL_MAPS } from '../../data/content/maps';
 import { INITIAL_WEAPONS } from '../../data/content/weapons';
-import { createInitialPMC, createInitialHideout } from '../../data';
+import { createInitialPMC, createInitialHideout } from '../../data/construction';
 import { runRaidTick } from '../raidSimulation';
 import { BODY_PART_ORDER } from '../bodyParts';
 
