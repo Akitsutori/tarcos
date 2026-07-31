@@ -413,11 +413,11 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 ## Phased Master Implementation Roadmap & Checklist
 
 ### Phase 1: Data-Driven Tuning Extraction & Code Deduplication
-- [ ] Create `src/data/tuning/raidConfig.ts` (decay rates, status thresholds).
+- [x] Create `src/data/tuning/raidConfig.ts` (decay rates, status thresholds).
 - [x] Create `src/engine/raidResolution.ts` with `handleKIA(state, reason)` & `handleExtraction(state)`. Remove 48-line duplicate block from `raidSimulation.ts`.
 - [x] Create `src/engine/lootManagement.ts` with `sortLootIntoContainers` & `SECURE_CONTAINER_CAPACITY`. Fix `loot.ts:L76` bug.
-- [ ] Create `src/data/tuning/enemySpawning.ts` with `ENEMY_SPAWN_PROFILES`.
-- [ ] Create `src/data/tuning/medicalConfig.ts` with `findBackupMedical` helper.
+- [x] Create `src/data/tuning/enemySpawning.ts` with `ENEMY_SPAWN_PROFILES`.
+- [x] Create `src/data/tuning/medicalConfig.ts` with `findBackupMedical` helper.
 
 ### Completed Work Log
 
@@ -462,6 +462,17 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 - [x] Implement runtime `EngineContext` adapter in `src/engine/engineContext.ts` with atomic intent accumulation & settlement step.
 - [x] Convert direct mutations in `combat.ts` and `raidSimulation.ts` to `context.emitIntent()`.
 
+#### 2026-07-31 — Phase 1 Final Slices: Tuning Extraction (`raidConfig.ts`, `enemySpawning.ts`, `medicalConfig.ts`)
+- **Intent**: Move all raid/nutrition balance values, enemy spawn tables, and medical backup logic into `src/data/tuning/` — completing the "Pure Config Balancing" pillar and satisfying the enforcement rule (engine orchestrators must not define magic numbers).
+- **Changes**:
+  - Added `src/data/tuning/raidConfig.ts` — tick advancement, energy/hydration decay chances, Nutrition Unit + Constitution decay reductions, `HYDRATION_STATUS` bands, status warning chance, maintenance hydration drain, provision drink threshold.
+  - Added `src/data/tuning/enemySpawning.ts` — `ENEMY_SPAWN_PROFILES` (per-tier names, level formulas, stat ranges, base accuracy, weapon/armor/helmet tables) + `LEVEL_STAT_SCALE` + raid spawn constants (`ENCOUNTER_CHANCE`, `REINFORCEMENT_MAX_PER_TILE`, `REINFORCEMENT_CHANCE`).
+  - Added `src/data/tuning/medicalConfig.ts` — `findBackupMedical(entries, kind, minResource)` + `consumeFoundEntry(entries, index)` + `BLEED_STOP_COST` + `DEFAULT_HEAL_RESTORE`.
+  - Rewired `spawning.ts` (profile-driven `spawnEnemy`), `maintenance.ts` (4 backup-search predicates + 4 consume blocks → shared helpers), `raidSimulation.ts` (all decay/status/spawn constants).
+- **Behavior**: Verbatim port. The surgical-kit predicate changed from `id.includes("kit")` to `medicalSubType === "surgical"` — provably equivalent for all current medical items (only surgical kits contain "kit"); verified by the untouched characterization tests passing. `spawnEnemy` RNG call sequence/count is preserved exactly per tier.
+- **Verification**: `npm test` — 51/51 pass (21 new data-contract tests across the 3 tuning files); `npm run lint` (`tsc --noEmit`) — clean.
+- **Residual**: `combat.ts` hydration penalty bands + burst accuracy decay remain local — owned by the future `combatBalance.ts` slice. Remaining roadmap work is Phase 3+.
+
 ### Phase 3: Async Generator Action Pipeline & Interceptors (HIGH-RISK PHASE)
 
 > [!WARNING]
@@ -490,7 +501,7 @@ The following 6 guardrails govern all future human and AI-agent contributions to
 
 ## Metrics & Impact Summary
 
-> **Progress as of 2026-07-31**: **Phase 1 complete** — `raidSimulation.ts` 336 → 173 lines, `loot.ts` 115 → 98 lines, duplicated container-sort code 44 → 0 lines, duplicated KIA/extraction pipeline ~170 → 0 lines (now centralized in `raidResolution.ts`). **Phase 2 core complete** — engine contract layer (`engineContext.ts` + `types.ts`, 12 tests) added, ~0 added engine lines beyond the adapter; simulation results unchanged. Remaining targets below are unchanged.
+> **Progress as of 2026-07-31**: **Phase 1 complete** — `raidSimulation.ts` 336 → 173 lines, `loot.ts` 115 → 98 lines, duplicated container-sort code 44 → 0 lines, duplicated KIA/extraction pipeline ~170 → 0 lines (centralized in `raidResolution.ts`); all raid/nutrition/enemy-spawn/medical balance values moved into `src/data/tuning/` (`raidConfig.ts`, `enemySpawning.ts`, `medicalConfig.ts`). **Phase 2 core complete** — engine contract layer (`engineContext.ts` + `types.ts`, 12 tests) added; simulation results unchanged. 51/51 tests green. Remaining targets below are unchanged.
 
 | Metric | Baseline | Target | Improvement |
 | :--- | :--- | :--- | :--- |

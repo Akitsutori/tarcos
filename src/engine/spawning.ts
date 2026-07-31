@@ -1,9 +1,23 @@
 import { MapData, EnemyState, Weapon, GameItem, PMCBodyParts, CharacterSkills, ClassType } from "../types";
-import { INITIAL_WEAPONS, ALL_ITEMS, calculateBodyParts } from "../data";
+import { INITIAL_WEAPONS, calculateBodyParts } from "../data";
+import { ENEMY_SPAWN_PROFILES, LEVEL_STAT_SCALE, EnemyTier, LevelConfig, WeaponConfig, EquipmentConfig } from "../data/tuning/enemySpawning";
+
+/**
+ * Rolls an equipment table following the profile's roll structure.
+ * The RNG call sequence mirrors the original inline rolls exactly:
+ * gate check first (when present), then a coin flip, random index, or single item.
+ */
+const rollEquipment = (cfg: EquipmentConfig): GameItem | null => {
+  if (cfg.gate !== undefined && !(Math.random() < cfg.gate)) return null;
+  if (cfg.pick === "coin") return Math.random() < 0.5 ? cfg.pool[0] : cfg.pool[1];
+  if (cfg.pick === "index") return cfg.pool[Math.floor(Math.random() * cfg.pool.length)];
+  return cfg.pool[0];
+};
 
 /**
  * Generates an enemy based on the map's difficulty and spawn chances.
  * Handles Boss, PMC, and Scav tiers, including their randomized stats and equipment.
+ * All values are sourced from ENEMY_SPAWN_PROFILES (data/tuning/enemySpawning.ts).
  *
  * @param map The current map metadata
  * @param pmcLevel The player's current level (for level scaling)
@@ -14,108 +28,69 @@ export const spawnEnemy = (map: MapData, pmcLevel: number): EnemyState => {
   const isBoss = rand < map.bossSpawnChance;
   const isPMC = !isBoss && rand < (map.bossSpawnChance + map.pmcSpawnChance);
 
+  let tier: EnemyTier = "Scav";
   let name = "";
-  let tier: "Scav" | "PMC" | "Boss" = "Scav";
   let level = 1;
-  let initiativeRange = [8, 12];
-  let agilityRange = [7, 11];
-  let weaponSkillRange = [1, 5];
-  let perceptionRange = [7, 11];
-  let constitutionRange = [2, 5];
-  let baseAccuracy = 30;
-
   let equippedWeapon: Weapon;
   let equippedArmor: GameItem | null = null;
   let equippedHelmet: GameItem | null = null;
 
   if (isBoss) {
+    const profile = ENEMY_SPAWN_PROFILES.Boss;
     tier = "Boss";
     name = map.bossName;
-    level = pmcLevel + 5;
-    if (level > 65) level = 65;
-    initiativeRange = [13, 17];
-    agilityRange = [11, 15];
-    weaponSkillRange = [15, 20];
-    perceptionRange = [11, 14];
-    constitutionRange = [6, 9];
-    baseAccuracy = 40;
+    const lvl = profile.level as Extract<LevelConfig, { mode: "add" }>;
+    level = Math.min(pmcLevel + lvl.amount, lvl.max);
 
-    const bossWeapons = [ClassType.SOLDIER, ClassType.MARKSMAN, ClassType.LUCKY];
-    const chosenW = bossWeapons[Math.floor(Math.random() * bossWeapons.length)];
+    const wpn = profile.weapon as Extract<WeaponConfig, { mode: "pool" }>;
+    const chosenW = wpn.pool[Math.floor(Math.random() * wpn.pool.length)];
     equippedWeapon = JSON.parse(JSON.stringify(INITIAL_WEAPONS[chosenW])) as Weapon;
 
-    equippedArmor = Math.random() < 0.5 ? JSON.parse(JSON.stringify(ALL_ITEMS.armor_killa)) : JSON.parse(JSON.stringify(ALL_ITEMS.armor_glukhar));
-    equippedHelmet = Math.random() < 0.5 ? JSON.parse(JSON.stringify(ALL_ITEMS.altyn)) : JSON.parse(JSON.stringify(ALL_ITEMS.helmet_6b47));
+    equippedArmor = rollEquipment(profile.armor);
+    equippedHelmet = rollEquipment(profile.helmet);
   } else if (isPMC) {
+    const profile = ENEMY_SPAWN_PROFILES.PMC;
     tier = "PMC";
-    const pmcNames = ["Ghost", "Hammer", "Viking", "Frost", "Viper", "Raven", "Slayer", "Sherpa", "DormChad"];
-    name = `${pmcNames[Math.floor(Math.random() * pmcNames.length)]} (PMC)`;
-    level = pmcLevel + Math.floor(Math.random() * 11) - 5;
-    if (level < 1) level = 1;
-    if (level > 60) level = 60;
-    initiativeRange = [10, 14];
-    agilityRange = [9, 13];
-    weaponSkillRange = [11, 16];
-    perceptionRange = [9, 12];
-    constitutionRange = [4, 7];
-    baseAccuracy = 30;
+    name = `${profile.names[Math.floor(Math.random() * profile.names.length)]} (PMC)`;
 
-    const isLmg = Math.random() < 0.25;
-    equippedWeapon = isLmg 
-      ? JSON.parse(JSON.stringify(INITIAL_WEAPONS[ClassType.LUCKY])) 
-      : JSON.parse(JSON.stringify(INITIAL_WEAPONS[ClassType.SOLDIER]));
+    const lvl = profile.level as Extract<LevelConfig, { mode: "delta" }>;
+    level = pmcLevel + (Math.floor(Math.random() * lvl.rollRange) + lvl.offset);
+    if (level < lvl.min) level = lvl.min;
+    if (level > lvl.max) level = lvl.max;
 
-    if (Math.random() < 0.70) {
-      equippedArmor = Math.random() < 0.5 ? JSON.parse(JSON.stringify(ALL_ITEMS.armor_6b13)) : JSON.parse(JSON.stringify(ALL_ITEMS.armor_6b13_heavy));
-    }
-    if (Math.random() < 0.60) {
-      const helmets = [ALL_ITEMS.helmet_6b47, ALL_ITEMS.ulach, ALL_ITEMS.fast_mt, ALL_ITEMS.tor_team];
-      equippedHelmet = JSON.parse(JSON.stringify(helmets[Math.floor(Math.random() * helmets.length)])) as GameItem;
-    }
+    const wpn = profile.weapon as Extract<WeaponConfig, { mode: "choice" }>;
+    const isLmg = Math.random() < wpn.chance;
+    equippedWeapon = isLmg
+      ? JSON.parse(JSON.stringify(INITIAL_WEAPONS[wpn.chosen])) as Weapon
+      : JSON.parse(JSON.stringify(INITIAL_WEAPONS[wpn.fallback])) as Weapon;
+
+    equippedArmor = rollEquipment(profile.armor);
+    equippedHelmet = rollEquipment(profile.helmet);
   } else {
+    const profile = ENEMY_SPAWN_PROFILES.Scav;
     tier = "Scav";
-    const scavNames = ["Bomzh", "Gopnik", "Tushonka", "Ded", "Cheeki", "Breeki", "Serega", "Kolya", "Morozov"];
-    name = `${scavNames[Math.floor(Math.random() * scavNames.length)]} (Scav)`;
-    level = pmcLevel - (Math.floor(Math.random() * 11) + 5);
-    if (level < 1) level = 1;
-    initiativeRange = [8, 12];
-    agilityRange = [7, 11];
-    weaponSkillRange = [1, 5];
-    perceptionRange = [7, 11];
-    constitutionRange = [2, 5];
-    baseAccuracy = 30;
+    name = `${profile.names[Math.floor(Math.random() * profile.names.length)]} (Scav)`;
 
+    const lvl = profile.level as Extract<LevelConfig, { mode: "subtract" }>;
+    level = pmcLevel - (Math.floor(Math.random() * lvl.rollRange) + lvl.offset);
+    if (level < lvl.min) level = lvl.min;
+
+    const wpn = profile.weapon as Extract<WeaponConfig, { mode: "split" }>;
     const rollWeapon = Math.random();
-    let classWeapon = ClassType.SOLDIER;
-    if (rollWeapon < 0.50) {
-      equippedWeapon = {
-        id: "pistol",
-        name: "Pistol (9x18mm)",
-        baseErgo: 40,
-        baseRecoil: 50,
-        baseDmg: 25,
-        baseAccuracy: 40,
-        mods: {},
-        signatureClass: ClassType.LUCKY,
-        caliber: "9x18mm",
-        currentMagRounds: 8,
-        maxMagSize: 8,
-        reserveMags: 2,
-        maxReserveMags: 2
-      };
+    if (rollWeapon < wpn.pistolChance) {
+      equippedWeapon = JSON.parse(JSON.stringify(wpn.pistol)) as Weapon;
     } else {
-      const scavWeapons = [ClassType.SURVIVOR, ClassType.SCOUT, ClassType.SOLDIER];
-      classWeapon = scavWeapons[Math.floor(Math.random() * scavWeapons.length)];
+      const classWeapon = wpn.pool[Math.floor(Math.random() * wpn.pool.length)];
       equippedWeapon = JSON.parse(JSON.stringify(INITIAL_WEAPONS[classWeapon])) as Weapon;
     }
 
-    if (Math.random() < 0.40) {
-      equippedArmor = JSON.parse(JSON.stringify(ALL_ITEMS.paca));
-    }
-    if (Math.random() < 0.20) {
-      equippedHelmet = Math.random() < 0.5 ? JSON.parse(JSON.stringify(ALL_ITEMS.untar)) : JSON.parse(JSON.stringify(ALL_ITEMS.ssh68));
-    }
+    equippedArmor = rollEquipment(profile.armor);
+    equippedHelmet = rollEquipment(profile.helmet);
   }
+
+  const profile = isBoss ? ENEMY_SPAWN_PROFILES.Boss : isPMC ? ENEMY_SPAWN_PROFILES.PMC : ENEMY_SPAWN_PROFILES.Scav;
+  const baseAccuracy = profile.baseAccuracy;
+  const { initiative: initiativeRange, agility: agilityRange, weaponSkill: weaponSkillRange, perception: perceptionRange, constitution: constitutionRange } = profile.statRanges;
 
   const getRandVal = (range: number[]) => Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
 
@@ -125,7 +100,7 @@ export const spawnEnemy = (map: MapData, pmcLevel: number): EnemyState => {
   const rollPerc = getRandVal(perceptionRange);
   const rollConst = getRandVal(constitutionRange);
 
-  const levelBonus = Math.floor((level - 1) * 0.15);
+  const levelBonus = Math.floor((level - 1) * LEVEL_STAT_SCALE);
 
   const finalInit = rollInit + levelBonus;
   const finalAgil = rollAgil + levelBonus;

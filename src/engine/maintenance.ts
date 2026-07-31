@@ -1,6 +1,8 @@
 import { PMCCharacter, RaidState, Weapon, PMCBodyParts } from "../types";
 import { INITIAL_WEAPONS } from "../data";
 import { createLog } from "./utils";
+import { findBackupMedical, consumeFoundEntry, BLEED_STOP_COST, DEFAULT_HEAL_RESTORE } from "../data/tuning/medicalConfig";
+import { MAINTENANCE_HYDRATION_DRAIN_MIN, MAINTENANCE_HYDRATION_DRAIN_MAX, PROVISION_DRINK_THRESHOLD } from "../data/tuning/raidConfig";
 
 /**
  * Performs post-combat medical and resource maintenance.
@@ -22,16 +24,15 @@ export const executeMaintenancePhase = (pmc: PMCCharacter, raid: RaidState, equi
         pmc.equippedSurgicalKit.resourceCurrent--;
         raid.logs.push(createLog(`Surgical repair completed: restored [${part.name}] blacked out limb to 1 HP using ${pmc.equippedSurgicalKit.name}. Uses remaining: ${pmc.equippedSurgicalKit.resourceCurrent}.`, "heal", raid.elapsedSeconds));
       } else {
-        const backupEntryIdx = raid.lootFound.findIndex(e => e.item.type === "medical" && e.item.id.includes("kit") && e.item.resourceCurrent && e.item.resourceCurrent > 0);
+        const backupEntryIdx = findBackupMedical(raid.lootFound, "surgical");
         if (backupEntryIdx !== -1) {
           const backup = raid.lootFound[backupEntryIdx].item;
           part.current = 1;
           backup.resourceCurrent!--;
           pmc.equippedSurgicalKit = backup;
           raid.logs.push(createLog(`Equipped backup surgical kit ${backup.name} and repaired [${part.name}] blacked out limb. Uses: ${backup.resourceCurrent}.`, "heal", raid.elapsedSeconds));
-          
-          if (raid.lootFound[backupEntryIdx].quantity > 1) raid.lootFound[backupEntryIdx].quantity--;
-          else raid.lootFound.splice(backupEntryIdx, 1);
+
+          consumeFoundEntry(raid.lootFound, backupEntryIdx);
         } else {
           raid.logs.push(createLog(`Limb [${part.name}] remains blacked out — No active surgical kit available!`, "warning", raid.elapsedSeconds));
         }
@@ -41,21 +42,20 @@ export const executeMaintenancePhase = (pmc: PMCCharacter, raid: RaidState, equi
 
   // Step 2: Bleed Stop
   if (pmc.isBleeding) {
-    if (pmc.equippedMedkit && pmc.equippedMedkit.resourceCurrent && pmc.equippedMedkit.resourceCurrent >= 20) {
-      pmc.equippedMedkit.resourceCurrent -= 20;
+    if (pmc.equippedMedkit && pmc.equippedMedkit.resourceCurrent && pmc.equippedMedkit.resourceCurrent >= BLEED_STOP_COST) {
+      pmc.equippedMedkit.resourceCurrent -= BLEED_STOP_COST;
       pmc.isBleeding = false;
-      raid.logs.push(createLog(`Stopped active arterial bleeding. Consumed 20 resource points of ${pmc.equippedMedkit.name}. Capacity: ${pmc.equippedMedkit.resourceCurrent}/${pmc.equippedMedkit.resourceMax}.`, "heal", raid.elapsedSeconds));
+      raid.logs.push(createLog(`Stopped active arterial bleeding. Consumed ${BLEED_STOP_COST} resource points of ${pmc.equippedMedkit.name}. Capacity: ${pmc.equippedMedkit.resourceCurrent}/${pmc.equippedMedkit.resourceMax}.`, "heal", raid.elapsedSeconds));
     } else {
-      const backupIdx = raid.lootFound.findIndex(e => e.item.type === "medical" && e.item.resourceCurrent && e.item.resourceCurrent >= 20);
+      const backupIdx = findBackupMedical(raid.lootFound, "medkit", BLEED_STOP_COST);
       if (backupIdx !== -1) {
         const backup = raid.lootFound[backupIdx].item;
-        backup.resourceCurrent! -= 20;
+        backup.resourceCurrent! -= BLEED_STOP_COST;
         pmc.equippedMedkit = backup;
         pmc.isBleeding = false;
         raid.logs.push(createLog(`Equipped backup medkit ${backup.name} and stopped arterial bleeding. Capacity: ${backup.resourceCurrent}/${backup.resourceMax}.`, "heal", raid.elapsedSeconds));
-        
-        if (raid.lootFound[backupIdx].quantity > 1) raid.lootFound[backupIdx].quantity--;
-        else raid.lootFound.splice(backupIdx, 1);
+
+        consumeFoundEntry(raid.lootFound, backupIdx);
       } else {
         raid.logs.push(createLog("Warning: Arterial bleeding continues — No medical resource pool available to stop clot!", "warning", raid.elapsedSeconds));
       }
@@ -64,7 +64,7 @@ export const executeMaintenancePhase = (pmc: PMCCharacter, raid: RaidState, equi
 
   // Step 3: Medkit Healing
   const healOrder: (keyof PMCBodyParts)[] = ["head", "thorax", "stomach", "leftLeg", "rightLeg", "leftArm", "rightArm"];
-  const healHPRestore = pmc.equippedMedkit?.hpHeal ?? 25;
+  const healHPRestore = pmc.equippedMedkit?.hpHeal ?? DEFAULT_HEAL_RESTORE;
 
   let healAttemptsCount = 5;
   while (healAttemptsCount > 0) {
@@ -87,7 +87,7 @@ export const executeMaintenancePhase = (pmc: PMCCharacter, raid: RaidState, equi
 
           if (pmc.equippedMedkit.resourceCurrent <= 0) pmc.equippedMedkit = null;
         } else {
-          const backupIdx = raid.lootFound.findIndex(e => e.item.type === "medical" && e.item.resourceCurrent && e.item.resourceCurrent > 0);
+          const backupIdx = findBackupMedical(raid.lootFound, "medkit");
           if (backupIdx !== -1) {
             const backup = raid.lootFound[backupIdx].item;
             const actualUse = Math.min(healAmt, backup.resourceCurrent!);
@@ -99,8 +99,7 @@ export const executeMaintenancePhase = (pmc: PMCCharacter, raid: RaidState, equi
 
             raid.logs.push(createLog(`Equipped backup medkit ${backup.name} and healed [${part.name}] for +${actualUse} HP. Capacity: ${backup.resourceCurrent}/${backup.resourceMax}.`, "heal", raid.elapsedSeconds));
 
-            if (raid.lootFound[backupIdx].quantity > 1) raid.lootFound[backupIdx].quantity--;
-            else raid.lootFound.splice(backupIdx, 1);
+            consumeFoundEntry(raid.lootFound, backupIdx);
 
             if (backup.resourceCurrent! <= 0) pmc.equippedMedkit = null;
           }
@@ -129,10 +128,10 @@ export const executeMaintenancePhase = (pmc: PMCCharacter, raid: RaidState, equi
   }
 
   // Step 5: Hydration Drain and Provision Consumption
-  const hydrationDrain = Math.floor(Math.random() * 5) + 3;
+  const hydrationDrain = MAINTENANCE_HYDRATION_DRAIN_MIN + Math.floor(Math.random() * MAINTENANCE_HYDRATION_DRAIN_MAX);
   pmc.hydration = Math.max(0, pmc.hydration - hydrationDrain);
 
-  if (pmc.hydration < 50) {
+  if (pmc.hydration < PROVISION_DRINK_THRESHOLD) {
     if (pmc.equippedProvision && pmc.equippedProvision.resourceCurrent && pmc.equippedProvision.resourceCurrent > 0) {
       const missing = pmc.maxHydration - pmc.hydration;
       const healAmt = Math.min(missing, pmc.equippedProvision.resourceCurrent);
@@ -141,7 +140,7 @@ export const executeMaintenancePhase = (pmc: PMCCharacter, raid: RaidState, equi
       raid.logs.push(createLog(`PMC is thirsty. Consumed equipped provision. Restored +${healAmt} Hydration.`, "heal", raid.elapsedSeconds));
       if (pmc.equippedProvision.resourceCurrent <= 0) pmc.equippedProvision = null;
     } else {
-      const backupIdx = raid.lootFound.findIndex(e => e.item.type === "provision" && e.item.resourceCurrent && e.item.resourceCurrent > 0);
+      const backupIdx = findBackupMedical(raid.lootFound, "provision");
       if (backupIdx !== -1) {
         const backup = raid.lootFound[backupIdx].item;
         const missing = pmc.maxHydration - pmc.hydration;
@@ -151,8 +150,7 @@ export const executeMaintenancePhase = (pmc: PMCCharacter, raid: RaidState, equi
         raid.logs.push(createLog(`PMC discovered ${backup.name} in backpack and drank it. Restored +${healAmt} Hydration.`, "heal", raid.elapsedSeconds));
 
         if (backup.resourceCurrent! <= 0) {
-          if (raid.lootFound[backupIdx].quantity > 1) raid.lootFound[backupIdx].quantity--;
-          else raid.lootFound.splice(backupIdx, 1);
+          consumeFoundEntry(raid.lootFound, backupIdx);
         }
       }
     }

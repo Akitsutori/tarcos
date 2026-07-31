@@ -8,6 +8,8 @@ import { executeMaintenancePhase } from "./maintenance";
 import { simulateCombatRound } from "./combat";
 import { handleKIA, handleExtraction } from "./raidResolution";
 import { createEngineContext } from "./engineContext";
+import { TICK_SECONDS_MIN, TICK_SECONDS_MAX, ENERGY_DECAY_CHANCE, HYDRATION_DECAY_CHANCE, NUTRITION_UNIT_DECAY_RATE, SKILL_DECAY_REDUCTION_PER_LEVEL, SKILL_DECAY_REDUCTION_MIN, HYDRATION_STATUS, STATUS_WARNING_CHANCE } from "../data/tuning/raidConfig";
+import { ENCOUNTER_CHANCE, REINFORCEMENT_MAX_PER_TILE, REINFORCEMENT_CHANCE } from "../data/tuning/enemySpawning";
 
 /**
  * Executes a single simulation tick for the active raid.
@@ -29,30 +31,30 @@ export const runRaidTick = (state: GameState): GameState => {
   const weaponStats = getWeaponStats(equippedWeapon, newState.hideout.workbench.level);
 
   // Time advancement
-  raid.elapsedSeconds += 12 + Math.floor(Math.random() * 8);
+  raid.elapsedSeconds += TICK_SECONDS_MIN + Math.floor(Math.random() * TICK_SECONDS_MAX);
 
   // Nutrition Decay
-  const rateReduction = newState.hideout.nutritionUnit.level >= 3 ? 0.8 : 1.0;
+  const rateReduction = newState.hideout.nutritionUnit.level >= 3 ? NUTRITION_UNIT_DECAY_RATE : 1.0;
   const enduranceLevel = pmc.skills.constitution.level;
-  const skillReduction = Math.max(0.5, 1 - enduranceLevel * 0.015);
+  const skillReduction = Math.max(SKILL_DECAY_REDUCTION_MIN, 1 - enduranceLevel * SKILL_DECAY_REDUCTION_PER_LEVEL);
   const drainModifier = rateReduction * skillReduction;
 
-  if (Math.random() < 0.25 * drainModifier) pmc.energy = Math.max(0, pmc.energy - 1);
-  if (Math.random() < 0.30 * drainModifier) pmc.hydration = Math.max(0, pmc.hydration - 1);
+  if (Math.random() < ENERGY_DECAY_CHANCE * drainModifier) pmc.energy = Math.max(0, pmc.energy - 1);
+  if (Math.random() < HYDRATION_DECAY_CHANCE * drainModifier) pmc.hydration = Math.max(0, pmc.hydration - 1);
 
   // Status update after decay
   const tileProgress = raid.tiles ? `${raid.currentStage + 1}/${raid.tiles.length}` : "?/?";
   raid.logs.push(createLog(`[STATUS] Hydration: ${pmc.hydration}/${pmc.maxHydration} | Energy: ${pmc.energy}/${pmc.maxEnergy} | Tile: ${tileProgress}`, "status", raid.elapsedSeconds));
 
-  if (pmc.hydration <= 0) {
+  if (pmc.hydration <= HYDRATION_STATUS.FATAL) {
     pmc.bodyParts.head.current = 0;
     pmc.bodyParts.thorax.current = 0;
     raid.logs.push(createLog("PMC collapsed from fatal dehydration and died!", "death", raid.elapsedSeconds));
     raid.status = "kia";
-  } else if (pmc.hydration < 25 && raid.status !== "combat") {
-    if (Math.random() < 0.15) raid.logs.push(createLog("Player is severely dehydrated!", "warning", raid.elapsedSeconds));
-  } else if (pmc.hydration < 50 && raid.status !== "combat") {
-    if (Math.random() < 0.15) raid.logs.push(createLog("Player is thirsty", "warning", raid.elapsedSeconds));
+  } else if (pmc.hydration < HYDRATION_STATUS.SEVERE && raid.status !== "combat") {
+    if (Math.random() < STATUS_WARNING_CHANCE) raid.logs.push(createLog("Player is severely dehydrated!", "warning", raid.elapsedSeconds));
+  } else if (pmc.hydration < HYDRATION_STATUS.THIRSTY && raid.status !== "combat") {
+    if (Math.random() < STATUS_WARNING_CHANCE) raid.logs.push(createLog("Player is thirsty", "warning", raid.elapsedSeconds));
   }
 
   // Dehydration KIA Handling
@@ -119,7 +121,7 @@ export const runRaidTick = (state: GameState): GameState => {
         }
       }
 
-      if (raid.reinforcementsSpawnedThisTile < 3 && Math.random() < 0.30) {
+      if (raid.reinforcementsSpawnedThisTile < REINFORCEMENT_MAX_PER_TILE && Math.random() < REINFORCEMENT_CHANCE) {
         raid.reinforcementsSpawnedThisTile++;
         const nextReinforcement = spawnEnemy(map, pmc.level);
         raid.combatTarget = nextReinforcement;
@@ -160,7 +162,7 @@ export const runRaidTick = (state: GameState): GameState => {
   raid.logs.push(createLog(`Entered [${currentTile.name}]: ${currentTile.description}`, "info", raid.elapsedSeconds));
 
   const encounterRoll = Math.random();
-  if (encounterRoll < 0.25) {
+  if (encounterRoll < ENCOUNTER_CHANCE) {
     const hostile = spawnEnemy(map, pmc.level);
     raid.combatTarget = hostile;
     raid.status = "combat";
