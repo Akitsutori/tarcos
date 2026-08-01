@@ -4,10 +4,11 @@
  */
 
 import React, { useState, useMemo } from "react";
-import { GameState, GameItem, ItemType, BodyPart } from "../types";
+import { GameState, GameItem, ItemType } from "../types";
 import { ALL_ITEMS } from "../data/content/items";
 import { MEDSTATION_HEAL_PER_5S_BY_LEVEL } from "../data/tuning/hideoutConfig";
 import { BodyMap } from "./BodyMap";
+import { totalCurrentHp, totalMaxHp } from "../engine/bodyParts";
 import { 
   Coins, PackageOpen, Heart, Zap, 
   Droplet, Package
@@ -33,8 +34,8 @@ export const StashScreen: React.FC<StashScreenProps> = ({
   const { stash, pmc, hideout } = gameState;
 
   // Compute total current and max HP across all body parts
-  const totalCurrentHP = pmc.bodyParts ? (Object.values(pmc.bodyParts) as BodyPart[]).reduce((acc, part) => acc + (part.current || 0), 0) : 0;
-  const totalMaxHP = pmc.bodyParts ? (Object.values(pmc.bodyParts) as BodyPart[]).reduce((acc, part) => acc + (part.max || 100), 0) : 100;
+  const totalCurrentHP = pmc.bodyParts ? totalCurrentHp(pmc.bodyParts) : 0;
+  const totalMaxHP = pmc.bodyParts ? totalMaxHp(pmc.bodyParts) : 100;
   const hpPercent = totalMaxHP > 0 ? (totalCurrentHP / totalMaxHP) * 100 : 0;
   const [activeCategory, setActiveCategory] = useState<ItemType | "all">("all");
 

@@ -1,7 +1,7 @@
 import { MapData, GameItem, PMCCharacter, RaidState } from "../types";
 import { ALL_ITEMS } from "../data/content/items";
 import { createLog } from "./utils";
-import { sortLootIntoContainers } from "./lootManagement";
+import { allocateLoot } from "./lootManagement";
 import { secureContainerCapacity } from "../data/tuning/hideoutConfig";
 import { getLuckyLootRolls } from "./behaviors/classPassives";
 import {
@@ -72,19 +72,8 @@ export const executeLootPhase = (pmc: PMCCharacter, raid: RaidState, map: MapDat
     if (Math.random() < lootChance) {
       const item = rollLootItem(map);
       const backpackCap = getBackpackCapacity(pmc.skills.constitution.level);
-      const currentLoad = raid.lootFound.reduce((acc, entry) => acc + entry.quantity, 0);
 
-      if (currentLoad < backpackCap) {
-        const secureCap = secureContainerCapacity(intelligenceCenterLevel);
-        raid.lootFound.push({ item, quantity: 1 });
-
-        const { lootFound, secureContainerSaved } = sortLootIntoContainers(
-          [...raid.lootFound, ...raid.secureContainerSaved],
-          secureCap
-        );
-        raid.lootFound = lootFound;
-        raid.secureContainerSaved = secureContainerSaved;
-
+      if (allocateLoot(raid, item, backpackCap, secureContainerCapacity(intelligenceCenterLevel))) {
         raid.logs.push(createLog(`Found ${item.name} (Value: ₽${item.value})`, "loot", raid.elapsedSeconds));
         itemsFoundCount++;
       } else {

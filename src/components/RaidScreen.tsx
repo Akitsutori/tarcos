@@ -8,6 +8,7 @@ import { GameState, RaidLog, ClassType, PMCBodyParts, BodyPart } from "../types"
 import { getWeaponStats } from "../data/construction";
 import { ALL_MAPS } from "../data/content/maps";
 import { SHOOTING_RANGE_BONUS } from "../data/tuning/hideoutConfig";
+import { totalCurrentHp, totalMaxHp } from "../engine/bodyParts";
 import { BodyMap } from "./BodyMap";
 import { 
   Play, Pause, Heart, Zap, Droplet, Skull, 
@@ -66,8 +67,8 @@ export const RaidScreen: React.FC<RaidScreenProps> = ({
   const weaponStats = getWeaponStats(equippedWeapon, hideout.workbench.level);
 
   // Calculate overall health values dynamically
-  const totalCurrentHP = (Object.values(pmc.bodyParts) as BodyPart[]).reduce((acc, part) => acc + part.current, 0);
-  const totalMaxHP = (Object.values(pmc.bodyParts) as BodyPart[]).reduce((acc, part) => acc + part.max, 0);
+  const totalCurrentHP = totalCurrentHp(pmc.bodyParts);
+  const totalMaxHP = totalMaxHp(pmc.bodyParts);
 
   // Helper for color-coding terminal log types
   const getLogStyle = (type: RaidLog["type"]) => {

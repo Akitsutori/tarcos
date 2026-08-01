@@ -5,7 +5,7 @@ import { buildProceduralMap } from "../data/content/maps";
 import { createLog } from "./utils";
 import { spawnEnemy } from "./spawning";
 import { executeLootPhase, rollLootItem, getBackpackCapacity } from "./loot";
-import { sortLootIntoContainers } from "./lootManagement";
+import { allocateLoot } from "./lootManagement";
 import { executeMaintenancePhase } from "./maintenance";
 import { simulateCombatRoundGenerator } from "./combat";
 import { handleKIA, handleExtraction } from "./raidResolution";
@@ -124,19 +124,8 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
       for (let i = 0; i < lootRollCount; i++) {
         const item = rollLootItem(map);
         const capacity = getBackpackCapacity(pmc.skills.constitution.level);
-        const uniqueBackpackCount = raid.lootFound.reduce((acc, e) => acc + e.quantity, 0);
 
-        if (uniqueBackpackCount < capacity) {
-          const secureCap = secureContainerCapacity(newState.hideout.intelligenceCenter.level);
-          raid.lootFound.push({ item, quantity: 1 });
-
-          const { lootFound, secureContainerSaved } = sortLootIntoContainers(
-            [...raid.lootFound, ...raid.secureContainerSaved],
-            secureCap
-          );
-          raid.lootFound = lootFound;
-          raid.secureContainerSaved = secureContainerSaved;
-
+        if (allocateLoot(raid, item, capacity, secureContainerCapacity(newState.hideout.intelligenceCenter.level))) {
           raid.logs.push(createLog(`Looted corpse: found ${item.name} (Value: ₽${item.value})`, "loot", raid.elapsedSeconds));
         } else {
           raid.logs.push(createLog(`Loot ${item.name} left behind — Backpack is full!`, "warning", raid.elapsedSeconds));

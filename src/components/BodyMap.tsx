@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { BodyPart, PMCBodyParts } from "../types";
+import { BODY_PART_ORDER } from "../engine/bodyParts";
 
 interface BodyMapProps {
   bodyParts: PMCBodyParts;
@@ -11,15 +12,9 @@ export const BodyMap: React.FC<BodyMapProps> = ({ bodyParts }) => {
   if (!bodyParts) return null;
 
   // Map keys exactly
-  const partsList: { [key: string]: BodyPart } = {
-    head: bodyParts.head,
-    thorax: bodyParts.thorax,
-    stomach: bodyParts.stomach,
-    leftArm: bodyParts.leftArm,
-    rightArm: bodyParts.rightArm,
-    leftLeg: bodyParts.leftLeg,
-    rightLeg: bodyParts.rightLeg,
-  };
+  const partsList: { [key: string]: BodyPart } = Object.fromEntries(
+    BODY_PART_ORDER.map((key) => [key, bodyParts[key]])
+  );
 
   const getLimbDetails = (part: BodyPart) => {
     if (!part) return { pct: 0, bg: "bg-slate-800", text: "text-slate-400", border: "border-slate-700" };

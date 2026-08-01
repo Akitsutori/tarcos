@@ -24,3 +24,11 @@ export const SURGICAL_TARGET_ORDER: readonly (keyof PMCBodyParts)[] = ["stomach"
  * stomach -> arms -> legs. Distinct from SURGICAL_TARGET_ORDER on purpose.
  */
 export const DAMAGE_SPILLOVER_ORDER: readonly (keyof PMCBodyParts)[] = ["stomach", "leftArm", "rightArm", "leftLeg", "rightLeg"];
+
+/** Total current HP summed over all body parts, in BODY_PART_ORDER. */
+export const totalCurrentHp = (parts: PMCBodyParts): number =>
+  BODY_PART_ORDER.reduce((acc, part) => acc + parts[part].current, 0);
+
+/** Total max HP summed over all body parts, in BODY_PART_ORDER. */
+export const totalMaxHp = (parts: PMCBodyParts): number =>
+  BODY_PART_ORDER.reduce((acc, part) => acc + parts[part].max, 0);
