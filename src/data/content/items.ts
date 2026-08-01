@@ -70,6 +70,11 @@ export const ALL_ITEMS: { [id: string]: GameItem } = {
   mag_pmag: { id: "mag_pmag", name: "Extended Mag", description: "Weapon Mod - Magazine.", type: "weapon_mod", rarity: "rare", value: 10000, iconName: "Disc", modCategory: WeaponModCategory.MAGAZINE, ergoBonus: 0, recoilReduction: 0, dmgBonus: 0, critBonus: 0, soldBy: "mechanic", traderCost: 12000 },
   mag_drum: { id: "mag_drum", name: "Drum Mag", description: "Weapon Mod - Magazine. Recoil: -2%", type: "weapon_mod", rarity: "epic", value: 20000, iconName: "Disc", modCategory: WeaponModCategory.MAGAZINE, ergoBonus: 0, recoilReduction: -2, dmgBonus: 0, critBonus: 0, soldBy: "mechanic", traderCost: 24000 },
 
+  // WEAPON MODS — HANDGUARDS
+  handguard_std: { id: "handguard_std", name: "Standard Handguard", description: "Weapon Mod - Handguard. Ergo: +1, Recoil: 1%", type: "weapon_mod", rarity: "common", value: 7000, iconName: "Columns2", modCategory: WeaponModCategory.HANDGUARD, ergoBonus: 1, recoilReduction: 1, dmgBonus: 0, critBonus: 0, soldBy: "mechanic", traderCost: 8400 },
+  handguard_tac: { id: "handguard_tac", name: "Tactical Handguard", description: "Weapon Mod - Handguard. Ergo: +3, Recoil: 2%", type: "weapon_mod", rarity: "rare", value: 14000, iconName: "Grid", modCategory: WeaponModCategory.HANDGUARD, ergoBonus: 3, recoilReduction: 2, dmgBonus: 0, critBonus: 0, soldBy: "mechanic", traderCost: 16800 },
+  handguard_hex: { id: "handguard_hex", name: "Hexagon Handguard", description: "Weapon Mod - Handguard. Ergo: +5, Recoil: 2%", type: "weapon_mod", rarity: "epic", value: 22000, iconName: "Hexagon", modCategory: WeaponModCategory.HANDGUARD, ergoBonus: 5, recoilReduction: 2, dmgBonus: 0, critBonus: 0 },
+
   // VALUABLES
   tetriz: { id: "tetriz", name: "Tetriz", description: "Handheld console. Highly requested by Ragman.", type: "valuable", rarity: "epic", value: 50, iconName: "Gamepad" },
   gp_coin: { id: "gp_coin", name: "GP Coin", description: "Physical Bitcoin-adjacent golden coin.", type: "valuable", rarity: "rare", value: 20, iconName: "Coins" },

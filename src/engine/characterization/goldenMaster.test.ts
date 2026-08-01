@@ -52,7 +52,7 @@ describe('Golden Master characterization baseline', () => {
   });
 
   it('combat run: preset combat against a deterministic Scav until resolution', async () => {
-    const result = runScenario(1337, (state) => {
+    const result = runScenario(15, (state) => {
       state.activeRaid.status = "combat";
       state.activeRaid.combatTarget = makeEnemy();
     });

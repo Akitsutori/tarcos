@@ -1,19 +1,19 @@
 [
   {
     "tick": 1,
-    "elapsedSeconds": 17,
-    "stage": 1,
-    "status": "scavenging",
+    "elapsedSeconds": 13,
+    "stage": 0,
+    "status": "combat",
     "killsByTier": {
-      "Scav": 1,
+      "Scav": 0,
       "PMC": 0,
       "Boss": 0
     },
     "pmc": {
       "level": 1,
-      "xp": 20,
+      "xp": 0,
       "energy": 100,
-      "hydration": 94,
+      "hydration": 99,
       "hp": [
         60,
         60,
@@ -24,20 +24,32 @@
         30
       ],
       "isBleeding": false,
-      "killsCount": 1,
+      "killsCount": 0,
       "medkit": "ai2:150/150",
       "surgicalKit": "cms_kit:3/3",
       "provision": "water_bottle:60/60",
       "armor": "armor_6b13:50/50",
       "helmet": "ssh68:30/30",
-      "weaponRounds": "29/30+3"
+      "weaponRounds": "26/30+3"
     },
-    "combatTarget": null,
+    "combatTarget": {
+      "name": "Test Scav",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        35,
+        25,
+        10,
+        60,
+        60,
+        0,
+        65
+      ]
+    },
     "lootFound": [],
-    "secureContainerSaved": [
-      "wd40x1",
-      "ai2x1"
-    ],
+    "secureContainerSaved": [],
     "stashItems": [],
     "logs": [
       {
@@ -50,7 +62,233 @@
       },
       {
         "t": "info",
-        "m": "[INIT] PMC rolled 20 vs Test Scav rolled 4 → PMC acts first"
+        "m": "[INIT] PMC rolled 13 vs Test Scav rolled 13 → PMC acts first"
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 4 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 74.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Test Scav [LEFT LEG]: 60 dmg | Part HP: 5/65"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 71.5%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Test Scav [THORAX]: 60 dmg | Part HP: 25/85"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 69.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Test Scav [LEFT LEG]: 60 dmg | Part HP: 0/65"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 66.5%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Test Scav [STOMACH]: 60 dmg | Part HP: 10/70"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 4 rounds | PMC: 270 HP | Test Scav: 255 HP"
+      },
+      {
+        "t": "info",
+        "m": "Test Scav ducked into COVER. Attacker accuracy reduced by 20."
+      }
+    ]
+  },
+  {
+    "tick": 2,
+    "elapsedSeconds": 32,
+    "stage": 0,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 100,
+      "hydration": 99,
+      "hp": [
+        60,
+        60,
+        30,
+        30,
+        30,
+        30,
+        30
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:50/50",
+      "helmet": "ssh68:30/30",
+      "weaponRounds": "23/30+3"
+    },
+    "combatTarget": {
+      "name": "Test Scav",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        35,
+        25,
+        10,
+        60,
+        0,
+        0,
+        65
+      ]
+    },
+    "lootFound": [],
+    "secureContainerSaved": [],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 99/100 | Energy: 100/100 | Tile: 1/0"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Test Scav Lv.1 | HP: 255/440 | Armor: None | Weapon: Test Weapon (7.62x39mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 19 vs Test Scav rolled 6 → PMC acts first"
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 3 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 54.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Test Scav [LEFT LEG]: 60 dmg | Part HP: 0/65"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 51.5%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 49.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Test Scav [RIGHT ARM]: 60 dmg | Part HP: 0/60"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 3 rounds | PMC: 270 HP | Test Scav: 195 HP"
+      },
+      {
+        "t": "info",
+        "m": "Test Scav broke cover to engage."
+      },
+      {
+        "t": "info",
+        "m": "Test Scav initiated burst spray of 1 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 61.0%"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Test Scav fired 1 rounds | PMC: 270 HP | Test Scav: 195 HP"
+      }
+    ]
+  },
+  {
+    "tick": 3,
+    "elapsedSeconds": 44,
+    "stage": 0,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 100,
+      "hydration": 98,
+      "hp": [
+        60,
+        60,
+        30,
+        30,
+        30,
+        30,
+        30
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:50/50",
+      "helmet": "ssh68:30/30",
+      "weaponRounds": "22/30+3"
+    },
+    "combatTarget": {
+      "name": "Test Scav",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        35,
+        25,
+        10,
+        0,
+        0,
+        0,
+        65
+      ]
+    },
+    "lootFound": [],
+    "secureContainerSaved": [],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 98/100 | Energy: 100/100 | Tile: 1/0"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Test Scav Lv.1 | HP: 195/440 | Armor: None | Weapon: Test Weapon (7.62x39mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 7 vs Test Scav rolled 9 → Enemy acts first"
+      },
+      {
+        "t": "info",
+        "m": "Test Scav ducked into COVER. Attacker accuracy reduced by 20."
       },
       {
         "t": "info",
@@ -58,7 +296,695 @@
       },
       {
         "t": "info",
-        "m": "[ACC] PMC Accuracy: 73.0%"
+        "m": "[ACC] PMC Accuracy: 54.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Test Scav [LEFT ARM]: 60 dmg | Part HP: 0/60"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 1 rounds | PMC: 270 HP | Test Scav: 135 HP"
+      }
+    ]
+  },
+  {
+    "tick": 4,
+    "elapsedSeconds": 61,
+    "stage": 0,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 100,
+      "hydration": 98,
+      "hp": [
+        35,
+        60,
+        22,
+        30,
+        30,
+        30,
+        30
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:45/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "22/30+3"
+    },
+    "combatTarget": {
+      "name": "Test Scav",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        35,
+        25,
+        10,
+        0,
+        0,
+        0,
+        65
+      ]
+    },
+    "lootFound": [],
+    "secureContainerSaved": [],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 98/100 | Energy: 100/100 | Tile: 1/0"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Test Scav Lv.1 | HP: 135/440 | Armor: None | Weapon: Test Weapon (7.62x39mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 17 vs Test Scav rolled 18 → Enemy acts first"
+      },
+      {
+        "t": "info",
+        "m": "Test Scav broke cover to engage."
+      },
+      {
+        "t": "info",
+        "m": "Test Scav initiated burst spray of 4 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 61.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[PEN] PENETRATED SSh-68 (60% dmg) | Armor Dur: 20/30"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Test Scav → PMC [HEAD]: 25 dmg | Part HP: 35/60"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 58.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 55.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 52.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[PEN] BLOCKED by 6B13 M (20% dmg) | Armor Dur: 45/50"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Test Scav → PMC [STOMACH]: 8 dmg | Part HP: 22/30"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Test Scav fired 4 rounds | PMC: 237 HP | Test Scav: 135 HP"
+      },
+      {
+        "t": "info",
+        "m": "PMC ducked into COVER. Attacker accuracy reduced by 20."
+      }
+    ]
+  },
+  {
+    "tick": 5,
+    "elapsedSeconds": 80,
+    "stage": 0,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 99,
+      "hydration": 98,
+      "hp": [
+        35,
+        60,
+        22,
+        30,
+        30,
+        30,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:45/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "20/30+3"
+    },
+    "combatTarget": {
+      "name": "Test Scav",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        35,
+        25,
+        10,
+        0,
+        0,
+        0,
+        5
+      ]
+    },
+    "lootFound": [],
+    "secureContainerSaved": [],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 98/100 | Energy: 99/100 | Tile: 1/0"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Test Scav Lv.1 | HP: 135/440 | Armor: None | Weapon: Test Weapon (7.62x39mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 20 vs Test Scav rolled 3 → PMC acts first"
+      },
+      {
+        "t": "info",
+        "m": "PMC broke cover to engage."
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 2 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 74.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 71.5%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Test Scav [RIGHT LEG]: 60 dmg | Part HP: 5/65"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 2 rounds | PMC: 237 HP | Test Scav: 75 HP"
+      },
+      {
+        "t": "info",
+        "m": "Test Scav initiated burst spray of 2 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 61.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 58.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Test Scav → PMC [RIGHT LEG]: 42 dmg | Part HP: 0/30"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Test Scav fired 2 rounds | PMC: 207 HP | Test Scav: 75 HP"
+      }
+    ]
+  },
+  {
+    "tick": 6,
+    "elapsedSeconds": 94,
+    "stage": 0,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 99,
+      "hydration": 97,
+      "hp": [
+        35,
+        60,
+        22,
+        0,
+        30,
+        30,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:45/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "20/30+3"
+    },
+    "combatTarget": {
+      "name": "Test Scav",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        35,
+        25,
+        10,
+        0,
+        0,
+        0,
+        5
+      ]
+    },
+    "lootFound": [],
+    "secureContainerSaved": [],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 97/100 | Energy: 99/100 | Tile: 1/0"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Test Scav Lv.1 | HP: 75/440 | Armor: None | Weapon: Test Weapon (7.62x39mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 12 vs Test Scav rolled 6 → PMC acts first"
+      },
+      {
+        "t": "info",
+        "m": "PMC ducked into COVER. Attacker accuracy reduced by 20."
+      },
+      {
+        "t": "info",
+        "m": "Test Scav initiated burst spray of 5 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 41.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 38.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 35.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Test Scav → PMC [LEFT ARM]: 42 dmg | Part HP: 0/30"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 32.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 29.0%"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Test Scav fired 5 rounds | PMC: 177 HP | Test Scav: 75 HP"
+      }
+    ]
+  },
+  {
+    "tick": 7,
+    "elapsedSeconds": 110,
+    "stage": 0,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 99,
+      "hydration": 96,
+      "hp": [
+        35,
+        60,
+        22,
+        0,
+        0,
+        30,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:45/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "15/30+3"
+    },
+    "combatTarget": {
+      "name": "Test Scav",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        35,
+        25,
+        0,
+        0,
+        0,
+        0,
+        5
+      ]
+    },
+    "lootFound": [],
+    "secureContainerSaved": [],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 96/100 | Energy: 99/100 | Tile: 1/0"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Test Scav Lv.1 | HP: 75/440 | Armor: None | Weapon: Test Weapon (7.62x39mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 10 vs Test Scav rolled 8 → PMC acts first"
+      },
+      {
+        "t": "info",
+        "m": "PMC broke cover to engage."
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 5 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 74.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Test Scav [LEFT ARM]: 60 dmg | Part HP: 0/60"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 71.5%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 69.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Test Scav [RIGHT ARM]: 60 dmg | Part HP: 0/60"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 66.5%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Test Scav [STOMACH]: 60 dmg | Part HP: 0/70"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 64.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Test Scav [RIGHT ARM]: 60 dmg | Part HP: 0/60"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 5 rounds | PMC: 177 HP | Test Scav: 65 HP"
+      },
+      {
+        "t": "info",
+        "m": "Test Scav initiated burst spray of 1 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 61.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Test Scav → PMC [RIGHT ARM]: 42 dmg | Part HP: 0/30"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Test Scav fired 1 rounds | PMC: 147 HP | Test Scav: 65 HP"
+      }
+    ]
+  },
+  {
+    "tick": 8,
+    "elapsedSeconds": 129,
+    "stage": 0,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 0,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 0,
+      "energy": 98,
+      "hydration": 96,
+      "hp": [
+        35,
+        60,
+        22,
+        0,
+        0,
+        30,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 0,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:45/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "11/30+3"
+    },
+    "combatTarget": {
+      "name": "Test Scav",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        35,
+        25,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "lootFound": [],
+    "secureContainerSaved": [],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 96/100 | Energy: 98/100 | Tile: 1/0"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Test Scav Lv.1 | HP: 65/440 | Armor: None | Weapon: Test Weapon (7.62x39mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 20 vs Test Scav rolled 20 → PMC acts first"
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 4 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 74.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Test Scav [RIGHT LEG]: 60 dmg | Part HP: 0/65"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 71.5%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Test Scav [RIGHT ARM]: 60 dmg | Part HP: 0/60"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 69.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Test Scav [STOMACH]: 60 dmg | Part HP: 0/70"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 66.5%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Test Scav [LEFT LEG]: 60 dmg | Part HP: 0/65"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 4 rounds | PMC: 147 HP | Test Scav: 60 HP"
+      },
+      {
+        "t": "info",
+        "m": "Test Scav initiated burst spray of 5 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 61.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 58.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Test Scav → PMC [RIGHT LEG]: 42 dmg | Part HP: 0/30"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 55.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Test Scav → PMC [RIGHT LEG]: 42 dmg | Part HP: 0/30"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 52.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Test Scav Accuracy: 49.0%"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Test Scav fired 5 rounds | PMC: 147 HP | Test Scav: 60 HP"
+      }
+    ]
+  },
+  {
+    "tick": 9,
+    "elapsedSeconds": 148,
+    "stage": 0,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 1,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 20,
+      "energy": 98,
+      "hydration": 96,
+      "hp": [
+        35,
+        60,
+        22,
+        0,
+        0,
+        30,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 1,
+      "medkit": "ai2:150/150",
+      "surgicalKit": "cms_kit:3/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:45/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "10/30+3"
+    },
+    "combatTarget": {
+      "name": "Tushonka (Scav)",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        30,
+        30,
+        20,
+        20,
+        20,
+        20,
+        20
+      ]
+    },
+    "lootFound": [],
+    "secureContainerSaved": [
+      "handguard_stdx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 96/100 | Energy: 98/100 | Tile: 1/0"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Test Scav Lv.1 | HP: 60/440 | Armor: None | Weapon: Test Weapon (7.62x39mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 9 vs Test Scav rolled 8 → PMC acts first"
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 2 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 74.0%"
       },
       {
         "t": "combat_damage",
@@ -70,7 +996,7 @@
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 1 rounds | PMC: 270 HP | Test Scav: 405 HP"
+        "m": "[ROUND] PMC fired 2 rounds | PMC: 147 HP | Test Scav: 25 HP"
       },
       {
         "t": "info",
@@ -78,942 +1004,197 @@
       },
       {
         "t": "loot",
-        "m": "Looted corpse: found AI-2 Medkit (Value: ₽4500)"
-      },
-      {
-        "t": "info",
-        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 30/30 | L.Arm 30/30 | R.Arm 30/30 | L.Leg 30/30 | R.Leg 30/30"
-      },
-      {
-        "t": "loot",
-        "m": "Found WD-40 (100ml) (Value: ₽19000)"
-      }
-    ]
-  },
-  {
-    "tick": 2,
-    "elapsedSeconds": 30,
-    "stage": 2,
-    "status": "scavenging",
-    "killsByTier": {
-      "Scav": 1,
-      "PMC": 0,
-      "Boss": 0
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 20,
-      "energy": 99,
-      "hydration": 90,
-      "hp": [
-        60,
-        60,
-        30,
-        30,
-        30,
-        30,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 1,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:50/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "29/30+3"
-    },
-    "combatTarget": null,
-    "lootFound": [],
-    "secureContainerSaved": [
-      "armor_6b13x1",
-      "wd40x1",
-      "ai2x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 94/100 | Energy: 99/100 | Tile: 2/0"
-      },
-      {
-        "t": "info",
-        "m": "Entered [Factory Floor]: An abandoned factory floor with conveyor belts and industrial machinery."
-      },
-      {
-        "t": "loot",
-        "m": "Found 6B13 M (Value: ₽35000)"
-      },
-      {
-        "t": "info",
-        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 30/30 | L.Arm 30/30 | R.Arm 30/30 | L.Leg 30/30 | R.Leg 30/30"
-      }
-    ]
-  },
-  {
-    "tick": 3,
-    "elapsedSeconds": 48,
-    "stage": 3,
-    "status": "scavenging",
-    "killsByTier": {
-      "Scav": 1,
-      "PMC": 0,
-      "Boss": 0
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 20,
-      "energy": 99,
-      "hydration": 86,
-      "hp": [
-        60,
-        60,
-        30,
-        30,
-        30,
-        30,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 1,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:50/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "29/30+3"
-    },
-    "combatTarget": null,
-    "lootFound": [],
-    "secureContainerSaved": [
-      "armor_6b13x1",
-      "wd40x1",
-      "cpu_fanx1",
-      "ai2x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 90/100 | Energy: 99/100 | Tile: 3/16"
-      },
-      {
-        "t": "info",
-        "m": "Entered [Factory Floor]: An abandoned factory floor with conveyor belts and industrial machinery."
-      },
-      {
-        "t": "loot",
-        "m": "Found CPU Fan (Value: ₽8500)"
-      },
-      {
-        "t": "info",
-        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 30/30 | L.Arm 30/30 | R.Arm 30/30 | L.Leg 30/30 | R.Leg 30/30"
-      }
-    ]
-  },
-  {
-    "tick": 4,
-    "elapsedSeconds": 61,
-    "stage": 3,
-    "status": "combat",
-    "killsByTier": {
-      "Scav": 1,
-      "PMC": 0,
-      "Boss": 0
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 20,
-      "energy": 98,
-      "hydration": 86,
-      "hp": [
-        60,
-        60,
-        30,
-        30,
-        30,
-        30,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 1,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:50/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "29/30+3"
-    },
-    "combatTarget": {
-      "name": "Tagilla",
-      "tier": "Boss",
-      "level": 6,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        36,
-        36,
-        22,
-        22,
-        22,
-        22,
-        22
-      ]
-    },
-    "lootFound": [],
-    "secureContainerSaved": [
-      "armor_6b13x1",
-      "wd40x1",
-      "cpu_fanx1",
-      "ai2x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 86/100 | Energy: 98/100 | Tile: 4/16"
-      },
-      {
-        "t": "info",
-        "m": "Entered [Server Room]: A cooled server room with blinking equipment racks."
+        "m": "Looted corpse: found Standard Handguard (Value: ₽7000)"
       },
       {
         "t": "warning",
-        "m": "[ENCOUNTER] Spotted Tagilla (Boss) Lv.6 in [Server Room] | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Marksman Rifle (7.62x54mm)"
-      }
-    ]
-  },
-  {
-    "tick": 5,
-    "elapsedSeconds": 73,
-    "stage": 3,
-    "status": "combat",
-    "killsByTier": {
-      "Scav": 1,
-      "PMC": 0,
-      "Boss": 0
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 20,
-      "energy": 98,
-      "hydration": 85,
-      "hp": [
-        60,
-        60,
-        30,
-        30,
-        30,
-        30,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 1,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:50/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "25/30+3"
-    },
-    "combatTarget": {
-      "name": "Tagilla",
-      "tier": "Boss",
-      "level": 6,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        24,
-        36,
-        22,
-        22,
-        22,
-        0,
-        22
-      ]
-    },
-    "lootFound": [],
-    "secureContainerSaved": [
-      "armor_6b13x1",
-      "wd40x1",
-      "cpu_fanx1",
-      "ai2x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 85/100 | Energy: 98/100 | Tile: 4/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Tagilla Lv.6 | HP: 182/182 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Marksman Rifle (7.62x54mm)"
-      },
-      {
-        "t": "info",
-        "m": "[INIT] PMC rolled 15 vs Tagilla rolled 29 → Enemy acts first"
-      },
-      {
-        "t": "info",
-        "m": "Tagilla ducked into COVER. Attacker accuracy reduced by 20."
-      },
-      {
-        "t": "info",
-        "m": "PMC initiated burst spray of 4 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 53.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[PEN] BLOCKED by 6B47 (20% dmg) | Armor Dur: 35/40"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [HEAD]: 12 dmg | Part HP: 24/36"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 50.5%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 48.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 45.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [LEFT LEG]: 60 dmg | Part HP: 0/22"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] PMC fired 4 rounds | PMC: 270 HP | Tagilla: 148 HP"
-      }
-    ]
-  },
-  {
-    "tick": 6,
-    "elapsedSeconds": 89,
-    "stage": 3,
-    "status": "combat",
-    "killsByTier": {
-      "Scav": 1,
-      "PMC": 0,
-      "Boss": 0
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 20,
-      "energy": 97,
-      "hydration": 85,
-      "hp": [
-        60,
-        60,
-        30,
-        30,
-        30,
-        0,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 1,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:50/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "25/30+3"
-    },
-    "combatTarget": {
-      "name": "Tagilla",
-      "tier": "Boss",
-      "level": 6,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        24,
-        36,
-        22,
-        22,
-        22,
-        0,
-        22
-      ]
-    },
-    "lootFound": [],
-    "secureContainerSaved": [
-      "armor_6b13x1",
-      "wd40x1",
-      "cpu_fanx1",
-      "ai2x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 85/100 | Energy: 97/100 | Tile: 4/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Tagilla Lv.6 | HP: 148/182 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Marksman Rifle (7.62x54mm)"
-      },
-      {
-        "t": "info",
-        "m": "[INIT] PMC rolled 20 vs Tagilla rolled 25 → Enemy acts first"
-      },
-      {
-        "t": "info",
-        "m": "Tagilla broke cover to engage."
-      },
-      {
-        "t": "info",
-        "m": "Tagilla initiated burst spray of 1 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 95.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [LEFT LEG]: 63 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] Tagilla fired 1 rounds | PMC: 240 HP | Tagilla: 148 HP"
-      },
-      {
-        "t": "info",
-        "m": "PMC ducked into COVER. Attacker accuracy reduced by 20."
-      }
-    ]
-  },
-  {
-    "tick": 7,
-    "elapsedSeconds": 103,
-    "stage": 3,
-    "status": "combat",
-    "killsByTier": {
-      "Scav": 1,
-      "PMC": 0,
-      "Boss": 0
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 20,
-      "energy": 97,
-      "hydration": 85,
-      "hp": [
-        60,
-        60,
-        30,
-        30,
-        30,
-        0,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 1,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:50/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "21/30+3"
-    },
-    "combatTarget": {
-      "name": "Tagilla",
-      "tier": "Boss",
-      "level": 6,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        24,
-        24,
-        22,
-        22,
-        22,
-        0,
-        0
-      ]
-    },
-    "lootFound": [],
-    "secureContainerSaved": [
-      "armor_6b13x1",
-      "wd40x1",
-      "cpu_fanx1",
-      "ai2x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 85/100 | Energy: 97/100 | Tile: 4/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Tagilla Lv.6 | HP: 148/182 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Marksman Rifle (7.62x54mm)"
-      },
-      {
-        "t": "info",
-        "m": "[INIT] PMC rolled 23 vs Tagilla rolled 20 → PMC acts first"
-      },
-      {
-        "t": "info",
-        "m": "PMC broke cover to engage."
-      },
-      {
-        "t": "info",
-        "m": "PMC initiated burst spray of 4 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 73.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [RIGHT LEG]: 60 dmg | Part HP: 0/22"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 70.5%"
-      },
-      {
-        "t": "info",
-        "m": "Tagilla dynamically dodged the incoming bullet!"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 68.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [RIGHT LEG]: 60 dmg | Part HP: 0/22"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 65.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[PEN] BLOCKED by 6B13 M (Glukhar) (20% dmg) | Armor Dur: 85/90"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [THORAX]: 12 dmg | Part HP: 24/36"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] PMC fired 4 rounds | PMC: 240 HP | Tagilla: 114 HP"
-      },
-      {
-        "t": "info",
-        "m": "Tagilla ducked into COVER. Attacker accuracy reduced by 20."
-      }
-    ]
-  },
-  {
-    "tick": 8,
-    "elapsedSeconds": 116,
-    "stage": 3,
-    "status": "combat",
-    "killsByTier": {
-      "Scav": 1,
-      "PMC": 0,
-      "Boss": 0
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 20,
-      "energy": 97,
-      "hydration": 85,
-      "hp": [
-        60,
-        22,
-        30,
-        0,
-        0,
-        0,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 1,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:40/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "21/30+3"
-    },
-    "combatTarget": {
-      "name": "Tagilla",
-      "tier": "Boss",
-      "level": 6,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        24,
-        24,
-        22,
-        22,
-        22,
-        0,
-        0
-      ]
-    },
-    "lootFound": [],
-    "secureContainerSaved": [
-      "armor_6b13x1",
-      "wd40x1",
-      "cpu_fanx1",
-      "ai2x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 85/100 | Energy: 97/100 | Tile: 4/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Tagilla Lv.6 | HP: 114/182 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Marksman Rifle (7.62x54mm)"
-      },
-      {
-        "t": "info",
-        "m": "[INIT] PMC rolled 15 vs Tagilla rolled 20 → Enemy acts first"
-      },
-      {
-        "t": "info",
-        "m": "Tagilla broke cover to engage."
-      },
-      {
-        "t": "info",
-        "m": "Tagilla initiated burst spray of 5 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 95.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [LEFT ARM]: 63 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 94.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [LEFT LEG]: 63 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 91.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[PEN] PENETRATED 6B13 M (60% dmg) | Armor Dur: 40/50"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [THORAX]: 38 dmg | Part HP: 22/60"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 88.5%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 85.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [RIGHT ARM]: 63 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] Tagilla fired 5 rounds | PMC: 142 HP | Tagilla: 114 HP"
-      },
-      {
-        "t": "info",
-        "m": "PMC ducked into COVER. Attacker accuracy reduced by 20."
-      }
-    ]
-  },
-  {
-    "tick": 9,
-    "elapsedSeconds": 135,
-    "stage": 3,
-    "status": "combat",
-    "killsByTier": {
-      "Scav": 1,
-      "PMC": 0,
-      "Boss": 0
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 20,
-      "energy": 97,
-      "hydration": 85,
-      "hp": [
-        60,
-        22,
-        30,
-        0,
-        0,
-        0,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 1,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:40/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "17/30+3"
-    },
-    "combatTarget": {
-      "name": "Tagilla",
-      "tier": "Boss",
-      "level": 6,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        24,
-        24,
-        22,
-        0,
-        22,
-        0,
-        0
-      ]
-    },
-    "lootFound": [],
-    "secureContainerSaved": [
-      "armor_6b13x1",
-      "wd40x1",
-      "cpu_fanx1",
-      "ai2x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 85/100 | Energy: 97/100 | Tile: 4/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Tagilla Lv.6 | HP: 114/182 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Marksman Rifle (7.62x54mm)"
-      },
-      {
-        "t": "info",
-        "m": "[INIT] PMC rolled 15 vs Tagilla rolled 25 → Enemy acts first"
-      },
-      {
-        "t": "info",
-        "m": "Tagilla ducked into COVER. Attacker accuracy reduced by 20."
-      },
-      {
-        "t": "info",
-        "m": "PMC broke cover to engage."
-      },
-      {
-        "t": "info",
-        "m": "PMC initiated burst spray of 4 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 53.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 50.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [LEFT ARM]: 60 dmg | Part HP: 0/22"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 48.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 45.5%"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] PMC fired 4 rounds | PMC: 142 HP | Tagilla: 92 HP"
+        "m": "[REINFORCE] 1/3 reinforcements on tile. Tushonka (Scav) (Scav) Lv.1 | Armor: None | Weapon: Pistol (9x18mm)"
       }
     ]
   },
   {
     "tick": 10,
-    "elapsedSeconds": 149,
-    "stage": 3,
-    "status": "combat",
+    "elapsedSeconds": 164,
+    "stage": 1,
+    "status": "scavenging",
     "killsByTier": {
-      "Scav": 1,
+      "Scav": 2,
       "PMC": 0,
       "Boss": 0
     },
     "pmc": {
       "level": 1,
-      "xp": 20,
-      "energy": 97,
-      "hydration": 84,
+      "xp": 40,
+      "energy": 98,
+      "hydration": 89,
       "hp": [
         60,
-        22,
+        60,
         30,
-        0,
-        0,
-        0,
-        0
+        30,
+        30,
+        30,
+        30
       ],
       "isBleeding": false,
-      "killsCount": 1,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
+      "killsCount": 2,
+      "medkit": "ai2:30/150",
+      "surgicalKit": "cms_kit:0/3",
       "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:40/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "14/30+3"
+      "armor": "armor_6b13:45/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "9/30+3"
     },
-    "combatTarget": {
-      "name": "Tagilla",
-      "tier": "Boss",
-      "level": 6,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        24,
-        12,
-        22,
-        0,
-        22,
-        0,
-        0
-      ]
-    },
+    "combatTarget": null,
     "lootFound": [],
     "secureContainerSaved": [
-      "armor_6b13x1",
-      "wd40x1",
-      "cpu_fanx1",
-      "ai2x1"
+      "armor_6b23x1",
+      "handguard_stdx1",
+      "ledxx1"
     ],
     "stashItems": [],
     "logs": [
       {
         "t": "status",
-        "m": "[STATUS] Hydration: 84/100 | Energy: 97/100 | Tile: 4/16"
+        "m": "[STATUS] Hydration: 95/100 | Energy: 98/100 | Tile: 1/0"
       },
       {
         "t": "combat_profile",
-        "m": "[COMBAT] Tagilla Lv.6 | HP: 92/182 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Marksman Rifle (7.62x54mm)"
+        "m": "[COMBAT] Tushonka (Scav) Lv.1 | HP: 160/160 | Armor: None | Weapon: Pistol (9x18mm)"
       },
       {
         "t": "info",
-        "m": "[INIT] PMC rolled 7 vs Tagilla rolled 27 → Enemy acts first"
+        "m": "[INIT] PMC rolled 11 vs Tushonka (Scav) rolled 20 → Enemy acts first"
       },
       {
         "t": "info",
-        "m": "Tagilla broke cover to engage."
+        "m": "Tushonka (Scav) initiated burst spray of 2 rounds."
       },
       {
         "t": "info",
-        "m": "Tagilla initiated burst spray of 2 rounds."
+        "m": "[ACC] Tushonka (Scav) Accuracy: 58.0%"
       },
       {
         "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 95.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [RIGHT ARM]: 63 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 94.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [RIGHT LEG]: 63 dmg | Part HP: 0/30"
+        "m": "[ACC] Tushonka (Scav) Accuracy: 55.0%"
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] Tagilla fired 2 rounds | PMC: 112 HP | Tagilla: 92 HP"
+        "m": "[ROUND] Tushonka (Scav) fired 2 rounds | PMC: 147 HP | Tushonka (Scav): 160 HP"
       },
       {
         "t": "info",
-        "m": "PMC initiated burst spray of 3 rounds."
+        "m": "PMC initiated burst spray of 1 rounds."
       },
       {
         "t": "info",
-        "m": "[ACC] PMC Accuracy: 73.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 70.5%"
+        "m": "[ACC] PMC Accuracy: 74.0%"
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [LEFT ARM]: 60 dmg | Part HP: 0/22"
+        "m": "[DMG] PMC → Tushonka (Scav) [HEAD]: 60 dmg | Part HP: 0/30"
       },
       {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 68.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[PEN] BLOCKED by 6B13 M (Glukhar) (20% dmg) | Armor Dur: 80/90"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [THORAX]: 12 dmg | Part HP: 12/36"
+        "t": "combat_kill",
+        "m": "PMC neutralized Tushonka (Scav) with a fatal shot!"
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 3 rounds | PMC: 112 HP | Tagilla: 80 HP"
+        "m": "[ROUND] PMC fired 1 rounds | PMC: 147 HP | Tushonka (Scav): 130 HP"
+      },
+      {
+        "t": "info",
+        "m": "Neutralized target of tier Scav. Earned +20 XP."
+      },
+      {
+        "t": "loot",
+        "m": "Looted corpse: found 6B23-1 (Value: ₽25000)"
+      },
+      {
+        "t": "heal",
+        "m": "Surgical repair completed: restored [Right Leg] blacked out limb to 1 HP using CMS Kit. Uses remaining: 2."
+      },
+      {
+        "t": "heal",
+        "m": "Surgical repair completed: restored [Left Arm] blacked out limb to 1 HP using CMS Kit. Uses remaining: 1."
+      },
+      {
+        "t": "heal",
+        "m": "Surgical repair completed: restored [Right Arm] blacked out limb to 1 HP using CMS Kit. Uses remaining: 0."
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Head] for +25 HP. Durability: 125/150."
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Stomach] for +8 HP. Durability: 117/150."
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Right Leg] for +25 HP. Durability: 92/150."
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Left Arm] for +25 HP. Durability: 67/150."
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Right Arm] for +25 HP. Durability: 42/150."
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Right Leg] for +4 HP. Durability: 38/150."
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Left Arm] for +4 HP. Durability: 34/150."
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Right Arm] for +4 HP. Durability: 30/150."
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 30/30 | L.Arm 30/30 | R.Arm 30/30 | L.Leg 30/30 | R.Leg 30/30"
+      },
+      {
+        "t": "loot",
+        "m": "Found LEDX (Value: ₽50)"
       }
     ]
   },
   {
     "tick": 11,
-    "elapsedSeconds": 168,
-    "stage": 3,
+    "elapsedSeconds": 178,
+    "stage": 1,
     "status": "combat",
     "killsByTier": {
-      "Scav": 1,
+      "Scav": 2,
       "PMC": 0,
       "Boss": 0
     },
     "pmc": {
       "level": 1,
-      "xp": 20,
-      "energy": 97,
-      "hydration": 83,
+      "xp": 40,
+      "energy": 98,
+      "hydration": 89,
       "hp": [
         60,
-        22,
+        60,
         30,
-        0,
-        0,
-        0,
-        0
+        30,
+        30,
+        30,
+        30
       ],
       "isBleeding": false,
-      "killsCount": 1,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
+      "killsCount": 2,
+      "medkit": "ai2:30/150",
+      "surgicalKit": "cms_kit:0/3",
       "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:40/50",
-      "helmet": "ssh68:30/30",
+      "armor": "armor_6b13:45/50",
+      "helmet": "ssh68:20/30",
       "weaponRounds": "9/30+3"
     },
     "combatTarget": {
@@ -1023,130 +1204,69 @@
       "isDead": false,
       "isBleeding": false,
       "hp": [
+        42,
+        42,
         24,
-        12,
-        10,
-        0,
-        22,
-        0,
-        0
+        24,
+        24,
+        24,
+        24
       ]
     },
     "lootFound": [],
     "secureContainerSaved": [
-      "armor_6b13x1",
-      "wd40x1",
-      "cpu_fanx1",
-      "ai2x1"
+      "armor_6b23x1",
+      "handguard_stdx1",
+      "ledxx1"
     ],
     "stashItems": [],
     "logs": [
       {
         "t": "status",
-        "m": "[STATUS] Hydration: 83/100 | Energy: 97/100 | Tile: 4/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Tagilla Lv.6 | HP: 80/182 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Marksman Rifle (7.62x54mm)"
+        "m": "[STATUS] Hydration: 89/100 | Energy: 98/100 | Tile: 2/0"
       },
       {
         "t": "info",
-        "m": "[INIT] PMC rolled 22 vs Tagilla rolled 24 → Enemy acts first"
+        "m": "Entered [Garage]: A vehicle garage with oil stains and tool benches."
       },
       {
-        "t": "info",
-        "m": "Tagilla initiated burst spray of 1 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 95.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [LEFT ARM]: 63 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] Tagilla fired 1 rounds | PMC: 112 HP | Tagilla: 80 HP"
-      },
-      {
-        "t": "info",
-        "m": "PMC initiated burst spray of 5 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 73.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [LEFT ARM]: 60 dmg | Part HP: 0/22"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 70.5%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 68.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[PEN] BLOCKED by 6B13 M (Glukhar) (20% dmg) | Armor Dur: 75/90"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [STOMACH]: 12 dmg | Part HP: 10/22"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 65.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [RIGHT LEG]: 60 dmg | Part HP: 0/22"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 63.0%"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] PMC fired 5 rounds | PMC: 112 HP | Tagilla: 68 HP"
+        "t": "warning",
+        "m": "[ENCOUNTER] Spotted Tagilla (Boss) Lv.6 in [Garage] | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Assault Rifle (7.62x39mm)"
       }
     ]
   },
   {
     "tick": 12,
-    "elapsedSeconds": 185,
-    "stage": 3,
+    "elapsedSeconds": 197,
+    "stage": 1,
     "status": "combat",
     "killsByTier": {
-      "Scav": 1,
+      "Scav": 2,
       "PMC": 0,
       "Boss": 0
     },
     "pmc": {
       "level": 1,
-      "xp": 20,
-      "energy": 97,
-      "hydration": 83,
+      "xp": 40,
+      "energy": 98,
+      "hydration": 89,
       "hp": [
         60,
-        22,
+        60,
         30,
         0,
         0,
         0,
-        0
+        30
       ],
       "isBleeding": false,
-      "killsCount": 1,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
+      "killsCount": 2,
+      "medkit": "ai2:30/150",
+      "surgicalKit": "cms_kit:0/3",
       "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:40/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "5/30+3"
+      "armor": "armor_6b13:45/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "9/30+3"
     },
     "combatTarget": {
       "name": "Tagilla",
@@ -1155,35 +1275,371 @@
       "isDead": false,
       "isBleeding": false,
       "hp": [
+        42,
+        42,
         24,
-        12,
-        0,
-        0,
-        0,
-        0,
-        0
+        24,
+        24,
+        24,
+        24
       ]
     },
     "lootFound": [],
     "secureContainerSaved": [
-      "armor_6b13x1",
-      "wd40x1",
-      "cpu_fanx1",
-      "ai2x1"
+      "armor_6b23x1",
+      "handguard_stdx1",
+      "ledxx1"
     ],
     "stashItems": [],
     "logs": [
       {
         "t": "status",
-        "m": "[STATUS] Hydration: 83/100 | Energy: 97/100 | Tile: 4/16"
+        "m": "[STATUS] Hydration: 89/100 | Energy: 98/100 | Tile: 2/16"
       },
       {
         "t": "combat_profile",
-        "m": "[COMBAT] Tagilla Lv.6 | HP: 68/182 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Marksman Rifle (7.62x54mm)"
+        "m": "[COMBAT] Tagilla Lv.6 | HP: 204/204 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Assault Rifle (7.62x39mm)"
       },
       {
         "t": "info",
-        "m": "[INIT] PMC rolled 19 vs Tagilla rolled 17 → PMC acts first"
+        "m": "[INIT] PMC rolled 7 vs Tagilla rolled 36 → Enemy acts first"
+      },
+      {
+        "t": "info",
+        "m": "Tagilla initiated burst spray of 3 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 89.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Tagilla → PMC [LEFT LEG]: 42 dmg | Part HP: 0/30"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 86.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Tagilla → PMC [RIGHT ARM]: 42 dmg | Part HP: 0/30"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 83.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Tagilla → PMC [LEFT ARM]: 42 dmg | Part HP: 0/30"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Tagilla fired 3 rounds | PMC: 180 HP | Tagilla: 204 HP"
+      },
+      {
+        "t": "info",
+        "m": "PMC ducked into COVER. Attacker accuracy reduced by 20."
+      }
+    ]
+  },
+  {
+    "tick": 13,
+    "elapsedSeconds": 214,
+    "stage": 1,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 2,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 40,
+      "energy": 98,
+      "hydration": 89,
+      "hp": [
+        60,
+        60,
+        30,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 2,
+      "medkit": "ai2:30/150",
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:45/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "6/30+3"
+    },
+    "combatTarget": {
+      "name": "Tagilla",
+      "tier": "Boss",
+      "level": 6,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        42,
+        42,
+        12,
+        0,
+        24,
+        24,
+        24
+      ]
+    },
+    "lootFound": [],
+    "secureContainerSaved": [
+      "armor_6b23x1",
+      "handguard_stdx1",
+      "ledxx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 89/100 | Energy: 98/100 | Tile: 2/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Tagilla Lv.6 | HP: 204/204 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Assault Rifle (7.62x39mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 7 vs Tagilla rolled 22 → Enemy acts first"
+      },
+      {
+        "t": "info",
+        "m": "Tagilla initiated burst spray of 3 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 69.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 66.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 63.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Tagilla → PMC [RIGHT LEG]: 42 dmg | Part HP: 0/30"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Tagilla fired 3 rounds | PMC: 150 HP | Tagilla: 204 HP"
+      },
+      {
+        "t": "info",
+        "m": "PMC broke cover to engage."
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 3 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 74.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 71.5%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Tagilla [LEFT ARM]: 60 dmg | Part HP: 0/24"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 69.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[PEN] BLOCKED by 6B13 M (Glukhar) (20% dmg) | Armor Dur: 85/90"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Tagilla [STOMACH]: 12 dmg | Part HP: 12/24"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 3 rounds | PMC: 150 HP | Tagilla: 168 HP"
+      }
+    ]
+  },
+  {
+    "tick": 14,
+    "elapsedSeconds": 229,
+    "stage": 1,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 2,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 40,
+      "energy": 98,
+      "hydration": 89,
+      "hp": [
+        60,
+        60,
+        30,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 2,
+      "medkit": "ai2:30/150",
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:45/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "6/30+3"
+    },
+    "combatTarget": {
+      "name": "Tagilla",
+      "tier": "Boss",
+      "level": 6,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        42,
+        42,
+        12,
+        0,
+        24,
+        24,
+        24
+      ]
+    },
+    "lootFound": [],
+    "secureContainerSaved": [
+      "armor_6b23x1",
+      "handguard_stdx1",
+      "ledxx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 89/100 | Energy: 98/100 | Tile: 2/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Tagilla Lv.6 | HP: 168/204 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Assault Rifle (7.62x39mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 17 vs Tagilla rolled 18 → Enemy acts first"
+      },
+      {
+        "t": "info",
+        "m": "Tagilla ducked into COVER. Attacker accuracy reduced by 20."
+      },
+      {
+        "t": "info",
+        "m": "PMC ducked into COVER. Attacker accuracy reduced by 20."
+      }
+    ]
+  },
+  {
+    "tick": 15,
+    "elapsedSeconds": 241,
+    "stage": 1,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 2,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 40,
+      "energy": 98,
+      "hydration": 89,
+      "hp": [
+        60,
+        60,
+        30,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 2,
+      "medkit": "ai2:30/150",
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:45/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "2/30+3"
+    },
+    "combatTarget": {
+      "name": "Tagilla",
+      "tier": "Boss",
+      "level": 6,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        30,
+        42,
+        0,
+        0,
+        24,
+        24,
+        0
+      ]
+    },
+    "lootFound": [],
+    "secureContainerSaved": [
+      "armor_6b23x1",
+      "handguard_stdx1",
+      "ledxx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 89/100 | Energy: 98/100 | Tile: 2/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Tagilla Lv.6 | HP: 168/204 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Assault Rifle (7.62x39mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 14 vs Tagilla rolled 24 → Enemy acts first"
+      },
+      {
+        "t": "info",
+        "m": "Tagilla broke cover to engage."
+      },
+      {
+        "t": "info",
+        "m": "Tagilla initiated burst spray of 1 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 69.0%"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Tagilla fired 1 rounds | PMC: 150 HP | Tagilla: 168 HP"
+      },
+      {
+        "t": "info",
+        "m": "PMC broke cover to engage."
       },
       {
         "t": "info",
@@ -1191,76 +1647,72 @@
       },
       {
         "t": "info",
-        "m": "[ACC] PMC Accuracy: 73.0%"
+        "m": "[ACC] PMC Accuracy: 74.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[PEN] BLOCKED by 6B13 M (Glukhar) (20% dmg) | Armor Dur: 80/90"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Tagilla [STOMACH]: 12 dmg | Part HP: 0/24"
       },
       {
         "t": "info",
-        "m": "[ACC] PMC Accuracy: 70.5%"
+        "m": "[ACC] PMC Accuracy: 71.5%"
       },
       {
         "t": "combat_damage",
-        "m": "[PEN] BLOCKED by 6B13 M (Glukhar) (20% dmg) | Armor Dur: 70/90"
+        "m": "[PEN] BLOCKED by 6B13 M (Glukhar) (20% dmg) | Armor Dur: 75/90"
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [STOMACH]: 12 dmg | Part HP: 0/22"
+        "m": "[DMG] PMC → Tagilla [STOMACH]: 12 dmg | Part HP: 0/24"
       },
       {
         "t": "info",
-        "m": "[ACC] PMC Accuracy: 68.0%"
+        "m": "[ACC] PMC Accuracy: 69.0%"
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [RIGHT ARM]: 60 dmg | Part HP: 0/22"
+        "m": "[DMG] PMC → Tagilla [RIGHT LEG]: 60 dmg | Part HP: 0/24"
       },
       {
         "t": "info",
-        "m": "[ACC] PMC Accuracy: 65.5%"
+        "m": "[ACC] PMC Accuracy: 66.5%"
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [RIGHT LEG]: 60 dmg | Part HP: 0/22"
+        "m": "[PEN] BLOCKED by 6B47 (20% dmg) | Armor Dur: 35/40"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Tagilla [HEAD]: 12 dmg | Part HP: 30/42"
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 4 rounds | PMC: 112 HP | Tagilla: 36 HP"
-      },
-      {
-        "t": "info",
-        "m": "Tagilla initiated burst spray of 1 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 95.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [RIGHT ARM]: 63 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] Tagilla fired 1 rounds | PMC: 112 HP | Tagilla: 36 HP"
+        "m": "[ROUND] PMC fired 4 rounds | PMC: 150 HP | Tagilla: 120 HP"
       }
     ]
   },
   {
-    "tick": 13,
-    "elapsedSeconds": 199,
-    "stage": 3,
+    "tick": 16,
+    "elapsedSeconds": 260,
+    "stage": 1,
     "status": "combat",
     "killsByTier": {
-      "Scav": 1,
+      "Scav": 2,
       "PMC": 0,
       "Boss": 0
     },
     "pmc": {
       "level": 1,
-      "xp": 20,
-      "energy": 97,
-      "hydration": 83,
+      "xp": 40,
+      "energy": 98,
+      "hydration": 89,
       "hp": [
         60,
-        22,
+        60,
         30,
         0,
         0,
@@ -1268,112 +1720,12 @@
         0
       ],
       "isBleeding": false,
-      "killsCount": 1,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
+      "killsCount": 2,
+      "medkit": "ai2:30/150",
+      "surgicalKit": "cms_kit:0/3",
       "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:40/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "3/30+3"
-    },
-    "combatTarget": {
-      "name": "Tagilla",
-      "tier": "Boss",
-      "level": 6,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        24,
-        12,
-        0,
-        0,
-        0,
-        0,
-        0
-      ]
-    },
-    "lootFound": [],
-    "secureContainerSaved": [
-      "armor_6b13x1",
-      "wd40x1",
-      "cpu_fanx1",
-      "ai2x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 83/100 | Energy: 97/100 | Tile: 4/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Tagilla Lv.6 | HP: 36/182 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Marksman Rifle (7.62x54mm)"
-      },
-      {
-        "t": "info",
-        "m": "[INIT] PMC rolled 7 vs Tagilla rolled 27 → Enemy acts first"
-      },
-      {
-        "t": "info",
-        "m": "Tagilla reloaded. Mag: 10, Reserves: 1."
-      },
-      {
-        "t": "info",
-        "m": "PMC initiated burst spray of 2 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 73.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [LEFT LEG]: 60 dmg | Part HP: 0/22"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 70.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [LEFT ARM]: 60 dmg | Part HP: 0/22"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] PMC fired 2 rounds | PMC: 112 HP | Tagilla: 36 HP"
-      }
-    ]
-  },
-  {
-    "tick": 14,
-    "elapsedSeconds": 217,
-    "stage": 3,
-    "status": "combat",
-    "killsByTier": {
-      "Scav": 1,
-      "PMC": 0,
-      "Boss": 0
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 20,
-      "energy": 97,
-      "hydration": 82,
-      "hp": [
-        60,
-        22,
-        30,
-        0,
-        0,
-        0,
-        0
-      ],
-      "isBleeding": false,
-      "killsCount": 1,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:40/50",
-      "helmet": "ssh68:30/30",
+      "armor": "armor_6b13:45/50",
+      "helmet": "ssh68:20/30",
       "weaponRounds": "0/30+3"
     },
     "combatTarget": {
@@ -1383,97 +1735,92 @@
       "isDead": false,
       "isBleeding": false,
       "hp": [
+        30,
+        42,
+        0,
+        0,
+        0,
         24,
-        12,
-        0,
-        0,
-        0,
-        0,
         0
       ]
     },
     "lootFound": [],
     "secureContainerSaved": [
-      "armor_6b13x1",
-      "wd40x1",
-      "cpu_fanx1",
-      "ai2x1"
+      "armor_6b23x1",
+      "handguard_stdx1",
+      "ledxx1"
     ],
     "stashItems": [],
     "logs": [
       {
         "t": "status",
-        "m": "[STATUS] Hydration: 82/100 | Energy: 97/100 | Tile: 4/16"
+        "m": "[STATUS] Hydration: 89/100 | Energy: 98/100 | Tile: 2/16"
       },
       {
         "t": "combat_profile",
-        "m": "[COMBAT] Tagilla Lv.6 | HP: 36/182 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Marksman Rifle (7.62x54mm)"
+        "m": "[COMBAT] Tagilla Lv.6 | HP: 120/204 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Assault Rifle (7.62x39mm)"
       },
       {
         "t": "info",
-        "m": "[INIT] PMC rolled 26 vs Tagilla rolled 17 → PMC acts first"
-      },
-      {
-        "t": "info",
-        "m": "PMC initiated burst spray of 3 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 73.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 70.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [RIGHT ARM]: 60 dmg | Part HP: 0/22"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 68.0%"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] PMC fired 3 rounds | PMC: 112 HP | Tagilla: 36 HP"
+        "m": "[INIT] PMC rolled 25 vs Tagilla rolled 33 → Enemy acts first"
       },
       {
         "t": "info",
         "m": "Tagilla ducked into COVER. Attacker accuracy reduced by 20."
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 2 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 54.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 51.5%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Tagilla [RIGHT ARM]: 60 dmg | Part HP: 0/24"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 2 rounds | PMC: 150 HP | Tagilla: 96 HP"
       }
     ]
   },
   {
-    "tick": 15,
-    "elapsedSeconds": 236,
-    "stage": 3,
+    "tick": 17,
+    "elapsedSeconds": 279,
+    "stage": 1,
     "status": "combat",
     "killsByTier": {
-      "Scav": 1,
+      "Scav": 2,
       "PMC": 0,
       "Boss": 0
     },
     "pmc": {
       "level": 1,
-      "xp": 20,
-      "energy": 97,
-      "hydration": 82,
+      "xp": 40,
+      "energy": 98,
+      "hydration": 89,
       "hp": [
         60,
-        22,
-        0,
+        60,
+        30,
         0,
         0,
         0,
         0
       ],
       "isBleeding": false,
-      "killsCount": 1,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
+      "killsCount": 2,
+      "medkit": "ai2:30/150",
+      "surgicalKit": "cms_kit:0/3",
       "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:30/50",
-      "helmet": "ssh68:30/30",
+      "armor": "armor_6b13:45/50",
+      "helmet": "ssh68:20/30",
       "weaponRounds": "30/30+2"
     },
     "combatTarget": {
@@ -1483,35 +1830,34 @@
       "isDead": false,
       "isBleeding": false,
       "hp": [
+        30,
+        42,
+        0,
+        0,
+        0,
         24,
-        12,
-        0,
-        0,
-        0,
-        0,
         0
       ]
     },
     "lootFound": [],
     "secureContainerSaved": [
-      "armor_6b13x1",
-      "wd40x1",
-      "cpu_fanx1",
-      "ai2x1"
+      "armor_6b23x1",
+      "handguard_stdx1",
+      "ledxx1"
     ],
     "stashItems": [],
     "logs": [
       {
         "t": "status",
-        "m": "[STATUS] Hydration: 82/100 | Energy: 97/100 | Tile: 4/16"
+        "m": "[STATUS] Hydration: 89/100 | Energy: 98/100 | Tile: 2/16"
       },
       {
         "t": "combat_profile",
-        "m": "[COMBAT] Tagilla Lv.6 | HP: 36/182 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Marksman Rifle (7.62x54mm)"
+        "m": "[COMBAT] Tagilla Lv.6 | HP: 96/204 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Assault Rifle (7.62x39mm)"
       },
       {
         "t": "info",
-        "m": "[INIT] PMC rolled 21 vs Tagilla rolled 18 → PMC acts first"
+        "m": "[INIT] PMC rolled 23 vs Tagilla rolled 22 → PMC acts first"
       },
       {
         "t": "info",
@@ -1523,11 +1869,110 @@
       },
       {
         "t": "info",
-        "m": "Tagilla initiated burst spray of 4 rounds."
+        "m": "Tagilla initiated burst spray of 1 rounds."
       },
       {
         "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 95.0%"
+        "m": "[ACC] Tagilla Accuracy: 89.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Tagilla → PMC [LEFT ARM]: 42 dmg | Part HP: 0/30"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Tagilla fired 1 rounds | PMC: 150 HP | Tagilla: 96 HP"
+      }
+    ]
+  },
+  {
+    "tick": 18,
+    "elapsedSeconds": 295,
+    "stage": 1,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 2,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 40,
+      "energy": 98,
+      "hydration": 89,
+      "hp": [
+        60,
+        52,
+        5,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 2,
+      "medkit": "ai2:30/150",
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:30/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "30/30+2"
+    },
+    "combatTarget": {
+      "name": "Tagilla",
+      "tier": "Boss",
+      "level": 6,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        30,
+        42,
+        0,
+        0,
+        0,
+        24,
+        0
+      ]
+    },
+    "lootFound": [],
+    "secureContainerSaved": [
+      "armor_6b23x1",
+      "handguard_stdx1",
+      "ledxx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 89/100 | Energy: 98/100 | Tile: 2/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Tagilla Lv.6 | HP: 96/204 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Assault Rifle (7.62x39mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 17 vs Tagilla rolled 26 → Enemy acts first"
+      },
+      {
+        "t": "info",
+        "m": "Tagilla initiated burst spray of 2 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 89.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[PEN] BLOCKED by 6B13 M (20% dmg) | Armor Dur: 40/50"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Tagilla → PMC [THORAX]: 8 dmg | Part HP: 52/60"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 86.0%"
       },
       {
         "t": "combat_damage",
@@ -1535,69 +1980,49 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [STOMACH]: 38 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 94.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [LEFT LEG]: 63 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 91.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [LEFT LEG]: 63 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 88.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [RIGHT ARM]: 63 dmg | Part HP: 0/30"
+        "m": "[DMG] Tagilla → PMC [STOMACH]: 25 dmg | Part HP: 5/30"
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] Tagilla fired 4 rounds | PMC: 82 HP | Tagilla: 36 HP"
+        "m": "[ROUND] Tagilla fired 2 rounds | PMC: 117 HP | Tagilla: 96 HP"
+      },
+      {
+        "t": "info",
+        "m": "PMC ducked into COVER. Attacker accuracy reduced by 20."
       }
     ]
   },
   {
-    "tick": 16,
-    "elapsedSeconds": 255,
-    "stage": 3,
+    "tick": 19,
+    "elapsedSeconds": 310,
+    "stage": 1,
     "status": "combat",
     "killsByTier": {
-      "Scav": 1,
+      "Scav": 2,
       "PMC": 0,
       "Boss": 0
     },
     "pmc": {
       "level": 1,
-      "xp": 20,
-      "energy": 97,
-      "hydration": 82,
+      "xp": 40,
+      "energy": 98,
+      "hydration": 88,
       "hp": [
         60,
-        22,
-        0,
+        52,
+        5,
         0,
         0,
         0,
         0
       ],
       "isBleeding": false,
-      "killsCount": 1,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
+      "killsCount": 2,
+      "medkit": "ai2:30/150",
+      "surgicalKit": "cms_kit:0/3",
       "provision": "water_bottle:60/60",
       "armor": "armor_6b13:30/50",
-      "helmet": "ssh68:30/30",
+      "helmet": "ssh68:20/30",
       "weaponRounds": "27/30+2"
     },
     "combatTarget": {
@@ -1605,10 +2030,10 @@
       "tier": "Boss",
       "level": 6,
       "isDead": false,
-      "isBleeding": false,
+      "isBleeding": true,
       "hp": [
-        12,
-        12,
+        18,
+        42,
         0,
         0,
         0,
@@ -1618,24 +2043,23 @@
     },
     "lootFound": [],
     "secureContainerSaved": [
-      "armor_6b13x1",
-      "wd40x1",
-      "cpu_fanx1",
-      "ai2x1"
+      "armor_6b23x1",
+      "handguard_stdx1",
+      "ledxx1"
     ],
     "stashItems": [],
     "logs": [
       {
         "t": "status",
-        "m": "[STATUS] Hydration: 82/100 | Energy: 97/100 | Tile: 4/16"
+        "m": "[STATUS] Hydration: 88/100 | Energy: 98/100 | Tile: 2/16"
       },
       {
         "t": "combat_profile",
-        "m": "[COMBAT] Tagilla Lv.6 | HP: 36/182 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Marksman Rifle (7.62x54mm)"
+        "m": "[COMBAT] Tagilla Lv.6 | HP: 96/204 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Assault Rifle (7.62x39mm)"
       },
       {
         "t": "info",
-        "m": "[INIT] PMC rolled 25 vs Tagilla rolled 34 → Enemy acts first"
+        "m": "[INIT] PMC rolled 21 vs Tagilla rolled 26 → Enemy acts first"
       },
       {
         "t": "info",
@@ -1643,11 +2067,27 @@
       },
       {
         "t": "info",
+        "m": "PMC broke cover to engage."
+      },
+      {
+        "t": "info",
         "m": "PMC initiated burst spray of 3 rounds."
       },
       {
         "t": "info",
-        "m": "[ACC] PMC Accuracy: 53.0%"
+        "m": "[ACC] PMC Accuracy: 54.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Tagilla [LEFT LEG]: 60 dmg | Part HP: 0/24"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 51.5%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 49.0%"
       },
       {
         "t": "combat_damage",
@@ -1655,68 +2095,60 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [HEAD]: 12 dmg | Part HP: 12/36"
+        "m": "[DMG] PMC → Tagilla [HEAD]: 12 dmg | Part HP: 18/42"
       },
       {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 50.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [LEFT LEG]: 60 dmg | Part HP: 0/22"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 48.0%"
+        "t": "warning",
+        "m": "[BLEED] PMC → Tagilla: HIT! Target is now BLEEDING!"
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 3 rounds | PMC: 82 HP | Tagilla: 24 HP"
+        "m": "[ROUND] PMC fired 3 rounds | PMC: 117 HP | Tagilla: 60 HP"
       }
     ]
   },
   {
-    "tick": 17,
-    "elapsedSeconds": 268,
-    "stage": 3,
+    "tick": 20,
+    "elapsedSeconds": 327,
+    "stage": 1,
     "status": "combat",
     "killsByTier": {
-      "Scav": 1,
+      "Scav": 2,
       "PMC": 0,
       "Boss": 0
     },
     "pmc": {
       "level": 1,
-      "xp": 20,
-      "energy": 97,
-      "hydration": 81,
+      "xp": 40,
+      "energy": 98,
+      "hydration": 88,
       "hp": [
         60,
-        22,
-        0,
+        52,
+        5,
         0,
         0,
         0,
         0
       ],
       "isBleeding": false,
-      "killsCount": 1,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
+      "killsCount": 2,
+      "medkit": "ai2:30/150",
+      "surgicalKit": "cms_kit:0/3",
       "provision": "water_bottle:60/60",
       "armor": "armor_6b13:30/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "24/30+2"
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "27/30+2"
     },
     "combatTarget": {
       "name": "Tagilla",
       "tier": "Boss",
       "level": 6,
       "isDead": false,
-      "isBleeding": false,
+      "isBleeding": true,
       "hp": [
-        12,
-        12,
+        13,
+        42,
         0,
         0,
         0,
@@ -1726,24 +2158,27 @@
     },
     "lootFound": [],
     "secureContainerSaved": [
-      "armor_6b13x1",
-      "wd40x1",
-      "cpu_fanx1",
-      "ai2x1"
+      "armor_6b23x1",
+      "handguard_stdx1",
+      "ledxx1"
     ],
     "stashItems": [],
     "logs": [
       {
         "t": "status",
-        "m": "[STATUS] Hydration: 81/100 | Energy: 97/100 | Tile: 4/16"
+        "m": "[STATUS] Hydration: 88/100 | Energy: 98/100 | Tile: 2/16"
       },
       {
         "t": "combat_profile",
-        "m": "[COMBAT] Tagilla Lv.6 | HP: 24/182 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Marksman Rifle (7.62x54mm)"
+        "m": "[COMBAT] Tagilla Lv.6 | HP: 60/204 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Assault Rifle (7.62x39mm)"
       },
       {
         "t": "info",
-        "m": "[INIT] PMC rolled 19 vs Tagilla rolled 21 → Enemy acts first"
+        "m": "[INIT] PMC rolled 6 vs Tagilla rolled 19 → Enemy acts first"
+      },
+      {
+        "t": "combat_hit",
+        "m": "Tagilla bled on [Head] for 5 damage."
       },
       {
         "t": "info",
@@ -1751,94 +2186,77 @@
       },
       {
         "t": "info",
-        "m": "Tagilla initiated burst spray of 4 rounds."
+        "m": "Tagilla initiated burst spray of 5 rounds."
       },
       {
         "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 95.0%"
+        "m": "[ACC] Tagilla Accuracy: 89.0%"
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [RIGHT ARM]: 63 dmg | Part HP: 0/30"
+        "m": "[DMG] Tagilla → PMC [RIGHT LEG]: 42 dmg | Part HP: 0/30"
       },
       {
         "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 94.5%"
+        "m": "[ACC] Tagilla Accuracy: 86.0%"
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [RIGHT ARM]: 63 dmg | Part HP: 0/30"
+        "m": "[DMG] Tagilla → PMC [RIGHT LEG]: 42 dmg | Part HP: 0/30"
       },
       {
         "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 91.5%"
+        "m": "[ACC] Tagilla Accuracy: 83.0%"
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [RIGHT LEG]: 63 dmg | Part HP: 0/30"
+        "m": "[DMG] Tagilla → PMC [LEFT LEG]: 42 dmg | Part HP: 0/30"
       },
       {
         "t": "info",
-        "m": "[ACC] Tagilla Accuracy: 88.5%"
+        "m": "[ACC] Tagilla Accuracy: 80.0%"
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Tagilla → PMC [LEFT ARM]: 63 dmg | Part HP: 0/30"
+        "m": "[DMG] Tagilla → PMC [LEFT LEG]: 42 dmg | Part HP: 0/30"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 77.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Tagilla → PMC [RIGHT LEG]: 42 dmg | Part HP: 0/30"
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] Tagilla fired 4 rounds | PMC: 82 HP | Tagilla: 24 HP"
+        "m": "[ROUND] Tagilla fired 5 rounds | PMC: 117 HP | Tagilla: 55 HP"
       },
       {
         "t": "info",
-        "m": "PMC initiated burst spray of 3 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 73.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 70.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[PEN] BLOCKED by 6B13 M (Glukhar) (20% dmg) | Armor Dur: 65/90"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [STOMACH]: 12 dmg | Part HP: 0/22"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 68.0%"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] PMC fired 3 rounds | PMC: 82 HP | Tagilla: 24 HP"
+        "m": "PMC ducked into COVER. Attacker accuracy reduced by 20."
       }
     ]
   },
   {
-    "tick": 18,
-    "elapsedSeconds": 283,
-    "stage": 3,
+    "tick": 21,
+    "elapsedSeconds": 345,
+    "stage": 1,
     "status": "combat",
     "killsByTier": {
-      "Scav": 1,
+      "Scav": 2,
       "PMC": 0,
-      "Boss": 1,
-      "Tagilla": 1
+      "Boss": 0
     },
     "pmc": {
       "level": 1,
-      "xp": 100,
-      "energy": 97,
-      "hydration": 80,
+      "xp": 40,
+      "energy": 98,
+      "hydration": 88,
       "hp": [
         60,
-        22,
-        0,
+        52,
+        5,
         0,
         0,
         0,
@@ -1846,57 +2264,281 @@
       ],
       "isBleeding": false,
       "killsCount": 2,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
+      "medkit": "ai2:30/150",
+      "surgicalKit": "cms_kit:0/3",
       "provision": "water_bottle:60/60",
       "armor": "armor_6b13:30/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "20/30+2"
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "26/30+2"
     },
     "combatTarget": {
-      "name": "Bomzh (Scav)",
-      "tier": "Scav",
-      "level": 1,
+      "name": "Tagilla",
+      "tier": "Boss",
+      "level": 6,
       "isDead": false,
-      "isBleeding": false,
+      "isBleeding": true,
       "hp": [
-        30,
-        30,
-        20,
-        20,
-        20,
-        20,
-        20
+        8,
+        42,
+        0,
+        0,
+        0,
+        0,
+        0
       ]
     },
-    "lootFound": [
-      "mag_pmagx1",
-      "cpu_fanx1",
-      "ai2x1"
-    ],
+    "lootFound": [],
     "secureContainerSaved": [
-      "cpux1",
-      "armor_6b13x1",
-      "wd40x1",
-      "ssh68x1"
+      "armor_6b23x1",
+      "handguard_stdx1",
+      "ledxx1"
     ],
     "stashItems": [],
     "logs": [
       {
         "t": "status",
-        "m": "[STATUS] Hydration: 80/100 | Energy: 97/100 | Tile: 4/16"
+        "m": "[STATUS] Hydration: 88/100 | Energy: 98/100 | Tile: 2/16"
       },
       {
         "t": "combat_profile",
-        "m": "[COMBAT] Tagilla Lv.6 | HP: 24/182 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Marksman Rifle (7.62x54mm)"
+        "m": "[COMBAT] Tagilla Lv.6 | HP: 55/204 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Assault Rifle (7.62x39mm)"
       },
       {
         "t": "info",
-        "m": "[INIT] PMC rolled 11 vs Tagilla rolled 19 → Enemy acts first"
+        "m": "[INIT] PMC rolled 22 vs Tagilla rolled 23 → Enemy acts first"
+      },
+      {
+        "t": "combat_hit",
+        "m": "Tagilla bled on [Head] for 5 damage."
       },
       {
         "t": "info",
-        "m": "Tagilla ducked into COVER. Attacker accuracy reduced by 20."
+        "m": "Tagilla initiated burst spray of 3 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 69.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Tagilla → PMC [RIGHT ARM]: 42 dmg | Part HP: 0/30"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 66.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 63.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Tagilla → PMC [RIGHT LEG]: 42 dmg | Part HP: 0/30"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Tagilla fired 3 rounds | PMC: 117 HP | Tagilla: 50 HP"
+      },
+      {
+        "t": "info",
+        "m": "PMC broke cover to engage."
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 1 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 74.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Tagilla [LEFT ARM]: 60 dmg | Part HP: 0/24"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 1 rounds | PMC: 117 HP | Tagilla: 50 HP"
+      }
+    ]
+  },
+  {
+    "tick": 22,
+    "elapsedSeconds": 358,
+    "stage": 1,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 2,
+      "PMC": 0,
+      "Boss": 0
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 40,
+      "energy": 98,
+      "hydration": 87,
+      "hp": [
+        60,
+        52,
+        5,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 2,
+      "medkit": "ai2:30/150",
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:30/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "26/30+2"
+    },
+    "combatTarget": {
+      "name": "Tagilla",
+      "tier": "Boss",
+      "level": 6,
+      "isDead": false,
+      "isBleeding": true,
+      "hp": [
+        3,
+        42,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "lootFound": [],
+    "secureContainerSaved": [
+      "armor_6b23x1",
+      "handguard_stdx1",
+      "ledxx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 87/100 | Energy: 98/100 | Tile: 2/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Tagilla Lv.6 | HP: 50/204 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Assault Rifle (7.62x39mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 16 vs Tagilla rolled 28 → Enemy acts first"
+      },
+      {
+        "t": "combat_hit",
+        "m": "Tagilla bled on [Head] for 5 damage."
+      },
+      {
+        "t": "info",
+        "m": "Tagilla initiated burst spray of 4 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 89.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Tagilla → PMC [LEFT ARM]: 42 dmg | Part HP: 0/30"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 86.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 83.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Tagilla → PMC [LEFT LEG]: 42 dmg | Part HP: 0/30"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tagilla Accuracy: 80.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Tagilla → PMC [RIGHT ARM]: 42 dmg | Part HP: 0/30"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Tagilla fired 4 rounds | PMC: 117 HP | Tagilla: 45 HP"
+      },
+      {
+        "t": "info",
+        "m": "PMC ducked into COVER. Attacker accuracy reduced by 20."
+      }
+    ]
+  },
+  {
+    "tick": 23,
+    "elapsedSeconds": 372,
+    "stage": 2,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 2,
+      "PMC": 0,
+      "Boss": 1,
+      "Tagilla": 1
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 120,
+      "energy": 98,
+      "hydration": 79,
+      "hp": [
+        60,
+        60,
+        27,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 3,
+      "medkit": null,
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:30/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "21/30+2"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "rk1_gripx1",
+      "ledxx2",
+      "toilet_paperx1"
+    ],
+    "secureContainerSaved": [
+      "fast_mtx1",
+      "armor_6b23x1",
+      "collimatorx1",
+      "handguard_stdx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 86/100 | Energy: 98/100 | Tile: 2/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Tagilla Lv.6 | HP: 45/204 | Armor: 6B13 M (Glukhar) (Class 5) | Weapon: Assault Rifle (7.62x39mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 23 vs Tagilla rolled 19 → PMC acts first"
+      },
+      {
+        "t": "info",
+        "m": "PMC broke cover to engage."
       },
       {
         "t": "info",
@@ -1904,47 +2546,51 @@
       },
       {
         "t": "info",
-        "m": "[ACC] PMC Accuracy: 53.0%"
+        "m": "[ACC] PMC Accuracy: 74.0%"
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [LEFT ARM]: 60 dmg | Part HP: 0/22"
+        "m": "[DMG] PMC → Tagilla [RIGHT ARM]: 60 dmg | Part HP: 0/24"
       },
       {
         "t": "info",
-        "m": "[ACC] PMC Accuracy: 50.5%"
+        "m": "[ACC] PMC Accuracy: 71.5%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Tagilla [RIGHT LEG]: 60 dmg | Part HP: 0/24"
       },
       {
         "t": "info",
-        "m": "[ACC] PMC Accuracy: 48.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[PEN] BLOCKED by 6B13 M (Glukhar) (20% dmg) | Armor Dur: 60/90"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [STOMACH]: 12 dmg | Part HP: 0/22"
+        "m": "[ACC] PMC Accuracy: 69.0%"
       },
       {
         "t": "info",
-        "m": "[ACC] PMC Accuracy: 45.5%"
+        "m": "[ACC] PMC Accuracy: 66.5%"
       },
       {
         "t": "combat_damage",
-        "m": "[PEN] PENETRATED 6B47 (60% dmg) | Armor Dur: 20/40"
+        "m": "[DMG] PMC → Tagilla [RIGHT LEG]: 60 dmg | Part HP: 0/24"
       },
       {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tagilla [HEAD]: 36 dmg | Part HP: 0/36"
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 64.0%"
       },
       {
-        "t": "combat_kill",
-        "m": "PMC neutralized Tagilla with a fatal shot!"
+        "t": "info",
+        "m": "Tagilla dynamically dodged the incoming bullet!"
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 5 rounds | PMC: 82 HP | Tagilla: 12 HP"
+        "m": "[ROUND] PMC fired 5 rounds | PMC: 117 HP | Tagilla: 45 HP"
+      },
+      {
+        "t": "combat_hit",
+        "m": "Tagilla bled on [Head] for 5 damage."
+      },
+      {
+        "t": "death",
+        "m": "Tagilla succumbed to fatal arterial bleeding!"
       },
       {
         "t": "info",
@@ -1952,473 +2598,140 @@
       },
       {
         "t": "loot",
-        "m": "Looted corpse: found SSh-68 (Value: ₽14000)"
+        "m": "Looted corpse: found Toilet Paper (Value: ₽0)"
       },
       {
         "t": "loot",
-        "m": "Looted corpse: found Central Processing Unit (Value: ₽45000)"
+        "m": "Looted corpse: found Red Dot Sight (Value: ₽8000)"
       },
       {
         "t": "loot",
-        "m": "Looted corpse: found Extended Mag (Value: ₽10000)"
+        "m": "Looted corpse: found FAST MT (Value: ₽32000)"
       },
       {
         "t": "warning",
-        "m": "[REINFORCE] 1/3 reinforcements on tile. Bomzh (Scav) (Scav) Lv.1 | Armor: PACA (Class 2) | Weapon: Pistol (9x18mm)"
+        "m": "Limb [Left Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Thorax] for +8 HP. Durability: 22/150."
+      },
+      {
+        "t": "heal",
+        "m": "Applied AI-2 Medkit and healed [Stomach] for +22 HP. Durability: 0/150."
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 27/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 0/30 | R.Leg 0/30"
+      },
+      {
+        "t": "loot",
+        "m": "Found Angled Grip (Value: ₽7000)"
+      },
+      {
+        "t": "loot",
+        "m": "Found LEDX (Value: ₽50)"
       }
     ]
   },
   {
-    "tick": 19,
-    "elapsedSeconds": 296,
+    "tick": 24,
+    "elapsedSeconds": 384,
     "stage": 3,
-    "status": "combat",
+    "status": "scavenging",
     "killsByTier": {
-      "Scav": 1,
+      "Scav": 2,
       "PMC": 0,
       "Boss": 1,
       "Tagilla": 1
     },
     "pmc": {
       "level": 1,
-      "xp": 100,
+      "xp": 120,
       "energy": 97,
-      "hydration": 79,
+      "hydration": 74,
       "hp": [
         60,
-        22,
-        0,
+        60,
+        27,
         0,
         0,
         0,
         0
       ],
       "isBleeding": false,
-      "killsCount": 2,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
+      "killsCount": 3,
+      "medkit": null,
+      "surgicalKit": "cms_kit:0/3",
       "provision": "water_bottle:60/60",
       "armor": "armor_6b13:30/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "20/30+2"
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "21/30+2"
     },
-    "combatTarget": {
-      "name": "Bomzh (Scav)",
-      "tier": "Scav",
-      "level": 1,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        30,
-        30,
-        20,
-        20,
-        20,
-        20,
-        20
-      ]
-    },
+    "combatTarget": null,
     "lootFound": [
-      "mag_pmagx1",
-      "cpu_fanx1",
-      "ai2x1"
+      "rk1_gripx1",
+      "handguard_stdx1",
+      "ledxx2",
+      "toilet_paperx1"
     ],
     "secureContainerSaved": [
-      "cpux1",
-      "armor_6b13x1",
-      "wd40x1",
-      "ssh68x1"
+      "tor_teamx1",
+      "fast_mtx1",
+      "armor_6b23x1",
+      "collimatorx1"
     ],
     "stashItems": [],
     "logs": [
       {
         "t": "status",
-        "m": "[STATUS] Hydration: 79/100 | Energy: 97/100 | Tile: 4/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Bomzh (Scav) Lv.1 | HP: 160/160 | Armor: PACA (Class 2) | Weapon: Pistol (9x18mm)"
+        "m": "[STATUS] Hydration: 79/100 | Energy: 97/100 | Tile: 3/16"
       },
       {
         "t": "info",
-        "m": "[INIT] PMC rolled 17 vs Bomzh (Scav) rolled 24 → Enemy acts first"
+        "m": "Entered [Armory]: A weapons storage room with empty weapon racks."
+      },
+      {
+        "t": "loot",
+        "m": "Found TOR Team (Value: ₽38000)"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Arm] remains blacked out — No active surgical kit available!"
       },
       {
         "t": "info",
-        "m": "Bomzh (Scav) initiated burst spray of 3 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Bomzh (Scav) Accuracy: 57.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Bomzh (Scav) Accuracy: 54.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Bomzh (Scav) → PMC [LEFT LEG]: 21 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Bomzh (Scav) Accuracy: 51.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Bomzh (Scav) → PMC [LEFT LEG]: 21 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] Bomzh (Scav) fired 3 rounds | PMC: 82 HP | Bomzh (Scav): 160 HP"
-      },
-      {
-        "t": "info",
-        "m": "PMC ducked into COVER. Attacker accuracy reduced by 20."
+        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 27/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 0/30 | R.Leg 0/30"
       }
     ]
   },
   {
-    "tick": 20,
-    "elapsedSeconds": 312,
-    "stage": 3,
-    "status": "combat",
-    "killsByTier": {
-      "Scav": 1,
-      "PMC": 0,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 100,
-      "energy": 97,
-      "hydration": 79,
-      "hp": [
-        60,
-        22,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "isBleeding": false,
-      "killsCount": 2,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:30/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "18/30+2"
-    },
-    "combatTarget": {
-      "name": "Bomzh (Scav)",
-      "tier": "Scav",
-      "level": 1,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        30,
-        30,
-        0,
-        20,
-        20,
-        20,
-        20
-      ]
-    },
-    "lootFound": [
-      "mag_pmagx1",
-      "cpu_fanx1",
-      "ai2x1"
-    ],
-    "secureContainerSaved": [
-      "cpux1",
-      "armor_6b13x1",
-      "wd40x1",
-      "ssh68x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 79/100 | Energy: 97/100 | Tile: 4/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Bomzh (Scav) Lv.1 | HP: 160/160 | Armor: PACA (Class 2) | Weapon: Pistol (9x18mm)"
-      },
-      {
-        "t": "info",
-        "m": "[INIT] PMC rolled 10 vs Bomzh (Scav) rolled 21 → Enemy acts first"
-      },
-      {
-        "t": "info",
-        "m": "Bomzh (Scav) ducked into COVER. Attacker accuracy reduced by 20."
-      },
-      {
-        "t": "info",
-        "m": "PMC broke cover to engage."
-      },
-      {
-        "t": "info",
-        "m": "PMC initiated burst spray of 2 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 53.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Bomzh (Scav) [STOMACH]: 60 dmg | Part HP: 0/20"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 50.5%"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] PMC fired 2 rounds | PMC: 82 HP | Bomzh (Scav): 140 HP"
-      }
-    ]
-  },
-  {
-    "tick": 21,
-    "elapsedSeconds": 329,
-    "stage": 3,
-    "status": "combat",
-    "killsByTier": {
-      "Scav": 1,
-      "PMC": 0,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 100,
-      "energy": 97,
-      "hydration": 78,
-      "hp": [
-        60,
-        22,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "isBleeding": false,
-      "killsCount": 2,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:25/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "18/30+2"
-    },
-    "combatTarget": {
-      "name": "Bomzh (Scav)",
-      "tier": "Scav",
-      "level": 1,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        30,
-        30,
-        0,
-        20,
-        20,
-        20,
-        20
-      ]
-    },
-    "lootFound": [
-      "mag_pmagx1",
-      "cpu_fanx1",
-      "ai2x1"
-    ],
-    "secureContainerSaved": [
-      "cpux1",
-      "armor_6b13x1",
-      "wd40x1",
-      "ssh68x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 78/100 | Energy: 97/100 | Tile: 4/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Bomzh (Scav) Lv.1 | HP: 140/160 | Armor: PACA (Class 2) | Weapon: Pistol (9x18mm)"
-      },
-      {
-        "t": "info",
-        "m": "[INIT] PMC rolled 12 vs Bomzh (Scav) rolled 21 → Enemy acts first"
-      },
-      {
-        "t": "info",
-        "m": "Bomzh (Scav) broke cover to engage."
-      },
-      {
-        "t": "info",
-        "m": "Bomzh (Scav) initiated burst spray of 5 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Bomzh (Scav) Accuracy: 57.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Bomzh (Scav) Accuracy: 54.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Bomzh (Scav) Accuracy: 51.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[PEN] BLOCKED by 6B13 M (20% dmg) | Armor Dur: 25/50"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Bomzh (Scav) → PMC [STOMACH]: 4 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Bomzh (Scav) Accuracy: 48.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Bomzh (Scav) Accuracy: 45.0%"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] Bomzh (Scav) fired 5 rounds | PMC: 82 HP | Bomzh (Scav): 140 HP"
-      },
-      {
-        "t": "info",
-        "m": "PMC ducked into COVER. Attacker accuracy reduced by 20."
-      }
-    ]
-  },
-  {
-    "tick": 22,
-    "elapsedSeconds": 347,
-    "stage": 3,
-    "status": "combat",
-    "killsByTier": {
-      "Scav": 1,
-      "PMC": 0,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 100,
-      "energy": 97,
-      "hydration": 78,
-      "hp": [
-        60,
-        22,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "isBleeding": false,
-      "killsCount": 2,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:25/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "15/30+2"
-    },
-    "combatTarget": {
-      "name": "Bomzh (Scav)",
-      "tier": "Scav",
-      "level": 1,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        30,
-        30,
-        0,
-        20,
-        20,
-        0,
-        0
-      ]
-    },
-    "lootFound": [
-      "mag_pmagx1",
-      "cpu_fanx1",
-      "ai2x1"
-    ],
-    "secureContainerSaved": [
-      "cpux1",
-      "armor_6b13x1",
-      "wd40x1",
-      "ssh68x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 78/100 | Energy: 97/100 | Tile: 4/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Bomzh (Scav) Lv.1 | HP: 140/160 | Armor: PACA (Class 2) | Weapon: Pistol (9x18mm)"
-      },
-      {
-        "t": "info",
-        "m": "[INIT] PMC rolled 19 vs Bomzh (Scav) rolled 22 → Enemy acts first"
-      },
-      {
-        "t": "info",
-        "m": "Bomzh (Scav) reloaded. Mag: 8, Reserves: 1."
-      },
-      {
-        "t": "info",
-        "m": "PMC broke cover to engage."
-      },
-      {
-        "t": "info",
-        "m": "PMC initiated burst spray of 3 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 73.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 70.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Bomzh (Scav) [RIGHT LEG]: 60 dmg | Part HP: 0/20"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 68.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Bomzh (Scav) [LEFT LEG]: 60 dmg | Part HP: 0/20"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] PMC fired 3 rounds | PMC: 82 HP | Bomzh (Scav): 100 HP"
-      }
-    ]
-  },
-  {
-    "tick": 23,
-    "elapsedSeconds": 365,
+    "tick": 25,
+    "elapsedSeconds": 396,
     "stage": 3,
     "status": "combat",
     "killsByTier": {
@@ -2431,11 +2744,11 @@
       "level": 1,
       "xp": 120,
       "energy": 97,
-      "hydration": 78,
+      "hydration": 74,
       "hp": [
         60,
-        22,
-        0,
+        60,
+        27,
         0,
         0,
         0,
@@ -2443,58 +2756,132 @@
       ],
       "isBleeding": false,
       "killsCount": 3,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
+      "medkit": null,
+      "surgicalKit": "cms_kit:0/3",
       "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:25/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "14/30+2"
+      "armor": "armor_6b13:30/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "21/30+2"
     },
     "combatTarget": {
-      "name": "Breeki (Scav)",
+      "name": "Ded (Scav)",
       "tier": "Scav",
       "level": 1,
       "isDead": false,
       "isBleeding": false,
       "hp": [
-        30,
-        30,
-        20,
-        20,
-        20,
-        20,
-        20
+        24,
+        24,
+        18,
+        18,
+        18,
+        18,
+        18
       ]
     },
     "lootFound": [
-      "ssh68x1",
-      "mag_pmagx1",
-      "cpu_fanx1",
-      "ai2x1"
+      "rk1_gripx1",
+      "handguard_stdx1",
+      "ledxx2",
+      "toilet_paperx1"
     ],
     "secureContainerSaved": [
-      "cpux1",
-      "armor_6b13x1",
-      "surv12x1",
-      "wd40x1"
+      "tor_teamx1",
+      "fast_mtx1",
+      "armor_6b23x1",
+      "collimatorx1"
     ],
     "stashItems": [],
     "logs": [
       {
         "t": "status",
-        "m": "[STATUS] Hydration: 78/100 | Energy: 97/100 | Tile: 4/16"
+        "m": "[STATUS] Hydration: 74/100 | Energy: 97/100 | Tile: 4/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Armory]: A weapons storage room with empty weapon racks."
+      },
+      {
+        "t": "warning",
+        "m": "[ENCOUNTER] Spotted Ded (Scav) (Scav) Lv.1 in [Armory] | Armor: PACA (Class 2) | Weapon: Pistol (9x18mm)"
+      }
+    ]
+  },
+  {
+    "tick": 26,
+    "elapsedSeconds": 412,
+    "stage": 3,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 2,
+      "PMC": 0,
+      "Boss": 1,
+      "Tagilla": 1
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 120,
+      "energy": 97,
+      "hydration": 74,
+      "hp": [
+        60,
+        60,
+        27,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 3,
+      "medkit": null,
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:30/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "18/30+2"
+    },
+    "combatTarget": {
+      "name": "Ded (Scav)",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        24,
+        24,
+        18,
+        18,
+        0,
+        18,
+        18
+      ]
+    },
+    "lootFound": [
+      "rk1_gripx1",
+      "handguard_stdx1",
+      "ledxx2",
+      "toilet_paperx1"
+    ],
+    "secureContainerSaved": [
+      "tor_teamx1",
+      "fast_mtx1",
+      "armor_6b23x1",
+      "collimatorx1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 74/100 | Energy: 97/100 | Tile: 4/16"
       },
       {
         "t": "combat_profile",
-        "m": "[COMBAT] Bomzh (Scav) Lv.1 | HP: 100/160 | Armor: PACA (Class 2) | Weapon: Pistol (9x18mm)"
+        "m": "[COMBAT] Ded (Scav) Lv.1 | HP: 138/138 | Armor: PACA (Class 2) | Weapon: Pistol (9x18mm)"
       },
       {
         "t": "info",
-        "m": "[INIT] PMC rolled 11 vs Bomzh (Scav) rolled 20 → Enemy acts first"
-      },
-      {
-        "t": "info",
-        "m": "Bomzh (Scav) ducked into COVER. Attacker accuracy reduced by 20."
+        "m": "[INIT] PMC rolled 21 vs Ded (Scav) rolled 13 → PMC acts first"
       },
       {
         "t": "info",
@@ -2502,7 +2889,104 @@
       },
       {
         "t": "info",
-        "m": "[ACC] PMC Accuracy: 53.0%"
+        "m": "[ACC] PMC Accuracy: 74.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 71.5%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Ded (Scav) [RIGHT ARM]: 60 dmg | Part HP: 0/18"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 69.0%"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 3 rounds | PMC: 147 HP | Ded (Scav): 120 HP"
+      },
+      {
+        "t": "info",
+        "m": "Ded (Scav) ducked into COVER. Attacker accuracy reduced by 20."
+      }
+    ]
+  },
+  {
+    "tick": 27,
+    "elapsedSeconds": 430,
+    "stage": 4,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 3,
+      "PMC": 0,
+      "Boss": 1,
+      "Tagilla": 1
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 140,
+      "energy": 97,
+      "hydration": 66,
+      "hp": [
+        60,
+        60,
+        27,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 4,
+      "medkit": null,
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:30/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "16/30+2"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "nutsx1",
+      "collimatorx1",
+      "rk1_gripx1",
+      "handguard_stdx1",
+      "ledxx2",
+      "toilet_paperx1"
+    ],
+    "secureContainerSaved": [
+      "golden_roosterx1",
+      "tor_teamx1",
+      "fast_mtx1",
+      "armor_6b23x1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 73/100 | Energy: 97/100 | Tile: 4/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Ded (Scav) Lv.1 | HP: 120/138 | Armor: PACA (Class 2) | Weapon: Pistol (9x18mm)"
+      },
+      {
+        "t": "info",
+        "m": "[INIT] PMC rolled 21 vs Ded (Scav) rolled 17 → PMC acts first"
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 5 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 54.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 51.5%"
       },
       {
         "t": "combat_damage",
@@ -2510,15 +2994,15 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Bomzh (Scav) [THORAX]: 36 dmg | Part HP: 0/30"
+        "m": "[DMG] PMC → Ded (Scav) [THORAX]: 36 dmg | Part HP: 0/24"
       },
       {
         "t": "combat_kill",
-        "m": "PMC neutralized Bomzh (Scav) with a fatal shot!"
+        "m": "PMC neutralized Ded (Scav) with a fatal shot!"
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 3 rounds | PMC: 82 HP | Bomzh (Scav): 34 HP"
+        "m": "[ROUND] PMC fired 5 rounds | PMC: 147 HP | Ded (Scav): 60 HP"
       },
       {
         "t": "info",
@@ -2526,251 +3010,39 @@
       },
       {
         "t": "loot",
-        "m": "Looted corpse: found Surv12 Surgical Kit (Value: ₽30000)"
+        "m": "Looted corpse: found Golden Rooster (Value: ₽150000)"
       },
       {
         "t": "warning",
-        "m": "[REINFORCE] 2/3 reinforcements on tile. Breeki (Scav) (Scav) Lv.1 | Armor: None | Weapon: Pistol (9x18mm)"
+        "m": "Limb [Left Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 27/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 0/30 | R.Leg 0/30"
+      },
+      {
+        "t": "loot",
+        "m": "Found Pack of Nuts (Value: ₽14500)"
       }
     ]
   },
   {
-    "tick": 24,
-    "elapsedSeconds": 379,
-    "stage": 3,
-    "status": "combat",
-    "killsByTier": {
-      "Scav": 2,
-      "PMC": 0,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 120,
-      "energy": 97,
-      "hydration": 77,
-      "hp": [
-        60,
-        22,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "isBleeding": false,
-      "killsCount": 3,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:15/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "11/30+2"
-    },
-    "combatTarget": {
-      "name": "Breeki (Scav)",
-      "tier": "Scav",
-      "level": 1,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        30,
-        30,
-        20,
-        0,
-        20,
-        20,
-        20
-      ]
-    },
-    "lootFound": [
-      "ssh68x1",
-      "mag_pmagx1",
-      "cpu_fanx1",
-      "ai2x1"
-    ],
-    "secureContainerSaved": [
-      "cpux1",
-      "armor_6b13x1",
-      "surv12x1",
-      "wd40x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 77/100 | Energy: 97/100 | Tile: 4/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Breeki (Scav) Lv.1 | HP: 160/160 | Armor: None | Weapon: Pistol (9x18mm)"
-      },
-      {
-        "t": "info",
-        "m": "[INIT] PMC rolled 21 vs Breeki (Scav) rolled 18 → PMC acts first"
-      },
-      {
-        "t": "info",
-        "m": "PMC initiated burst spray of 3 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 73.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Breeki (Scav) [LEFT ARM]: 60 dmg | Part HP: 0/20"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 70.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Breeki (Scav) [LEFT ARM]: 60 dmg | Part HP: 0/20"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 68.0%"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] PMC fired 3 rounds | PMC: 82 HP | Breeki (Scav): 140 HP"
-      },
-      {
-        "t": "info",
-        "m": "Breeki (Scav) initiated burst spray of 4 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Breeki (Scav) Accuracy: 56.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Breeki (Scav) Accuracy: 53.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[PEN] BLOCKED by 6B13 M (20% dmg) | Armor Dur: 20/50"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Breeki (Scav) → PMC [STOMACH]: 4 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Breeki (Scav) Accuracy: 50.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[PEN] BLOCKED by 6B13 M (20% dmg) | Armor Dur: 15/50"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Breeki (Scav) → PMC [STOMACH]: 4 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Breeki (Scav) Accuracy: 47.0%"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] Breeki (Scav) fired 4 rounds | PMC: 82 HP | Breeki (Scav): 140 HP"
-      }
-    ]
-  },
-  {
-    "tick": 25,
-    "elapsedSeconds": 397,
-    "stage": 3,
-    "status": "combat",
-    "killsByTier": {
-      "Scav": 2,
-      "PMC": 0,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 120,
-      "energy": 97,
-      "hydration": 77,
-      "hp": [
-        60,
-        22,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "isBleeding": false,
-      "killsCount": 3,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:15/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "11/30+2"
-    },
-    "combatTarget": {
-      "name": "Breeki (Scav)",
-      "tier": "Scav",
-      "level": 1,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        30,
-        30,
-        20,
-        0,
-        20,
-        20,
-        20
-      ]
-    },
-    "lootFound": [
-      "ssh68x1",
-      "mag_pmagx1",
-      "cpu_fanx1",
-      "ai2x1"
-    ],
-    "secureContainerSaved": [
-      "cpux1",
-      "armor_6b13x1",
-      "surv12x1",
-      "wd40x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 77/100 | Energy: 97/100 | Tile: 4/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Breeki (Scav) Lv.1 | HP: 140/160 | Armor: None | Weapon: Pistol (9x18mm)"
-      },
-      {
-        "t": "info",
-        "m": "[INIT] PMC rolled 15 vs Breeki (Scav) rolled 18 → Enemy acts first"
-      },
-      {
-        "t": "info",
-        "m": "Breeki (Scav) ducked into COVER. Attacker accuracy reduced by 20."
-      },
-      {
-        "t": "info",
-        "m": "PMC ducked into COVER. Attacker accuracy reduced by 20."
-      }
-    ]
-  },
-  {
-    "tick": 26,
-    "elapsedSeconds": 409,
-    "stage": 3,
-    "status": "combat",
+    "tick": 28,
+    "elapsedSeconds": 445,
+    "stage": 5,
+    "status": "scavenging",
     "killsByTier": {
       "Scav": 3,
       "PMC": 0,
@@ -2781,11 +3053,11 @@
       "level": 1,
       "xp": 140,
       "energy": 96,
-      "hydration": 77,
+      "hydration": 62,
       "hp": [
         60,
-        22,
-        0,
+        60,
+        27,
         0,
         0,
         0,
@@ -2793,12 +3065,757 @@
       ],
       "isBleeding": false,
       "killsCount": 4,
-      "medkit": "ai2:150/150",
-      "surgicalKit": "cms_kit:3/3",
+      "medkit": null,
+      "surgicalKit": "cms_kit:0/3",
       "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:15/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "10/30+2"
+      "armor": "armor_6b13:30/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "16/30+2"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "armor_6b23x1",
+      "nutsx1",
+      "collimatorx1",
+      "rk1_gripx1",
+      "handguard_stdx1",
+      "ledxx2",
+      "toilet_paperx2"
+    ],
+    "secureContainerSaved": [
+      "golden_roosterx1",
+      "tor_teamx1",
+      "fast_mtx1",
+      "armor_6b23x1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 66/100 | Energy: 96/100 | Tile: 5/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Offices]: A set of offices with overturned desks and filing cabinets."
+      },
+      {
+        "t": "loot",
+        "m": "Found Toilet Paper (Value: ₽0)"
+      },
+      {
+        "t": "loot",
+        "m": "Found 6B23-1 (Value: ₽25000)"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 27/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 0/30 | R.Leg 0/30"
+      }
+    ]
+  },
+  {
+    "tick": 29,
+    "elapsedSeconds": 464,
+    "stage": 6,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 3,
+      "PMC": 0,
+      "Boss": 1,
+      "Tagilla": 1
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 140,
+      "energy": 96,
+      "hydration": 57,
+      "hp": [
+        60,
+        60,
+        27,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 4,
+      "medkit": null,
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:30/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "16/30+2"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "armor_6b23x1",
+      "nutsx1",
+      "untarx1",
+      "collimatorx1",
+      "rk1_gripx1",
+      "handguard_stdx1",
+      "ledxx2",
+      "toilet_paperx2"
+    ],
+    "secureContainerSaved": [
+      "golden_roosterx1",
+      "tor_teamx1",
+      "fast_mtx1",
+      "armor_6b23x1"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 61/100 | Energy: 96/100 | Tile: 6/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Cafeteria]: A large cafeteria with overturned tables and scattered trays."
+      },
+      {
+        "t": "loot",
+        "m": "Found UNTAR (Value: ₽12000)"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 27/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 0/30 | R.Leg 0/30"
+      }
+    ]
+  },
+  {
+    "tick": 30,
+    "elapsedSeconds": 481,
+    "stage": 7,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 3,
+      "PMC": 0,
+      "Boss": 1,
+      "Tagilla": 1
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 140,
+      "energy": 95,
+      "hydration": 51,
+      "hp": [
+        60,
+        60,
+        27,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 4,
+      "medkit": null,
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:60/60",
+      "armor": "armor_6b13:30/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "16/30+2"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "armor_6b23x2",
+      "nutsx1",
+      "untarx1",
+      "collimatorx1",
+      "rvg_gripx1",
+      "rk1_gripx1",
+      "handguard_stdx1",
+      "ledxx2",
+      "toilet_paperx2"
+    ],
+    "secureContainerSaved": [
+      "golden_roosterx1",
+      "tor_teamx1",
+      "fast_mtx2"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 57/100 | Energy: 95/100 | Tile: 7/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Server Room]: A cooled server room with blinking equipment racks."
+      },
+      {
+        "t": "loot",
+        "m": "Found FAST MT (Value: ₽32000)"
+      },
+      {
+        "t": "loot",
+        "m": "Found Vertical Grip (Value: ₽8000)"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 27/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 0/30 | R.Leg 0/30"
+      }
+    ]
+  },
+  {
+    "tick": 31,
+    "elapsedSeconds": 494,
+    "stage": 8,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 3,
+      "PMC": 0,
+      "Boss": 1,
+      "Tagilla": 1
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 140,
+      "energy": 95,
+      "hydration": 100,
+      "hp": [
+        60,
+        60,
+        27,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 4,
+      "medkit": null,
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:5/60",
+      "armor": "armor_6b13:30/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "16/30+2"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "armor_6b23x2",
+      "nutsx1",
+      "untarx1",
+      "collimatorx1",
+      "rvg_gripx1",
+      "rk1_gripx1",
+      "handguard_stdx1",
+      "crackersx1",
+      "ledxx2",
+      "toilet_paperx2"
+    ],
+    "secureContainerSaved": [
+      "golden_roosterx1",
+      "tor_teamx1",
+      "fast_mtx2"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 51/100 | Energy: 95/100 | Tile: 8/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Armory]: A weapons storage room with empty weapon racks."
+      },
+      {
+        "t": "loot",
+        "m": "Found Crackers (Value: ₽2000)"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "heal",
+        "m": "PMC is thirsty. Consumed equipped provision. Restored +55 Hydration."
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 27/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 0/30 | R.Leg 0/30"
+      }
+    ]
+  },
+  {
+    "tick": 32,
+    "elapsedSeconds": 510,
+    "stage": 9,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 3,
+      "PMC": 0,
+      "Boss": 1,
+      "Tagilla": 1
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 140,
+      "energy": 95,
+      "hydration": 96,
+      "hp": [
+        60,
+        60,
+        27,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 4,
+      "medkit": null,
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:5/60",
+      "armor": "armor_6b13:30/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "16/30+2"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "armor_6b23x2",
+      "nutsx1",
+      "untarx1",
+      "cpu_fanx1",
+      "collimatorx1",
+      "rvg_gripx1",
+      "rk1_gripx1",
+      "handguard_stdx1",
+      "crackersx1",
+      "energy_drinkx1",
+      "ledxx2",
+      "toilet_paperx2"
+    ],
+    "secureContainerSaved": [
+      "golden_roosterx1",
+      "tor_teamx1",
+      "fast_mtx2"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 100/100 | Energy: 95/100 | Tile: 9/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Offices]: A set of offices with overturned desks and filing cabinets."
+      },
+      {
+        "t": "loot",
+        "m": "Found CPU Fan (Value: ₽8500)"
+      },
+      {
+        "t": "loot",
+        "m": "Found Energy Drink (Value: ₽2000)"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 27/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 0/30 | R.Leg 0/30"
+      }
+    ]
+  },
+  {
+    "tick": 33,
+    "elapsedSeconds": 522,
+    "stage": 10,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 3,
+      "PMC": 0,
+      "Boss": 1,
+      "Tagilla": 1
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 140,
+      "energy": 95,
+      "hydration": 89,
+      "hp": [
+        60,
+        60,
+        27,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 4,
+      "medkit": null,
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:5/60",
+      "armor": "armor_6b13:30/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "16/30+2"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "armor_6b23x2",
+      "nutsx1",
+      "untarx1",
+      "cpu_fanx1",
+      "collimatorx1",
+      "rvg_gripx1",
+      "rk1_gripx1",
+      "handguard_stdx1",
+      "crackersx1",
+      "energy_drinkx1",
+      "ledxx2",
+      "ammo_556x45_m855x1",
+      "toilet_paperx2"
+    ],
+    "secureContainerSaved": [
+      "golden_roosterx1",
+      "tor_teamx1",
+      "fast_mtx2"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 96/100 | Energy: 95/100 | Tile: 10/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Armory]: A weapons storage room with empty weapon racks."
+      },
+      {
+        "t": "loot",
+        "m": "Found 5.56x45mm M855 Box (Value: ₽12)"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 27/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 0/30 | R.Leg 0/30"
+      }
+    ]
+  },
+  {
+    "tick": 34,
+    "elapsedSeconds": 540,
+    "stage": 11,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 3,
+      "PMC": 0,
+      "Boss": 1,
+      "Tagilla": 1
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 140,
+      "energy": 95,
+      "hydration": 83,
+      "hp": [
+        60,
+        60,
+        27,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 4,
+      "medkit": null,
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:5/60",
+      "armor": "armor_6b13:30/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "16/30+2"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "armor_6b23x2",
+      "nutsx1",
+      "untarx1",
+      "cpu_fanx1",
+      "collimatorx1",
+      "rvg_gripx1",
+      "rk1_gripx2",
+      "handguard_stdx1",
+      "folded_stockx1",
+      "crackersx1",
+      "energy_drinkx1",
+      "ledxx2",
+      "ammo_556x45_m855x1",
+      "ammo_9x18_pmx1",
+      "toilet_paperx2"
+    ],
+    "secureContainerSaved": [
+      "golden_roosterx1",
+      "tor_teamx1",
+      "fast_mtx2"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 89/100 | Energy: 95/100 | Tile: 11/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Cafeteria]: A large cafeteria with overturned tables and scattered trays."
+      },
+      {
+        "t": "loot",
+        "m": "Found Angled Grip (Value: ₽7000)"
+      },
+      {
+        "t": "loot",
+        "m": "Found Folded Stock (Value: ₽5000)"
+      },
+      {
+        "t": "loot",
+        "m": "Found 9x18mm PM Box (Value: ₽10)"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 27/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 0/30 | R.Leg 0/30"
+      }
+    ]
+  },
+  {
+    "tick": 35,
+    "elapsedSeconds": 558,
+    "stage": 12,
+    "status": "scavenging",
+    "killsByTier": {
+      "Scav": 3,
+      "PMC": 0,
+      "Boss": 1,
+      "Tagilla": 1
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 140,
+      "energy": 95,
+      "hydration": 77,
+      "hp": [
+        60,
+        60,
+        27,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 4,
+      "medkit": null,
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:5/60",
+      "armor": "armor_6b13:30/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "16/30+2"
+    },
+    "combatTarget": null,
+    "lootFound": [
+      "armor_6b23x2",
+      "pacax1",
+      "nutsx1",
+      "untarx1",
+      "cpu_fanx1",
+      "collimatorx1",
+      "rvg_gripx1",
+      "rk1_gripx2",
+      "handguard_stdx1",
+      "folded_stockx1",
+      "crackersx1",
+      "energy_drinkx1",
+      "ledxx2",
+      "ammo_556x45_m855x1",
+      "ammo_9x18_pmx1",
+      "ammo_12x70_slugx1",
+      "toilet_paperx2"
+    ],
+    "secureContainerSaved": [
+      "golden_roosterx1",
+      "tor_teamx1",
+      "fast_mtx2"
+    ],
+    "stashItems": [],
+    "logs": [
+      {
+        "t": "status",
+        "m": "[STATUS] Hydration: 83/100 | Energy: 95/100 | Tile: 12/16"
+      },
+      {
+        "t": "info",
+        "m": "Entered [Garage]: A vehicle garage with oil stains and tool benches."
+      },
+      {
+        "t": "loot",
+        "m": "Found PACA (Value: ₽15000)"
+      },
+      {
+        "t": "loot",
+        "m": "Found 12x70mm Slug Box (Value: ₽8)"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "info",
+        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 27/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 0/30 | R.Leg 0/30"
+      }
+    ]
+  },
+  {
+    "tick": 36,
+    "elapsedSeconds": 575,
+    "stage": 12,
+    "status": "combat",
+    "killsByTier": {
+      "Scav": 3,
+      "PMC": 0,
+      "Boss": 1,
+      "Tagilla": 1
+    },
+    "pmc": {
+      "level": 1,
+      "xp": 140,
+      "energy": 95,
+      "hydration": 76,
+      "hp": [
+        60,
+        60,
+        27,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isBleeding": false,
+      "killsCount": 4,
+      "medkit": null,
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:5/60",
+      "armor": "armor_6b13:30/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "16/30+2"
     },
     "combatTarget": {
       "name": "Tushonka (Scav)",
@@ -2817,125 +3834,124 @@
       ]
     },
     "lootFound": [
-      "rotor43x1",
-      "ssh68x1",
-      "mag_pmagx1",
+      "armor_6b23x2",
+      "pacax1",
+      "nutsx1",
+      "untarx1",
       "cpu_fanx1",
-      "ai2x1"
+      "collimatorx1",
+      "rvg_gripx1",
+      "rk1_gripx2",
+      "handguard_stdx1",
+      "folded_stockx1",
+      "crackersx1",
+      "energy_drinkx1",
+      "ledxx2",
+      "ammo_556x45_m855x1",
+      "ammo_9x18_pmx1",
+      "ammo_12x70_slugx1",
+      "toilet_paperx2"
     ],
     "secureContainerSaved": [
-      "cpux1",
-      "armor_6b13x1",
-      "surv12x1",
-      "wd40x1"
+      "golden_roosterx1",
+      "tor_teamx1",
+      "fast_mtx2"
     ],
     "stashItems": [],
     "logs": [
       {
         "t": "status",
-        "m": "[STATUS] Hydration: 77/100 | Energy: 96/100 | Tile: 4/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Breeki (Scav) Lv.1 | HP: 140/160 | Armor: None | Weapon: Pistol (9x18mm)"
+        "m": "[STATUS] Hydration: 76/100 | Energy: 95/100 | Tile: 13/16"
       },
       {
         "t": "info",
-        "m": "[INIT] PMC rolled 10 vs Breeki (Scav) rolled 10 → PMC acts first"
-      },
-      {
-        "t": "info",
-        "m": "PMC broke cover to engage."
-      },
-      {
-        "t": "info",
-        "m": "PMC initiated burst spray of 2 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 53.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Breeki (Scav) [HEAD]: 60 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "combat_kill",
-        "m": "PMC neutralized Breeki (Scav) with a fatal shot!"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] PMC fired 2 rounds | PMC: 82 HP | Breeki (Scav): 110 HP"
-      },
-      {
-        "t": "info",
-        "m": "Neutralized target of tier Scav. Earned +20 XP."
-      },
-      {
-        "t": "loot",
-        "m": "Looted corpse: found Suppressor (Value: ₽15000)"
+        "m": "Entered [Server Room]: A cooled server room with blinking equipment racks."
       },
       {
         "t": "warning",
-        "m": "[REINFORCE] 3/3 reinforcements on tile. Tushonka (Scav) (Scav) Lv.1 | Armor: None | Weapon: Pistol (9x18mm)"
+        "m": "[ENCOUNTER] Spotted Tushonka (Scav) (Scav) Lv.1 in [Server Room] | Armor: None | Weapon: Pistol (9x18mm)"
       }
     ]
   },
   {
-    "tick": 27,
-    "elapsedSeconds": 423,
-    "stage": 4,
-    "status": "scavenging",
+    "tick": 37,
+    "elapsedSeconds": 594,
+    "stage": 12,
+    "status": "combat",
     "killsByTier": {
-      "Scav": 4,
+      "Scav": 3,
       "PMC": 0,
       "Boss": 1,
       "Tagilla": 1
     },
     "pmc": {
       "level": 1,
-      "xp": 160,
-      "energy": 96,
-      "hydration": 74,
+      "xp": 140,
+      "energy": 95,
+      "hydration": 76,
       "hp": [
         60,
         60,
-        30,
+        27,
         0,
         0,
-        30,
-        30
+        0,
+        0
       ],
       "isBleeding": false,
-      "killsCount": 5,
-      "medkit": "ai2:25/150",
+      "killsCount": 4,
+      "medkit": null,
       "surgicalKit": "cms_kit:0/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:15/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "8/30+2"
+      "provision": "water_bottle:5/60",
+      "armor": "armor_6b13:30/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "16/30+2"
     },
-    "combatTarget": null,
+    "combatTarget": {
+      "name": "Tushonka (Scav)",
+      "tier": "Scav",
+      "level": 1,
+      "isDead": false,
+      "isBleeding": false,
+      "hp": [
+        27,
+        27,
+        19,
+        19,
+        19,
+        19,
+        19
+      ]
+    },
     "lootFound": [
-      "rotor43x1",
+      "armor_6b23x2",
       "pacax1",
-      "ssh68x1",
-      "mag_pmagx1",
+      "nutsx1",
+      "untarx1",
       "cpu_fanx1",
-      "mrex1",
-      "ai2x1"
+      "collimatorx1",
+      "rvg_gripx1",
+      "rk1_gripx2",
+      "handguard_stdx1",
+      "folded_stockx1",
+      "crackersx1",
+      "energy_drinkx1",
+      "ledxx2",
+      "ammo_556x45_m855x1",
+      "ammo_9x18_pmx1",
+      "ammo_12x70_slugx1",
+      "toilet_paperx2"
     ],
     "secureContainerSaved": [
-      "cpux1",
-      "armor_6b13x1",
-      "surv12x1",
-      "wd40x1"
+      "golden_roosterx1",
+      "tor_teamx1",
+      "fast_mtx2"
     ],
     "stashItems": [],
     "logs": [
       {
         "t": "status",
-        "m": "[STATUS] Hydration: 77/100 | Energy: 96/100 | Tile: 4/16"
+        "m": "[STATUS] Hydration: 76/100 | Energy: 95/100 | Tile: 13/16"
       },
       {
         "t": "combat_profile",
@@ -2943,214 +3959,22 @@
       },
       {
         "t": "info",
-        "m": "[INIT] PMC rolled 18 vs Tushonka (Scav) rolled 24 → Enemy acts first"
+        "m": "[INIT] PMC rolled 9 vs Tushonka (Scav) rolled 22 → Enemy acts first"
       },
       {
         "t": "info",
-        "m": "Tushonka (Scav) initiated burst spray of 3 rounds."
+        "m": "Tushonka (Scav) ducked into COVER. Attacker accuracy reduced by 20."
       },
       {
         "t": "info",
-        "m": "[ACC] Tushonka (Scav) Accuracy: 57.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Tushonka (Scav) Accuracy: 54.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Tushonka (Scav) Accuracy: 51.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Tushonka (Scav) → PMC [LEFT LEG]: 21 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] Tushonka (Scav) fired 3 rounds | PMC: 82 HP | Tushonka (Scav): 149 HP"
-      },
-      {
-        "t": "info",
-        "m": "PMC initiated burst spray of 4 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 73.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 70.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Tushonka (Scav) [HEAD]: 60 dmg | Part HP: 0/27"
-      },
-      {
-        "t": "combat_kill",
-        "m": "PMC neutralized Tushonka (Scav) with a fatal shot!"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] PMC fired 4 rounds | PMC: 82 HP | Tushonka (Scav): 122 HP"
-      },
-      {
-        "t": "info",
-        "m": "Neutralized target of tier Scav. Earned +20 XP."
-      },
-      {
-        "t": "loot",
-        "m": "Looted corpse: found MRE (Value: ₽6000)"
-      },
-      {
-        "t": "heal",
-        "m": "Surgical repair completed: restored [Stomach] blacked out limb to 1 HP using CMS Kit. Uses remaining: 2."
-      },
-      {
-        "t": "heal",
-        "m": "Surgical repair completed: restored [Left Leg] blacked out limb to 1 HP using CMS Kit. Uses remaining: 1."
-      },
-      {
-        "t": "heal",
-        "m": "Surgical repair completed: restored [Right Leg] blacked out limb to 1 HP using CMS Kit. Uses remaining: 0."
-      },
-      {
-        "t": "warning",
-        "m": "Limb [Left Arm] remains blacked out — No active surgical kit available!"
-      },
-      {
-        "t": "warning",
-        "m": "Limb [Right Arm] remains blacked out — No active surgical kit available!"
-      },
-      {
-        "t": "heal",
-        "m": "Applied AI-2 Medkit and healed [Thorax] for +25 HP. Durability: 125/150."
-      },
-      {
-        "t": "heal",
-        "m": "Applied AI-2 Medkit and healed [Stomach] for +25 HP. Durability: 100/150."
-      },
-      {
-        "t": "heal",
-        "m": "Applied AI-2 Medkit and healed [Left Leg] for +25 HP. Durability: 75/150."
-      },
-      {
-        "t": "heal",
-        "m": "Applied AI-2 Medkit and healed [Right Leg] for +25 HP. Durability: 50/150."
-      },
-      {
-        "t": "heal",
-        "m": "Applied AI-2 Medkit and healed [Thorax] for +13 HP. Durability: 37/150."
-      },
-      {
-        "t": "heal",
-        "m": "Applied AI-2 Medkit and healed [Stomach] for +4 HP. Durability: 33/150."
-      },
-      {
-        "t": "heal",
-        "m": "Applied AI-2 Medkit and healed [Left Leg] for +4 HP. Durability: 29/150."
-      },
-      {
-        "t": "heal",
-        "m": "Applied AI-2 Medkit and healed [Right Leg] for +4 HP. Durability: 25/150."
-      },
-      {
-        "t": "info",
-        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 30/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 30/30 | R.Leg 30/30"
-      },
-      {
-        "t": "loot",
-        "m": "Found PACA (Value: ₽15000)"
+        "m": "PMC ducked into COVER. Attacker accuracy reduced by 20."
       }
     ]
   },
   {
-    "tick": 28,
-    "elapsedSeconds": 441,
-    "stage": 5,
-    "status": "scavenging",
-    "killsByTier": {
-      "Scav": 4,
-      "PMC": 0,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 160,
-      "energy": 96,
-      "hydration": 69,
-      "hp": [
-        60,
-        60,
-        30,
-        0,
-        0,
-        30,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 5,
-      "medkit": "ai2:25/150",
-      "surgicalKit": "cms_kit:0/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:15/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "8/30+2"
-    },
-    "combatTarget": null,
-    "lootFound": [
-      "wd40x1",
-      "rotor43x1",
-      "pacax1",
-      "ssh68x1",
-      "untarx1",
-      "mag_pmagx1",
-      "cpu_fanx1",
-      "mrex1",
-      "ai2x1"
-    ],
-    "secureContainerSaved": [
-      "cpux1",
-      "armor_6b13x1",
-      "surv12x1",
-      "ulachx1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 73/100 | Energy: 96/100 | Tile: 5/16"
-      },
-      {
-        "t": "info",
-        "m": "Entered [Cafeteria]: A large cafeteria with overturned tables and scattered trays."
-      },
-      {
-        "t": "loot",
-        "m": "Found UlACH (Value: ₽25000)"
-      },
-      {
-        "t": "loot",
-        "m": "Found UNTAR (Value: ₽12000)"
-      },
-      {
-        "t": "warning",
-        "m": "Limb [Left Arm] remains blacked out — No active surgical kit available!"
-      },
-      {
-        "t": "warning",
-        "m": "Limb [Right Arm] remains blacked out — No active surgical kit available!"
-      },
-      {
-        "t": "info",
-        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 30/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 30/30 | R.Leg 30/30"
-      }
-    ]
-  },
-  {
-    "tick": 29,
-    "elapsedSeconds": 459,
-    "stage": 6,
+    "tick": 38,
+    "elapsedSeconds": 607,
+    "stage": 13,
     "status": "scavenging",
     "killsByTier": {
       "Scav": 4,
@@ -3162,66 +3986,158 @@
       "level": 1,
       "xp": 160,
       "energy": 95,
-      "hydration": 63,
+      "hydration": 72,
       "hp": [
         60,
         60,
-        30,
+        23,
         0,
         0,
-        30,
-        30
+        0,
+        0
       ],
       "isBleeding": false,
       "killsCount": 5,
-      "medkit": "ai2:25/150",
+      "medkit": null,
       "surgicalKit": "cms_kit:0/3",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:15/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "8/30+2"
+      "provision": "water_bottle:5/60",
+      "armor": "armor_6b13:25/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "13/30+2"
     },
     "combatTarget": null,
     "lootFound": [
-      "ulachx1",
-      "wd40x1",
-      "rotor43x1",
+      "fast_mtx1",
+      "armor_6b23x2",
       "pacax1",
-      "ssh68x1",
+      "nutsx1",
       "untarx1",
       "mag_pmagx1",
       "cpu_fanx1",
-      "rk1_gripx1",
-      "mrex1",
-      "ai2x1",
-      "tetrizx1"
+      "collimatorx1",
+      "rvg_gripx1",
+      "rk1_gripx2",
+      "handguard_stdx1",
+      "folded_stockx1",
+      "crackersx1",
+      "energy_drinkx1",
+      "ledxx2",
+      "ammo_556x45_m855x1",
+      "ammo_9x18_pmx2",
+      "ammo_12x70_slugx1",
+      "toilet_paperx2"
     ],
     "secureContainerSaved": [
-      "cpux1",
-      "armor_6b13x2",
-      "surv12x1"
+      "golden_roosterx1",
+      "armor_glukharx1",
+      "tor_teamx1",
+      "fast_mtx1"
     ],
     "stashItems": [],
     "logs": [
       {
         "t": "status",
-        "m": "[STATUS] Hydration: 69/100 | Energy: 95/100 | Tile: 6/16"
+        "m": "[STATUS] Hydration: 76/100 | Energy: 95/100 | Tile: 13/16"
+      },
+      {
+        "t": "combat_profile",
+        "m": "[COMBAT] Tushonka (Scav) Lv.1 | HP: 149/149 | Armor: None | Weapon: Pistol (9x18mm)"
       },
       {
         "t": "info",
-        "m": "Entered [Cafeteria]: A large cafeteria with overturned tables and scattered trays."
+        "m": "[INIT] PMC rolled 12 vs Tushonka (Scav) rolled 28 → Enemy acts first"
+      },
+      {
+        "t": "info",
+        "m": "Tushonka (Scav) broke cover to engage."
+      },
+      {
+        "t": "info",
+        "m": "Tushonka (Scav) initiated burst spray of 4 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tushonka (Scav) Accuracy: 36.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tushonka (Scav) Accuracy: 33.0%"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tushonka (Scav) Accuracy: 30.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[PEN] BLOCKED by 6B13 M (20% dmg) | Armor Dur: 25/50"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] Tushonka (Scav) → PMC [STOMACH]: 4 dmg | Part HP: 23/30"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] Tushonka (Scav) Accuracy: 27.0%"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] Tushonka (Scav) fired 4 rounds | PMC: 143 HP | Tushonka (Scav): 149 HP"
+      },
+      {
+        "t": "info",
+        "m": "PMC broke cover to engage."
+      },
+      {
+        "t": "info",
+        "m": "PMC initiated burst spray of 4 rounds."
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 74.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Tushonka (Scav) [LEFT LEG]: 60 dmg | Part HP: 0/19"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 71.5%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Tushonka (Scav) [LEFT ARM]: 60 dmg | Part HP: 0/19"
+      },
+      {
+        "t": "info",
+        "m": "[ACC] PMC Accuracy: 69.0%"
+      },
+      {
+        "t": "combat_damage",
+        "m": "[DMG] PMC → Tushonka (Scav) [HEAD]: 60 dmg | Part HP: 0/27"
+      },
+      {
+        "t": "combat_kill",
+        "m": "PMC neutralized Tushonka (Scav) with a fatal shot!"
+      },
+      {
+        "t": "combat_round",
+        "m": "[ROUND] PMC fired 4 rounds | PMC: 143 HP | Tushonka (Scav): 84 HP"
+      },
+      {
+        "t": "info",
+        "m": "Neutralized target of tier Scav. Earned +20 XP."
       },
       {
         "t": "loot",
-        "m": "Found 6B13 M (Value: ₽35000)"
+        "m": "Looted corpse: found 9x18mm PM Box (Value: ₽10)"
       },
       {
-        "t": "loot",
-        "m": "Found Angled Grip (Value: ₽7000)"
+        "t": "warning",
+        "m": "Limb [Left Leg] remains blacked out — No active surgical kit available!"
       },
       {
-        "t": "loot",
-        "m": "Found Tetriz (Value: ₽50)"
+        "t": "warning",
+        "m": "Limb [Right Leg] remains blacked out — No active surgical kit available!"
       },
       {
         "t": "warning",
@@ -3233,14 +4149,22 @@
       },
       {
         "t": "info",
-        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 30/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 30/30 | R.Leg 30/30"
+        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 23/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 0/30 | R.Leg 0/30"
+      },
+      {
+        "t": "loot",
+        "m": "Found 6B13 M (Glukhar) (Value: ₽95000)"
+      },
+      {
+        "t": "loot",
+        "m": "Found Extended Mag (Value: ₽10000)"
       }
     ]
   },
   {
-    "tick": 30,
-    "elapsedSeconds": 473,
-    "stage": 7,
+    "tick": 39,
+    "elapsedSeconds": 623,
+    "stage": 14,
     "status": "scavenging",
     "killsByTier": {
       "Scav": 4,
@@ -3251,597 +4175,59 @@
     "pmc": {
       "level": 1,
       "xp": 160,
-      "energy": 94,
-      "hydration": 60,
+      "energy": 95,
+      "hydration": 66,
       "hp": [
         60,
         60,
-        30,
-        30,
-        30,
-        30,
-        30
+        23,
+        0,
+        0,
+        0,
+        0
       ],
       "isBleeding": false,
       "killsCount": 5,
-      "medkit": "ai2:117/150",
-      "surgicalKit": "surv12:7/9",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:15/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "8/30+2"
-    },
-    "combatTarget": null,
-    "lootFound": [
-      "ulachx1",
-      "wd40x1",
-      "rotor43x1",
-      "pacax1",
-      "ssh68x1",
-      "untarx1",
-      "mag_pmagx1",
-      "cpu_fanx1",
-      "rk1_gripx1",
-      "mrex2",
-      "tetrizx1"
-    ],
-    "secureContainerSaved": [
-      "cpux1",
-      "armor_6b13x2",
-      "surv12x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 63/100 | Energy: 94/100 | Tile: 7/16"
-      },
-      {
-        "t": "info",
-        "m": "Entered [Cafeteria]: A large cafeteria with overturned tables and scattered trays."
-      },
-      {
-        "t": "loot",
-        "m": "Found MRE (Value: ₽6000)"
-      },
-      {
-        "t": "loot",
-        "m": "Found Surv12 Surgical Kit (Value: ₽30000)"
-      },
-      {
-        "t": "heal",
-        "m": "Equipped backup surgical kit Surv12 Surgical Kit and repaired [Left Arm] blacked out limb. Uses: 8."
-      },
-      {
-        "t": "heal",
-        "m": "Surgical repair completed: restored [Right Arm] blacked out limb to 1 HP using Surv12 Surgical Kit. Uses remaining: 7."
-      },
-      {
-        "t": "heal",
-        "m": "Applied AI-2 Medkit and healed [Left Arm] for +25 HP. Durability: 0/150."
-      },
-      {
-        "t": "heal",
-        "m": "Equipped backup medkit AI-2 Medkit and healed [Right Arm] for +25 HP. Capacity: 125/150."
-      },
-      {
-        "t": "heal",
-        "m": "Applied AI-2 Medkit and healed [Left Arm] for +4 HP. Durability: 121/150."
-      },
-      {
-        "t": "heal",
-        "m": "Applied AI-2 Medkit and healed [Right Arm] for +4 HP. Durability: 117/150."
-      },
-      {
-        "t": "info",
-        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 30/30 | L.Arm 30/30 | R.Arm 30/30 | L.Leg 30/30 | R.Leg 30/30"
-      }
-    ]
-  },
-  {
-    "tick": 31,
-    "elapsedSeconds": 489,
-    "stage": 8,
-    "status": "scavenging",
-    "killsByTier": {
-      "Scav": 4,
-      "PMC": 0,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 160,
-      "energy": 94,
-      "hydration": 55,
-      "hp": [
-        60,
-        60,
-        30,
-        30,
-        30,
-        30,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 5,
-      "medkit": "ai2:117/150",
-      "surgicalKit": "surv12:7/9",
-      "provision": "water_bottle:60/60",
-      "armor": "armor_6b13:15/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "8/30+2"
-    },
-    "combatTarget": null,
-    "lootFound": [
-      "ulachx1",
-      "wd40x1",
-      "rotor43x1",
-      "pacax1",
-      "ssh68x1",
-      "untarx2",
-      "mag_pmagx1",
-      "cpu_fanx1",
-      "rk1_gripx1",
-      "mrex2",
-      "tetrizx1"
-    ],
-    "secureContainerSaved": [
-      "cpux1",
-      "armor_6b13x2",
-      "surv12x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 60/100 | Energy: 94/100 | Tile: 8/16"
-      },
-      {
-        "t": "info",
-        "m": "Entered [Cafeteria]: A large cafeteria with overturned tables and scattered trays."
-      },
-      {
-        "t": "loot",
-        "m": "Found UNTAR (Value: ₽12000)"
-      },
-      {
-        "t": "info",
-        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 30/30 | L.Arm 30/30 | R.Arm 30/30 | L.Leg 30/30 | R.Leg 30/30"
-      }
-    ]
-  },
-  {
-    "tick": 32,
-    "elapsedSeconds": 506,
-    "stage": 9,
-    "status": "scavenging",
-    "killsByTier": {
-      "Scav": 4,
-      "PMC": 0,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 160,
-      "energy": 93,
-      "hydration": 100,
-      "hp": [
-        60,
-        60,
-        30,
-        30,
-        30,
-        30,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 5,
-      "medkit": "ai2:117/150",
-      "surgicalKit": "surv12:7/9",
-      "provision": "water_bottle:8/60",
-      "armor": "armor_6b13:15/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "8/30+2"
-    },
-    "combatTarget": null,
-    "lootFound": [
-      "surv12x1",
-      "ulachx1",
-      "wd40x1",
-      "rotor43x1",
-      "pacax1",
-      "ssh68x1",
-      "untarx2",
-      "mag_pmagx1",
-      "cpu_fanx1",
-      "rk1_gripx1",
-      "mrex2",
-      "tetrizx1"
-    ],
-    "secureContainerSaved": [
-      "armor_6b13_heavyx1",
-      "cpux1",
-      "armor_6b13x2"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 55/100 | Energy: 93/100 | Tile: 9/16"
-      },
-      {
-        "t": "info",
-        "m": "Entered [Factory Floor]: An abandoned factory floor with conveyor belts and industrial machinery."
-      },
-      {
-        "t": "loot",
-        "m": "Found 6B13 M (Heavy) (Value: ₽45000)"
-      },
-      {
-        "t": "heal",
-        "m": "PMC is thirsty. Consumed equipped provision. Restored +52 Hydration."
-      },
-      {
-        "t": "info",
-        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 30/30 | L.Arm 30/30 | R.Arm 30/30 | L.Leg 30/30 | R.Leg 30/30"
-      }
-    ]
-  },
-  {
-    "tick": 33,
-    "elapsedSeconds": 525,
-    "stage": 10,
-    "status": "scavenging",
-    "killsByTier": {
-      "Scav": 4,
-      "PMC": 0,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 160,
-      "energy": 92,
-      "hydration": 95,
-      "hp": [
-        60,
-        60,
-        30,
-        30,
-        30,
-        30,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 5,
-      "medkit": "ai2:117/150",
-      "surgicalKit": "surv12:7/9",
-      "provision": "water_bottle:8/60",
-      "armor": "armor_6b13:15/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "8/30+2"
-    },
-    "combatTarget": null,
-    "lootFound": [
-      "surv12x1",
-      "ulachx1",
-      "wd40x2",
-      "rotor43x1",
-      "pacax1",
-      "ssh68x1",
-      "untarx2",
-      "mag_pmagx1",
-      "cpu_fanx1",
-      "rk1_gripx1",
-      "mrex2",
-      "light_stockx1",
-      "tetrizx1"
-    ],
-    "secureContainerSaved": [
-      "armor_6b13_heavyx1",
-      "cpux1",
-      "armor_6b13x2"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 100/100 | Energy: 92/100 | Tile: 10/16"
-      },
-      {
-        "t": "info",
-        "m": "Entered [Offices]: A set of offices with overturned desks and filing cabinets."
-      },
-      {
-        "t": "loot",
-        "m": "Found WD-40 (100ml) (Value: ₽19000)"
-      },
-      {
-        "t": "loot",
-        "m": "Found Light Stock (Value: ₽6000)"
-      },
-      {
-        "t": "info",
-        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 30/30 | L.Arm 30/30 | R.Arm 30/30 | L.Leg 30/30 | R.Leg 30/30"
-      }
-    ]
-  },
-  {
-    "tick": 34,
-    "elapsedSeconds": 544,
-    "stage": 10,
-    "status": "combat",
-    "killsByTier": {
-      "Scav": 4,
-      "PMC": 0,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 160,
-      "energy": 92,
-      "hydration": 94,
-      "hp": [
-        60,
-        60,
-        30,
-        30,
-        30,
-        30,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 5,
-      "medkit": "ai2:117/150",
-      "surgicalKit": "surv12:7/9",
-      "provision": "water_bottle:8/60",
-      "armor": "armor_6b13:15/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "8/30+2"
-    },
-    "combatTarget": {
-      "name": "Gopnik (Scav)",
-      "tier": "Scav",
-      "level": 1,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        30,
-        30,
-        20,
-        20,
-        20,
-        20,
-        20
-      ]
-    },
-    "lootFound": [
-      "surv12x1",
-      "ulachx1",
-      "wd40x2",
-      "rotor43x1",
-      "pacax1",
-      "ssh68x1",
-      "untarx2",
-      "mag_pmagx1",
-      "cpu_fanx1",
-      "rk1_gripx1",
-      "mrex2",
-      "light_stockx1",
-      "tetrizx1"
-    ],
-    "secureContainerSaved": [
-      "armor_6b13_heavyx1",
-      "cpux1",
-      "armor_6b13x2"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 94/100 | Energy: 92/100 | Tile: 11/16"
-      },
-      {
-        "t": "info",
-        "m": "Entered [Offices]: A set of offices with overturned desks and filing cabinets."
-      },
-      {
-        "t": "warning",
-        "m": "[ENCOUNTER] Spotted Gopnik (Scav) (Scav) Lv.1 in [Offices] | Armor: PACA (Class 2) | Weapon: Assault Rifle (7.62x39mm)"
-      }
-    ]
-  },
-  {
-    "tick": 35,
-    "elapsedSeconds": 560,
-    "stage": 11,
-    "status": "scavenging",
-    "killsByTier": {
-      "Scav": 5,
-      "PMC": 0,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 180,
-      "energy": 92,
-      "hydration": 88,
-      "hp": [
-        60,
-        60,
-        30,
-        30,
-        30,
-        30,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 6,
-      "medkit": "ai2:117/150",
-      "surgicalKit": "surv12:7/9",
-      "provision": "water_bottle:8/60",
-      "armor": "armor_6b13:15/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "7/30+2"
-    },
-    "combatTarget": null,
-    "lootFound": [
-      "surv12x1",
-      "ulachx1",
-      "wd40x2",
-      "rotor43x1",
-      "pacax1",
-      "ssh68x1",
-      "untarx2",
-      "mag_pmagx1",
-      "long_barrelx1",
-      "cpu_fanx1",
-      "collimatorx1",
-      "rk1_gripx1",
-      "mrex2",
-      "light_stockx1",
-      "crackersx1",
-      "tetrizx1",
-      "ammo_762x54_snbx1"
-    ],
-    "secureContainerSaved": [
-      "armor_6b13_heavyx1",
-      "cpux1",
-      "armor_6b13x2"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 93/100 | Energy: 92/100 | Tile: 11/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Gopnik (Scav) Lv.1 | HP: 160/160 | Armor: PACA (Class 2) | Weapon: Assault Rifle (7.62x39mm)"
-      },
-      {
-        "t": "info",
-        "m": "[INIT] PMC rolled 13 vs Gopnik (Scav) rolled 9 → PMC acts first"
-      },
-      {
-        "t": "info",
-        "m": "PMC initiated burst spray of 5 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 73.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[PEN] PENETRATED UNTAR (60% dmg) | Armor Dur: 15/25"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Gopnik (Scav) [HEAD]: 36 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "combat_kill",
-        "m": "PMC neutralized Gopnik (Scav) with a fatal shot!"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] PMC fired 5 rounds | PMC: 270 HP | Gopnik (Scav): 130 HP"
-      },
-      {
-        "t": "info",
-        "m": "Neutralized target of tier Scav. Earned +20 XP."
-      },
-      {
-        "t": "loot",
-        "m": "Looted corpse: found Long Barrel (Value: ₽10000)"
-      },
-      {
-        "t": "info",
-        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 30/30 | L.Arm 30/30 | R.Arm 30/30 | L.Leg 30/30 | R.Leg 30/30"
-      },
-      {
-        "t": "loot",
-        "m": "Found Crackers (Value: ₽2000)"
-      },
-      {
-        "t": "loot",
-        "m": "Found Red Dot Sight (Value: ₽8000)"
-      },
-      {
-        "t": "loot",
-        "m": "Found 7.62x54mm SNB Box (Value: ₽15)"
-      }
-    ]
-  },
-  {
-    "tick": 36,
-    "elapsedSeconds": 573,
-    "stage": 12,
-    "status": "scavenging",
-    "killsByTier": {
-      "Scav": 5,
-      "PMC": 0,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 180,
-      "energy": 92,
-      "hydration": 85,
-      "hp": [
-        60,
-        60,
-        30,
-        30,
-        30,
-        30,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 6,
-      "medkit": "ai2:117/150",
-      "surgicalKit": "surv12:7/9",
-      "provision": "water_bottle:8/60",
-      "armor": "armor_6b13:15/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "7/30+2"
+      "medkit": null,
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:5/60",
+      "armor": "armor_6b13:25/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "13/30+2"
     },
     "combatTarget": null,
     "lootFound": [
       "fast_mtx1",
-      "surv12x1",
-      "ulachx1",
-      "wd40x2",
-      "rotor43x1",
+      "armor_6b23x3",
       "pacax1",
-      "ssh68x1",
-      "untarx2",
+      "nutsx1",
+      "untarx1",
       "mag_pmagx1",
-      "long_barrelx1",
       "cpu_fanx1",
       "collimatorx1",
-      "rk1_gripx1",
-      "mrex2",
-      "light_stockx1",
+      "rvg_gripx1",
+      "rk1_gripx2",
+      "handguard_stdx1",
+      "folded_stockx1",
       "crackersx1",
-      "tetrizx1",
-      "ammo_762x54_snbx1"
+      "energy_drinkx1",
+      "ledxx2",
+      "ammo_556x45_m855x1",
+      "ammo_9x18_pmx2",
+      "ammo_12x70_slugx1",
+      "toilet_paperx2"
     ],
     "secureContainerSaved": [
-      "armor_6b13_heavyx1",
-      "cpux1",
-      "armor_6b13x2"
+      "golden_roosterx1",
+      "armor_glukharx1",
+      "tor_teamx1",
+      "fast_mtx1"
     ],
     "stashItems": [],
     "logs": [
       {
         "t": "status",
-        "m": "[STATUS] Hydration: 88/100 | Energy: 92/100 | Tile: 12/16"
+        "m": "[STATUS] Hydration: 71/100 | Energy: 95/100 | Tile: 14/16"
       },
       {
         "t": "info",
@@ -3849,645 +4235,98 @@
       },
       {
         "t": "loot",
-        "m": "Found FAST MT (Value: ₽32000)"
-      },
-      {
-        "t": "info",
-        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 30/30 | L.Arm 30/30 | R.Arm 30/30 | L.Leg 30/30 | R.Leg 30/30"
-      }
-    ]
-  },
-  {
-    "tick": 37,
-    "elapsedSeconds": 587,
-    "stage": 12,
-    "status": "combat",
-    "killsByTier": {
-      "Scav": 5,
-      "PMC": 0,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 180,
-      "energy": 92,
-      "hydration": 85,
-      "hp": [
-        60,
-        60,
-        30,
-        30,
-        30,
-        30,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 6,
-      "medkit": "ai2:117/150",
-      "surgicalKit": "surv12:7/9",
-      "provision": "water_bottle:8/60",
-      "armor": "armor_6b13:15/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "7/30+2"
-    },
-    "combatTarget": {
-      "name": "Hammer (PMC)",
-      "tier": "PMC",
-      "level": 4,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        33,
-        33,
-        21,
-        21,
-        21,
-        21,
-        21
-      ]
-    },
-    "lootFound": [
-      "fast_mtx1",
-      "surv12x1",
-      "ulachx1",
-      "wd40x2",
-      "rotor43x1",
-      "pacax1",
-      "ssh68x1",
-      "untarx2",
-      "mag_pmagx1",
-      "long_barrelx1",
-      "cpu_fanx1",
-      "collimatorx1",
-      "rk1_gripx1",
-      "mrex2",
-      "light_stockx1",
-      "crackersx1",
-      "tetrizx1",
-      "ammo_762x54_snbx1"
-    ],
-    "secureContainerSaved": [
-      "armor_6b13_heavyx1",
-      "cpux1",
-      "armor_6b13x2"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 85/100 | Energy: 92/100 | Tile: 13/16"
-      },
-      {
-        "t": "info",
-        "m": "Entered [Offices]: A set of offices with overturned desks and filing cabinets."
+        "m": "Found 6B23-1 (Value: ₽25000)"
       },
       {
         "t": "warning",
-        "m": "[ENCOUNTER] Spotted Hammer (PMC) (PMC) Lv.4 in [Offices] | Armor: None | Weapon: Assault Rifle (7.62x39mm)"
-      }
-    ]
-  },
-  {
-    "tick": 38,
-    "elapsedSeconds": 599,
-    "stage": 12,
-    "status": "combat",
-    "killsByTier": {
-      "Scav": 5,
-      "PMC": 0,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 180,
-      "energy": 91,
-      "hydration": 85,
-      "hp": [
-        60,
-        10,
-        30,
-        0,
-        30,
-        30,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 6,
-      "medkit": "ai2:117/150",
-      "surgicalKit": "surv12:7/9",
-      "provision": "water_bottle:8/60",
-      "armor": "armor_6b13:0/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "6/30+2"
-    },
-    "combatTarget": {
-      "name": "Hammer (PMC)",
-      "tier": "PMC",
-      "level": 4,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        33,
-        33,
-        21,
-        21,
-        21,
-        0,
-        21
-      ]
-    },
-    "lootFound": [
-      "fast_mtx1",
-      "surv12x1",
-      "ulachx1",
-      "wd40x2",
-      "rotor43x1",
-      "pacax1",
-      "ssh68x1",
-      "untarx2",
-      "mag_pmagx1",
-      "long_barrelx1",
-      "cpu_fanx1",
-      "collimatorx1",
-      "rk1_gripx1",
-      "mrex2",
-      "light_stockx1",
-      "crackersx1",
-      "tetrizx1",
-      "ammo_762x54_snbx1"
-    ],
-    "secureContainerSaved": [
-      "armor_6b13_heavyx1",
-      "cpux1",
-      "armor_6b13x2"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 85/100 | Energy: 91/100 | Tile: 13/16"
+        "m": "Limb [Left Leg] remains blacked out — No active surgical kit available!"
       },
       {
-        "t": "combat_profile",
-        "m": "[COMBAT] Hammer (PMC) Lv.4 | HP: 171/171 | Armor: None | Weapon: Assault Rifle (7.62x39mm)"
+        "t": "warning",
+        "m": "Limb [Right Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Arm] remains blacked out — No active surgical kit available!"
       },
       {
         "t": "info",
-        "m": "[INIT] PMC rolled 25 vs Hammer (PMC) rolled 28 → Enemy acts first"
-      },
-      {
-        "t": "info",
-        "m": "Hammer (PMC) initiated burst spray of 4 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Hammer (PMC) Accuracy: 73.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Hammer (PMC) Accuracy: 70.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Hammer (PMC) → PMC [LEFT ARM]: 42 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Hammer (PMC) Accuracy: 67.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[PEN] PENETRATED 6B13 M (60% dmg) | Armor Dur: 5/50"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Hammer (PMC) → PMC [THORAX]: 25 dmg | Part HP: 35/60"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Hammer (PMC) Accuracy: 64.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[PEN] PENETRATED 6B13 M (60% dmg) | Armor Dur: 0/50"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Hammer (PMC) → PMC [THORAX]: 25 dmg | Part HP: 10/60"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] Hammer (PMC) fired 4 rounds | PMC: 190 HP | Hammer (PMC): 171 HP"
-      },
-      {
-        "t": "info",
-        "m": "PMC initiated burst spray of 1 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 73.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Hammer (PMC) [LEFT LEG]: 60 dmg | Part HP: 0/21"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] PMC fired 1 rounds | PMC: 190 HP | Hammer (PMC): 150 HP"
-      }
-    ]
-  },
-  {
-    "tick": 39,
-    "elapsedSeconds": 612,
-    "stage": 12,
-    "status": "combat",
-    "killsByTier": {
-      "Scav": 5,
-      "PMC": 0,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 180,
-      "energy": 91,
-      "hydration": 85,
-      "hp": [
-        60,
-        10,
-        30,
-        0,
-        30,
-        30,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 6,
-      "medkit": "ai2:117/150",
-      "surgicalKit": "surv12:7/9",
-      "provision": "water_bottle:8/60",
-      "armor": "armor_6b13:0/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "5/30+2"
-    },
-    "combatTarget": {
-      "name": "Hammer (PMC)",
-      "tier": "PMC",
-      "level": 4,
-      "isDead": false,
-      "isBleeding": false,
-      "hp": [
-        33,
-        33,
-        21,
-        21,
-        21,
-        0,
-        21
-      ]
-    },
-    "lootFound": [
-      "fast_mtx1",
-      "surv12x1",
-      "ulachx1",
-      "wd40x2",
-      "rotor43x1",
-      "pacax1",
-      "ssh68x1",
-      "untarx2",
-      "mag_pmagx1",
-      "long_barrelx1",
-      "cpu_fanx1",
-      "collimatorx1",
-      "rk1_gripx1",
-      "mrex2",
-      "light_stockx1",
-      "crackersx1",
-      "tetrizx1",
-      "ammo_762x54_snbx1"
-    ],
-    "secureContainerSaved": [
-      "armor_6b13_heavyx1",
-      "cpux1",
-      "armor_6b13x2"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 85/100 | Energy: 91/100 | Tile: 13/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Hammer (PMC) Lv.4 | HP: 150/171 | Armor: None | Weapon: Assault Rifle (7.62x39mm)"
-      },
-      {
-        "t": "info",
-        "m": "[INIT] PMC rolled 26 vs Hammer (PMC) rolled 21 → PMC acts first"
-      },
-      {
-        "t": "info",
-        "m": "PMC initiated burst spray of 1 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 73.0%"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] PMC fired 1 rounds | PMC: 190 HP | Hammer (PMC): 150 HP"
-      },
-      {
-        "t": "info",
-        "m": "Hammer (PMC) ducked into COVER. Attacker accuracy reduced by 20."
+        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 23/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 0/30 | R.Leg 0/30"
       }
     ]
   },
   {
     "tick": 40,
-    "elapsedSeconds": 628,
-    "stage": 13,
+    "elapsedSeconds": 637,
+    "stage": 15,
     "status": "scavenging",
     "killsByTier": {
-      "Scav": 5,
-      "PMC": 1,
+      "Scav": 4,
+      "PMC": 0,
       "Boss": 1,
       "Tagilla": 1
     },
     "pmc": {
       "level": 1,
-      "xp": 225,
-      "energy": 91,
-      "hydration": 77,
+      "xp": 160,
+      "energy": 95,
+      "hydration": 59,
       "hp": [
         60,
-        52,
-        26,
-        26,
-        26,
-        30,
-        30
+        60,
+        23,
+        0,
+        0,
+        0,
+        0
       ],
       "isBleeding": false,
-      "killsCount": 7,
+      "killsCount": 5,
       "medkit": null,
-      "surgicalKit": "surv12:4/9",
-      "provision": "water_bottle:8/60",
-      "armor": "armor_6b13:0/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "1/30+2"
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:5/60",
+      "armor": "armor_6b13:25/50",
+      "helmet": "ssh68:20/30",
+      "weaponRounds": "13/30+2"
     },
     "combatTarget": null,
     "lootFound": [
-      "armor_6b13x1",
-      "fast_mtx1",
-      "surv12x1",
-      "ulachx1",
-      "wd40x2",
-      "rotor43x1",
+      "fast_mtx2",
+      "armor_6b23x3",
       "pacax1",
-      "ssh68x1",
-      "untarx2",
-      "moe_stockx2",
+      "nutsx1",
+      "untarx1",
       "mag_pmagx1",
-      "long_barrelx1",
       "cpu_fanx1",
-      "collimatorx1",
+      "collimatorx2",
+      "rvg_gripx1",
       "rk1_gripx2",
-      "mrex2",
-      "light_stockx1",
-      "water_bottlex1",
+      "handguard_stdx1",
+      "folded_stockx1",
+      "canned_foodx1",
       "crackersx1",
-      "tetrizx1",
-      "ammo_762x54_snbx1"
+      "energy_drinkx1",
+      "ledxx2",
+      "ammo_556x45_m855x1",
+      "ammo_9x18_pmx2",
+      "ammo_12x70_slugx1",
+      "toilet_paperx2"
     ],
     "secureContainerSaved": [
-      "armor_6b13_heavyx1",
-      "cpux1",
-      "armor_6b13x1",
-      "hosex1"
+      "golden_roosterx1",
+      "armor_glukharx1",
+      "altynx1",
+      "tor_teamx1"
     ],
     "stashItems": [],
     "logs": [
       {
         "t": "status",
-        "m": "[STATUS] Hydration: 84/100 | Energy: 91/100 | Tile: 13/16"
-      },
-      {
-        "t": "combat_profile",
-        "m": "[COMBAT] Hammer (PMC) Lv.4 | HP: 150/171 | Armor: None | Weapon: Assault Rifle (7.62x39mm)"
-      },
-      {
-        "t": "info",
-        "m": "[INIT] PMC rolled 13 vs Hammer (PMC) rolled 26 → Enemy acts first"
-      },
-      {
-        "t": "info",
-        "m": "Hammer (PMC) broke cover to engage."
-      },
-      {
-        "t": "info",
-        "m": "Hammer (PMC) initiated burst spray of 3 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Hammer (PMC) Accuracy: 73.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Hammer (PMC) → PMC [RIGHT ARM]: 42 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Hammer (PMC) Accuracy: 70.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Hammer (PMC) → PMC [STOMACH]: 42 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] Hammer (PMC) Accuracy: 67.0%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] Hammer (PMC) → PMC [STOMACH]: 42 dmg | Part HP: 0/30"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] Hammer (PMC) fired 3 rounds | PMC: 130 HP | Hammer (PMC): 150 HP"
-      },
-      {
-        "t": "info",
-        "m": "PMC initiated burst spray of 4 rounds."
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 73.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 70.5%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 68.0%"
-      },
-      {
-        "t": "info",
-        "m": "[ACC] PMC Accuracy: 65.5%"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[DMG] PMC → Hammer (PMC) [THORAX]: 60 dmg | Part HP: 0/33"
-      },
-      {
-        "t": "combat_kill",
-        "m": "PMC neutralized Hammer (PMC) with a fatal shot!"
-      },
-      {
-        "t": "combat_round",
-        "m": "[ROUND] PMC fired 4 rounds | PMC: 130 HP | Hammer (PMC): 57 HP"
-      },
-      {
-        "t": "info",
-        "m": "Neutralized target of tier PMC. Earned +45 XP."
-      },
-      {
-        "t": "info",
-        "m": "SKILL INCREASE: Weapon Skill reached Level 14!"
-      },
-      {
-        "t": "loot",
-        "m": "Looted corpse: found Corrugated Hose (Value: ₽35000)"
-      },
-      {
-        "t": "loot",
-        "m": "Looted corpse: found Precision Stock (Value: ₽12000)"
-      },
-      {
-        "t": "heal",
-        "m": "Surgical repair completed: restored [Stomach] blacked out limb to 1 HP using Surv12 Surgical Kit. Uses remaining: 6."
-      },
-      {
-        "t": "heal",
-        "m": "Surgical repair completed: restored [Left Arm] blacked out limb to 1 HP using Surv12 Surgical Kit. Uses remaining: 5."
-      },
-      {
-        "t": "heal",
-        "m": "Surgical repair completed: restored [Right Arm] blacked out limb to 1 HP using Surv12 Surgical Kit. Uses remaining: 4."
-      },
-      {
-        "t": "heal",
-        "m": "Applied AI-2 Medkit and healed [Thorax] for +25 HP. Durability: 92/150."
-      },
-      {
-        "t": "heal",
-        "m": "Applied AI-2 Medkit and healed [Stomach] for +25 HP. Durability: 67/150."
-      },
-      {
-        "t": "heal",
-        "m": "Applied AI-2 Medkit and healed [Left Arm] for +25 HP. Durability: 42/150."
-      },
-      {
-        "t": "heal",
-        "m": "Applied AI-2 Medkit and healed [Right Arm] for +25 HP. Durability: 17/150."
-      },
-      {
-        "t": "heal",
-        "m": "Applied AI-2 Medkit and healed [Thorax] for +17 HP. Durability: 0/150."
-      },
-      {
-        "t": "info",
-        "m": "Vital Monitor: Head 60/60 | Thorax 52/60 | Stomach 26/30 | L.Arm 26/30 | R.Arm 26/30 | L.Leg 30/30 | R.Leg 30/30"
-      },
-      {
-        "t": "loot",
-        "m": "Found Water Bottle (Value: ₽4000)"
-      },
-      {
-        "t": "loot",
-        "m": "Found Precision Stock (Value: ₽12000)"
-      },
-      {
-        "t": "loot",
-        "m": "Found Angled Grip (Value: ₽7000)"
-      }
-    ]
-  },
-  {
-    "tick": 41,
-    "elapsedSeconds": 643,
-    "stage": 14,
-    "status": "scavenging",
-    "killsByTier": {
-      "Scav": 5,
-      "PMC": 1,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 225,
-      "energy": 90,
-      "hydration": 70,
-      "hp": [
-        60,
-        52,
-        26,
-        26,
-        26,
-        30,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 7,
-      "medkit": null,
-      "surgicalKit": "surv12:4/9",
-      "provision": "water_bottle:8/60",
-      "armor": "armor_6b13:0/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "30/30+3"
-    },
-    "combatTarget": null,
-    "lootFound": [
-      "armor_6b13x1",
-      "fast_mtx1",
-      "surv12x1",
-      "ulachx1",
-      "wd40x2",
-      "rotor43x1",
-      "pacax1",
-      "ssh68x2",
-      "untarx2",
-      "moe_stockx2",
-      "mag_pmagx1",
-      "long_barrelx1",
-      "cpu_fanx1",
-      "collimatorx1",
-      "rk1_gripx2",
-      "mrex2",
-      "light_stockx1",
-      "water_bottlex1",
-      "crackersx1",
-      "tetrizx1",
-      "ammo_762x54_snbx1",
-      "toilet_paperx1"
-    ],
-    "secureContainerSaved": [
-      "armor_6b13_heavyx1",
-      "cpux1",
-      "armor_6b13x1",
-      "hosex1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 77/100 | Energy: 90/100 | Tile: 14/16"
+        "m": "[STATUS] Hydration: 66/100 | Energy: 95/100 | Tile: 15/16"
       },
       {
         "t": "info",
@@ -4495,225 +4334,135 @@
       },
       {
         "t": "loot",
-        "m": "Found SSh-68 (Value: ₽14000)"
+        "m": "Found Altyn (Value: ₽65000)"
       },
       {
         "t": "loot",
-        "m": "Found Toilet Paper (Value: ₽0)"
+        "m": "Found Canned Food (Value: ₽3500)"
       },
       {
         "t": "loot",
-        "m": "Found 7.62x39mm PS Box (Value: ₽15)"
-      },
-      {
-        "t": "info",
-        "m": "Unpacked matching ammunition box 7.62x39mm PS Box from backpack. Magazines and reserve munitions fully replenished."
-      },
-      {
-        "t": "info",
-        "m": "Vital Monitor: Head 60/60 | Thorax 52/60 | Stomach 26/30 | L.Arm 26/30 | R.Arm 26/30 | L.Leg 30/30 | R.Leg 30/30"
-      }
-    ]
-  },
-  {
-    "tick": 42,
-    "elapsedSeconds": 659,
-    "stage": 15,
-    "status": "scavenging",
-    "killsByTier": {
-      "Scav": 5,
-      "PMC": 1,
-      "Boss": 1,
-      "Tagilla": 1
-    },
-    "pmc": {
-      "level": 1,
-      "xp": 225,
-      "energy": 90,
-      "hydration": 65,
-      "hp": [
-        60,
-        52,
-        26,
-        26,
-        26,
-        30,
-        30
-      ],
-      "isBleeding": false,
-      "killsCount": 7,
-      "medkit": null,
-      "surgicalKit": "surv12:4/9",
-      "provision": "water_bottle:8/60",
-      "armor": "armor_6b13:0/50",
-      "helmet": "ssh68:30/30",
-      "weaponRounds": "30/30+3"
-    },
-    "combatTarget": null,
-    "lootFound": [
-      "armor_6b13x1",
-      "fast_mtx1",
-      "surv12x1",
-      "ulachx1",
-      "wd40x2",
-      "rotor43x1",
-      "pacax1",
-      "ssh68x2",
-      "untarx2",
-      "moe_stockx2",
-      "mag_pmagx1",
-      "long_barrelx1",
-      "cpu_fanx1",
-      "collimatorx1",
-      "rk1_gripx2",
-      "mrex2",
-      "light_stockx1",
-      "folded_stockx1",
-      "water_bottlex1",
-      "crackersx1",
-      "tetrizx1",
-      "ammo_762x54_snbx1",
-      "toilet_paperx1",
-      "bronze_pocket_watchx1"
-    ],
-    "secureContainerSaved": [
-      "armor_6b13_heavyx1",
-      "cpux1",
-      "hosex1",
-      "armor_6b13x1"
-    ],
-    "stashItems": [],
-    "logs": [
-      {
-        "t": "status",
-        "m": "[STATUS] Hydration: 70/100 | Energy: 90/100 | Tile: 15/16"
-      },
-      {
-        "t": "info",
-        "m": "Entered [Cafeteria]: A large cafeteria with overturned tables and scattered trays."
-      },
-      {
-        "t": "loot",
-        "m": "Found Bronze Pocket Watch (Value: ₽0)"
-      },
-      {
-        "t": "loot",
-        "m": "Found Folded Stock (Value: ₽5000)"
+        "m": "Found Red Dot Sight (Value: ₽8000)"
       },
       {
         "t": "warning",
-        "m": "Backpack is full! Left behind discovered loot: 9x18mm PM Box."
+        "m": "Limb [Left Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Leg] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Left Arm] remains blacked out — No active surgical kit available!"
+      },
+      {
+        "t": "warning",
+        "m": "Limb [Right Arm] remains blacked out — No active surgical kit available!"
       },
       {
         "t": "info",
-        "m": "Vital Monitor: Head 60/60 | Thorax 52/60 | Stomach 26/30 | L.Arm 26/30 | R.Arm 26/30 | L.Leg 30/30 | R.Leg 30/30"
+        "m": "Vital Monitor: Head 60/60 | Thorax 60/60 | Stomach 23/30 | L.Arm 0/30 | R.Arm 0/30 | L.Leg 0/30 | R.Leg 0/30"
       }
     ]
   },
   {
-    "tick": 43,
-    "elapsedSeconds": 678,
+    "tick": 41,
+    "elapsedSeconds": 652,
     "stage": 15,
     "status": "extracted",
     "killsByTier": {
-      "Scav": 5,
-      "PMC": 1,
+      "Scav": 4,
+      "PMC": 0,
       "Boss": 1,
       "Tagilla": 1
     },
     "pmc": {
-      "level": 21,
-      "xp": 1507,
-      "energy": 90,
-      "hydration": 65,
+      "level": 18,
+      "xp": 1702,
+      "energy": 95,
+      "hydration": 59,
       "hp": [
         60,
-        52,
-        26,
-        26,
-        26,
-        30,
-        30
+        60,
+        23,
+        0,
+        0,
+        0,
+        0
       ],
       "isBleeding": false,
-      "killsCount": 7,
+      "killsCount": 5,
       "medkit": null,
-      "surgicalKit": "surv12:4/9",
-      "provision": "water_bottle:8/60",
+      "surgicalKit": "cms_kit:0/3",
+      "provision": "water_bottle:5/60",
       "armor": "armor_6b13:50/50",
       "helmet": "ssh68:30/30",
-      "weaponRounds": "30/30+3"
+      "weaponRounds": "13/30+2"
     },
     "combatTarget": null,
     "lootFound": [
-      "armor_6b13x1",
-      "fast_mtx1",
-      "surv12x1",
-      "ulachx1",
-      "wd40x2",
-      "rotor43x1",
+      "fast_mtx2",
+      "armor_6b23x3",
       "pacax1",
-      "ssh68x2",
-      "untarx2",
-      "moe_stockx2",
+      "nutsx1",
+      "untarx1",
       "mag_pmagx1",
-      "long_barrelx1",
       "cpu_fanx1",
-      "collimatorx1",
+      "collimatorx2",
+      "rvg_gripx1",
       "rk1_gripx2",
-      "mrex2",
-      "light_stockx1",
+      "handguard_stdx1",
       "folded_stockx1",
-      "water_bottlex1",
+      "canned_foodx1",
       "crackersx1",
-      "tetrizx1",
-      "ammo_762x54_snbx1",
-      "toilet_paperx1",
-      "bronze_pocket_watchx1"
+      "energy_drinkx1",
+      "ledxx2",
+      "ammo_556x45_m855x1",
+      "ammo_9x18_pmx2",
+      "ammo_12x70_slugx1",
+      "toilet_paperx2"
     ],
     "secureContainerSaved": [
-      "armor_6b13_heavyx1",
-      "cpux1",
-      "hosex1",
-      "armor_6b13x1"
+      "golden_roosterx1",
+      "armor_glukharx1",
+      "altynx1",
+      "tor_teamx1"
     ],
     "stashItems": [
-      "armor_6b13x2",
-      "fast_mtx1",
-      "surv12x1",
-      "ulachx1",
-      "wd40x2",
-      "rotor43x1",
+      "fast_mtx2",
+      "armor_6b23x3",
       "pacax1",
-      "ssh68x2",
-      "untarx2",
-      "moe_stockx2",
+      "nutsx1",
+      "untarx1",
       "mag_pmagx1",
-      "long_barrelx1",
       "cpu_fanx1",
-      "collimatorx1",
+      "collimatorx2",
+      "rvg_gripx1",
       "rk1_gripx2",
-      "mrex2",
-      "light_stockx1",
+      "handguard_stdx1",
       "folded_stockx1",
-      "water_bottlex1",
+      "canned_foodx1",
       "crackersx1",
-      "tetrizx1",
-      "ammo_762x54_snbx1",
-      "toilet_paperx1",
-      "bronze_pocket_watchx1",
-      "armor_6b13_heavyx1",
-      "cpux1",
-      "hosex1"
+      "energy_drinkx1",
+      "ledxx2",
+      "ammo_556x45_m855x1",
+      "ammo_9x18_pmx2",
+      "ammo_12x70_slugx1",
+      "toilet_paperx2",
+      "golden_roosterx1",
+      "armor_glukharx1",
+      "altynx1",
+      "tor_teamx1"
     ],
     "logs": [
       {
         "t": "status",
-        "m": "[STATUS] Hydration: 65/100 | Energy: 90/100 | Tile: 16/16"
+        "m": "[STATUS] Hydration: 59/100 | Energy: 95/100 | Tile: 16/16"
       },
       {
         "t": "extract",
-        "m": "PMC extracted successfully! Earned +43282 cumulative XP in raid."
+        "m": "PMC extracted successfully! Earned +32142 cumulative XP in raid."
       },
       {
         "t": "info",
@@ -4721,7 +4470,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Perception upgraded to Level 10!"
+        "m": "Skill Award: Constitution upgraded to Level 16!"
       },
       {
         "t": "info",
@@ -4729,7 +4478,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Perception upgraded to Level 11!"
+        "m": "Skill Award: Agility upgraded to Level 10!"
       },
       {
         "t": "info",
@@ -4737,7 +4486,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Weapon Skill upgraded to Level 15!"
+        "m": "Skill Award: Constitution upgraded to Level 17!"
       },
       {
         "t": "info",
@@ -4745,7 +4494,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Agility upgraded to Level 7!"
+        "m": "Skill Award: Constitution upgraded to Level 18!"
       },
       {
         "t": "info",
@@ -4753,7 +4502,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Weapon Skill upgraded to Level 16!"
+        "m": "Skill Award: Weapon Skill upgraded to Level 15!"
       },
       {
         "t": "info",
@@ -4761,7 +4510,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Constitution upgraded to Level 16!"
+        "m": "Skill Award: Perception upgraded to Level 7!"
       },
       {
         "t": "info",
@@ -4769,7 +4518,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Initiative upgraded to Level 8!"
+        "m": "Skill Award: Constitution upgraded to Level 19!"
       },
       {
         "t": "info",
@@ -4777,7 +4526,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Perception upgraded to Level 12!"
+        "m": "Skill Award: Perception upgraded to Level 8!"
       },
       {
         "t": "info",
@@ -4785,7 +4534,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Weapon Skill upgraded to Level 17!"
+        "m": "Skill Award: Weapon Skill upgraded to Level 16!"
       },
       {
         "t": "info",
@@ -4793,7 +4542,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Weapon Skill upgraded to Level 18!"
+        "m": "Skill Award: Agility upgraded to Level 11!"
       },
       {
         "t": "info",
@@ -4801,7 +4550,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Weapon Skill upgraded to Level 19!"
+        "m": "Skill Award: Weapon Skill upgraded to Level 17!"
       },
       {
         "t": "info",
@@ -4809,7 +4558,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Weapon Skill upgraded to Level 20!"
+        "m": "Skill Award: Weapon Skill upgraded to Level 18!"
       },
       {
         "t": "info",
@@ -4817,7 +4566,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Perception upgraded to Level 13!"
+        "m": "Skill Award: Weapon Skill upgraded to Level 19!"
       },
       {
         "t": "info",
@@ -4825,7 +4574,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Perception upgraded to Level 14!"
+        "m": "Skill Award: Perception upgraded to Level 9!"
       },
       {
         "t": "info",
@@ -4833,7 +4582,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Weapon Skill upgraded to Level 21!"
+        "m": "Skill Award: Weapon Skill upgraded to Level 20!"
       },
       {
         "t": "info",
@@ -4841,7 +4590,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Weapon Skill upgraded to Level 22!"
+        "m": "Skill Award: Constitution upgraded to Level 20!"
       },
       {
         "t": "info",
@@ -4849,31 +4598,7 @@
       },
       {
         "t": "info",
-        "m": "Skill Award: Initiative upgraded to Level 9!"
-      },
-      {
-        "t": "info",
-        "m": "PMC LEVELED UP! Level reached: 19!"
-      },
-      {
-        "t": "info",
-        "m": "Skill Award: Perception upgraded to Level 15!"
-      },
-      {
-        "t": "info",
-        "m": "PMC LEVELED UP! Level reached: 20!"
-      },
-      {
-        "t": "info",
-        "m": "Skill Award: Constitution upgraded to Level 17!"
-      },
-      {
-        "t": "info",
-        "m": "PMC LEVELED UP! Level reached: 21!"
-      },
-      {
-        "t": "info",
-        "m": "Skill Award: Initiative upgraded to Level 10!"
+        "m": "Skill Award: Weapon Skill upgraded to Level 21!"
       }
     ]
   }

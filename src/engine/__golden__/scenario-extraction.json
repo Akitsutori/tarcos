@@ -99,9 +99,9 @@
     "lootFound": [],
     "secureContainerSaved": [
       "nutsx1",
-      "canned_foodx1",
+      "mrex1",
       "ammo_762x39_psx1",
-      "ammo_556x45_m855x1"
+      "ammo_12x70_slugx1"
     ],
     "stashItems": [],
     "logs": [
@@ -115,11 +115,11 @@
       },
       {
         "t": "loot",
-        "m": "Found Canned Food (Value: ₽3500)"
+        "m": "Found MRE (Value: ₽6000)"
       },
       {
         "t": "loot",
-        "m": "Found 5.56x45mm M855 Box (Value: ₽12)"
+        "m": "Found 12x70mm Slug Box (Value: ₽8)"
       },
       {
         "t": "info",
@@ -163,13 +163,13 @@
     "combatTarget": null,
     "lootFound": [
       "ammo_762x39_psx1",
-      "ammo_556x45_m855x1"
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
       "tor_teamx1",
-      "ulachx1",
+      "helmet_6b47x1",
       "nutsx1",
-      "canned_foodx1"
+      "mrex1"
     ],
     "stashItems": [],
     "logs": [
@@ -183,7 +183,7 @@
       },
       {
         "t": "loot",
-        "m": "Found UlACH (Value: ₽25000)"
+        "m": "Found 6B47 (Value: ₽22000)"
       },
       {
         "t": "loot",
@@ -230,16 +230,16 @@
     },
     "combatTarget": null,
     "lootFound": [
-      "water_bottlex1",
-      "canned_foodx1",
+      "mrex1",
+      "juicex1",
       "ammo_762x39_psx1",
-      "ammo_556x45_m855x1"
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
+      "armor_glukharx1",
       "tor_teamx1",
-      "ulachx1",
-      "nutsx1",
-      "untarx1"
+      "helmet_6b47x1",
+      "nutsx1"
     ],
     "stashItems": [],
     "logs": [
@@ -253,11 +253,11 @@
       },
       {
         "t": "loot",
-        "m": "Found UNTAR (Value: ₽12000)"
+        "m": "Found 6B13 M (Glukhar) (Value: ₽95000)"
       },
       {
         "t": "loot",
-        "m": "Found Water Bottle (Value: ₽4000)"
+        "m": "Found Juice Box (Value: ₽3000)"
       },
       {
         "t": "info",
@@ -300,19 +300,19 @@
     },
     "combatTarget": null,
     "lootFound": [
-      "untarx1",
-      "light_stockx1",
-      "water_bottlex1",
-      "canned_foodx1",
+      "nutsx1",
+      "moe_stockx1",
+      "mrex1",
+      "ai2x1",
+      "juicex1",
       "ammo_762x39_psx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
+      "armor_glukharx1",
       "altynx1",
       "tor_teamx1",
-      "ulachx1",
-      "nutsx1"
+      "helmet_6b47x1"
     ],
     "stashItems": [],
     "logs": [
@@ -326,11 +326,11 @@
       },
       {
         "t": "loot",
-        "m": "Found Light Stock (Value: ₽6000)"
+        "m": "Found Precision Stock (Value: ₽12000)"
       },
       {
         "t": "loot",
-        "m": "Found 7.62x54mm SNB Box (Value: ₽15)"
+        "m": "Found AI-2 Medkit (Value: ₽4500)"
       },
       {
         "t": "loot",
@@ -392,19 +392,19 @@
       ]
     },
     "lootFound": [
-      "untarx1",
-      "light_stockx1",
-      "water_bottlex1",
-      "canned_foodx1",
+      "nutsx1",
+      "moe_stockx1",
+      "mrex1",
+      "ai2x1",
+      "juicex1",
       "ammo_762x39_psx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
+      "armor_glukharx1",
       "altynx1",
       "tor_teamx1",
-      "ulachx1",
-      "nutsx1"
+      "helmet_6b47x1"
     ],
     "stashItems": [],
     "logs": [
@@ -472,19 +472,19 @@
       ]
     },
     "lootFound": [
-      "untarx1",
-      "light_stockx1",
-      "water_bottlex1",
-      "canned_foodx1",
+      "nutsx1",
+      "moe_stockx1",
+      "mrex1",
+      "ai2x1",
+      "juicex1",
       "ammo_762x39_psx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
+      "armor_glukharx1",
       "altynx1",
       "tor_teamx1",
-      "ulachx1",
-      "nutsx1"
+      "helmet_6b47x1"
     ],
     "stashItems": [],
     "logs": [
@@ -628,19 +628,19 @@
       ]
     },
     "lootFound": [
-      "untarx1",
-      "light_stockx1",
-      "water_bottlex1",
-      "canned_foodx1",
+      "nutsx1",
+      "moe_stockx1",
+      "mrex1",
+      "ai2x1",
+      "juicex1",
       "ammo_762x39_psx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
+      "armor_glukharx1",
       "altynx1",
       "tor_teamx1",
-      "ulachx1",
-      "nutsx1"
+      "helmet_6b47x1"
     ],
     "stashItems": [],
     "logs": [
@@ -776,19 +776,19 @@
       ]
     },
     "lootFound": [
-      "untarx1",
-      "light_stockx1",
-      "water_bottlex1",
-      "canned_foodx1",
+      "nutsx1",
+      "moe_stockx1",
+      "mrex1",
+      "ai2x1",
+      "juicex1",
       "ammo_762x39_psx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
+      "armor_glukharx1",
       "altynx1",
       "tor_teamx1",
-      "ulachx1",
-      "nutsx1"
+      "helmet_6b47x1"
     ],
     "stashItems": [],
     "logs": [
@@ -849,19 +849,19 @@
     },
     "combatTarget": null,
     "lootFound": [
+      "helmet_6b47x1",
       "nutsx1",
-      "untarx1",
-      "light_stockx1",
-      "water_bottlex1",
-      "canned_foodx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "moe_stockx1",
+      "mrex1",
+      "ai2x1",
+      "juicex1",
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
+      "armor_glukharx1",
       "altynx1",
       "tor_teamx1",
-      "afakx1",
-      "ulachx1"
+      "surgical_kitx1"
     ],
     "stashItems": [],
     "logs": [
@@ -955,7 +955,7 @@
       },
       {
         "t": "loot",
-        "m": "Looted corpse: found AFAK First Aid Kit (Value: ₽32000)"
+        "m": "Looted corpse: found Surgical Kit (Value: ₽25000)"
       },
       {
         "t": "heal",
@@ -1030,19 +1030,19 @@
     },
     "combatTarget": null,
     "lootFound": [
+      "helmet_6b47x1",
       "nutsx1",
-      "untarx1",
-      "light_stockx1",
-      "water_bottlex1",
-      "canned_foodx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "moe_stockx1",
+      "mrex1",
+      "ai2x1",
+      "juicex1",
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
+      "armor_glukharx1",
       "altynx1",
       "tor_teamx1",
-      "afakx1",
-      "ulachx1"
+      "surgical_kitx1"
     ],
     "stashItems": [],
     "logs": [
@@ -1099,21 +1099,21 @@
     },
     "combatTarget": null,
     "lootFound": [
+      "helmet_6b47x1",
       "nutsx1",
-      "untarx1",
+      "moe_stockx1",
       "cpu_fanx1",
-      "light_stockx1",
-      "water_bottlex1",
+      "mrex1",
+      "ai2x1",
       "canned_foodx1",
-      "crackersx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "juicex1",
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
+      "armor_glukharx1",
       "altynx1",
       "tor_teamx1",
-      "afakx1",
-      "ulachx1"
+      "surgical_kitx1"
     ],
     "stashItems": [],
     "logs": [
@@ -1127,7 +1127,7 @@
       },
       {
         "t": "loot",
-        "m": "Found Crackers (Value: ₽2000)"
+        "m": "Found Canned Food (Value: ₽3500)"
       },
       {
         "t": "loot",
@@ -1189,21 +1189,21 @@
       ]
     },
     "lootFound": [
+      "helmet_6b47x1",
       "nutsx1",
-      "untarx1",
+      "moe_stockx1",
       "cpu_fanx1",
-      "light_stockx1",
-      "water_bottlex1",
+      "mrex1",
+      "ai2x1",
       "canned_foodx1",
-      "crackersx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "juicex1",
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
+      "armor_glukharx1",
       "altynx1",
       "tor_teamx1",
-      "afakx1",
-      "ulachx1"
+      "surgical_kitx1"
     ],
     "stashItems": [],
     "logs": [
@@ -1271,22 +1271,22 @@
       ]
     },
     "lootFound": [
-      "ulachx1",
+      "surgical_kitx1",
+      "helmet_6b47x1",
       "nutsx1",
-      "untarx1",
+      "moe_stockx1",
       "cpu_fanx1",
-      "light_stockx1",
-      "water_bottlex1",
+      "mrex1",
+      "ai2x1",
       "canned_foodx1",
-      "crackersx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "juicex1",
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
+      "armor_glukharx1",
       "altynx1",
       "tor_teamx1",
-      "fast_mtx1",
-      "afakx1"
+      "fast_mtx1"
     ],
     "stashItems": [],
     "logs": [
@@ -1402,22 +1402,22 @@
       ]
     },
     "lootFound": [
-      "ulachx1",
+      "surgical_kitx1",
+      "helmet_6b47x1",
       "nutsx1",
-      "untarx1",
+      "moe_stockx1",
       "cpu_fanx1",
-      "light_stockx1",
-      "water_bottlex1",
+      "mrex1",
+      "ai2x1",
       "canned_foodx1",
-      "crackersx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "juicex1",
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
+      "armor_glukharx1",
       "altynx1",
       "tor_teamx1",
-      "fast_mtx1",
-      "afakx1"
+      "fast_mtx1"
     ],
     "stashItems": [],
     "logs": [
@@ -1522,25 +1522,24 @@
     },
     "combatTarget": null,
     "lootFound": [
-      "ulachx1",
-      "helmet_6b47x1",
+      "surgical_kitx1",
+      "helmet_6b47x2",
       "circuit_boardx1",
       "nutsx1",
-      "untarx1",
+      "moe_stockx1",
       "cpu_fanx1",
-      "light_stockx1",
-      "water_bottlex1",
+      "mrex1",
+      "ai2x1",
       "canned_foodx1",
-      "crackersx1",
-      "gp_coinx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "juicex1",
+      "tetrizx1",
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
+      "armor_glukharx1",
       "altynx1",
       "tor_teamx1",
-      "fast_mtx1",
-      "afakx1"
+      "fast_mtx1"
     ],
     "stashItems": [],
     "logs": [
@@ -1606,7 +1605,7 @@
       },
       {
         "t": "loot",
-        "m": "Found GP Coin (Value: ₽20)"
+        "m": "Found Tetriz (Value: ₽50)"
       }
     ]
   },
@@ -1660,25 +1659,24 @@
       ]
     },
     "lootFound": [
-      "ulachx1",
-      "helmet_6b47x1",
+      "surgical_kitx1",
+      "helmet_6b47x2",
       "circuit_boardx1",
       "nutsx1",
-      "untarx1",
+      "moe_stockx1",
       "cpu_fanx1",
-      "light_stockx1",
-      "water_bottlex1",
+      "mrex1",
+      "ai2x1",
       "canned_foodx1",
-      "crackersx1",
-      "gp_coinx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "juicex1",
+      "tetrizx1",
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
+      "armor_glukharx1",
       "altynx1",
       "tor_teamx1",
-      "fast_mtx1",
-      "afakx1"
+      "fast_mtx1"
     ],
     "stashItems": [],
     "logs": [
@@ -1746,25 +1744,24 @@
       ]
     },
     "lootFound": [
-      "ulachx1",
-      "helmet_6b47x1",
+      "surgical_kitx1",
+      "helmet_6b47x2",
       "circuit_boardx1",
       "nutsx1",
-      "untarx1",
+      "moe_stockx1",
       "cpu_fanx1",
-      "light_stockx1",
-      "water_bottlex1",
+      "mrex1",
+      "ai2x1",
       "canned_foodx1",
-      "crackersx1",
-      "gp_coinx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "juicex1",
+      "tetrizx1",
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
+      "armor_glukharx1",
       "altynx1",
       "tor_teamx1",
-      "fast_mtx1",
-      "afakx1"
+      "fast_mtx1"
     ],
     "stashItems": [],
     "logs": [
@@ -1833,25 +1830,24 @@
     },
     "combatTarget": null,
     "lootFound": [
-      "afakx1",
-      "ulachx1",
-      "helmet_6b47x1",
+      "tor_teamx1",
+      "fast_mtx1",
+      "surgical_kitx1",
+      "helmet_6b47x2",
       "circuit_boardx1",
       "nutsx1",
-      "untarx2",
+      "moe_stockx1",
       "cpu_fanx1",
-      "light_stockx1",
-      "water_bottlex1",
+      "mrex1",
+      "ai2x1",
       "canned_foodx1",
-      "crackersx1",
-      "gp_coinx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "juicex1",
+      "tetrizx1",
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
-      "altynx2",
-      "tor_teamx1",
-      "fast_mtx1"
+      "armor_glukharx2",
+      "altynx2"
     ],
     "stashItems": [],
     "logs": [
@@ -1937,7 +1933,7 @@
       },
       {
         "t": "loot",
-        "m": "Looted corpse: found UNTAR (Value: ₽12000)"
+        "m": "Looted corpse: found 6B13 M (Glukhar) (Value: ₽95000)"
       },
       {
         "t": "heal",
@@ -1992,26 +1988,25 @@
     },
     "combatTarget": null,
     "lootFound": [
-      "afakx1",
-      "ulachx1",
-      "helmet_6b47x1",
+      "tor_teamx1",
+      "fast_mtx1",
+      "surgical_kitx1",
+      "helmet_6b47x2",
       "circuit_boardx1",
       "nutsx1",
-      "untarx2",
+      "moe_stockx1",
       "cpu_fanx1",
-      "light_stockx1",
-      "water_bottlex1",
-      "canned_foodx1",
+      "mrex1",
+      "ai2x1",
+      "canned_foodx2",
       "juicex1",
-      "crackersx2",
-      "gp_coinx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "energy_drinkx1",
+      "tetrizx1",
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
-      "altynx2",
-      "tor_teamx1",
-      "fast_mtx1"
+      "armor_glukharx2",
+      "altynx2"
     ],
     "stashItems": [],
     "logs": [
@@ -2025,11 +2020,11 @@
       },
       {
         "t": "loot",
-        "m": "Found Juice Box (Value: ₽3000)"
+        "m": "Found Energy Drink (Value: ₽2000)"
       },
       {
         "t": "loot",
-        "m": "Found Crackers (Value: ₽2000)"
+        "m": "Found Canned Food (Value: ₽3500)"
       },
       {
         "t": "info",
@@ -2072,28 +2067,27 @@
     },
     "combatTarget": null,
     "lootFound": [
-      "afakx1",
-      "ulachx1",
-      "helmet_6b47x1",
+      "tor_teamx1",
+      "fast_mtx1",
+      "surgical_kitx1",
+      "helmet_6b47x2",
       "circuit_boardx1",
-      "rotor43x1",
       "boltsx1",
       "nutsx1",
-      "untarx2",
+      "moe_stockx1",
+      "long_barrelx1",
       "cpu_fanx1",
-      "light_stockx1",
-      "water_bottlex1",
-      "canned_foodx1",
+      "mrex1",
+      "ai2x1",
+      "canned_foodx2",
       "juicex1",
-      "crackersx2",
-      "gp_coinx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "energy_drinkx1",
+      "tetrizx1",
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
-      "altynx2",
-      "tor_teamx1",
-      "fast_mtx1"
+      "armor_glukharx2",
+      "altynx2"
     ],
     "stashItems": [],
     "logs": [
@@ -2107,7 +2101,7 @@
       },
       {
         "t": "loot",
-        "m": "Found Suppressor (Value: ₽15000)"
+        "m": "Found Long Barrel (Value: ₽10000)"
       },
       {
         "t": "loot",
@@ -2154,29 +2148,28 @@
     },
     "combatTarget": null,
     "lootFound": [
+      "tor_teamx1",
+      "armor_6b13x1",
       "fast_mtx1",
-      "afakx1",
-      "ulachx1",
-      "helmet_6b47x1",
+      "surgical_kitx1",
+      "helmet_6b47x2",
       "circuit_boardx2",
-      "rotor43x1",
       "boltsx1",
       "nutsx1",
-      "untarx2",
+      "moe_stockx1",
+      "long_barrelx1",
       "cpu_fanx1",
-      "light_stockx1",
-      "water_bottlex1",
-      "canned_foodx1",
+      "mrex1",
+      "ai2x1",
+      "canned_foodx2",
       "juicex1",
-      "crackersx2",
-      "gp_coinx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1"
+      "energy_drinkx1",
+      "tetrizx1",
+      "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
-      "altynx2",
-      "tor_teamx1",
-      "armor_6b13x1"
+      "armor_glukharx2",
+      "altynx2"
     ],
     "stashItems": [],
     "logs": [
@@ -2237,31 +2230,31 @@
     },
     "combatTarget": null,
     "lootFound": [
+      "altynx1",
+      "tor_teamx1",
+      "armor_6b13x1",
       "fast_mtx1",
-      "afakx1",
-      "ulachx1",
-      "helmet_6b47x1",
-      "wd40x1",
+      "surgical_kitx1",
+      "helmet_6b47x2",
       "circuit_boardx2",
-      "rotor43x1",
       "boltsx1",
       "nutsx1",
-      "untarx2",
+      "moe_stockx1",
+      "long_barrelx1",
       "cpu_fanx1",
-      "light_stockx1",
-      "water_bottlex1",
-      "canned_foodx1",
+      "mrex1",
+      "ai2x1",
+      "canned_foodx2",
       "juicex1",
-      "crackersx2",
-      "gp_coinx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1",
-      "church_keyx1"
+      "energy_drinkx1",
+      "tetrizx1",
+      "ammo_12x70_slugx1",
+      "suspicious_letterx1"
     ],
     "secureContainerSaved": [
-      "altynx2",
-      "tor_teamx1",
-      "armor_6b13x1"
+      "armor_glukharx2",
+      "fuel_tankx1",
+      "altynx1"
     ],
     "stashItems": [],
     "logs": [
@@ -2275,11 +2268,11 @@
       },
       {
         "t": "loot",
-        "m": "Found WD-40 (100ml) (Value: ₽19000)"
+        "m": "Found Expeditionary Fuel Tank (Value: ₽85000)"
       },
       {
         "t": "loot",
-        "m": "Found Church Key (Value: ₽0)"
+        "m": "Found Suspicious Letter (Value: ₽0)"
       },
       {
         "t": "info",
@@ -2322,31 +2315,31 @@
     },
     "combatTarget": null,
     "lootFound": [
+      "altynx1",
+      "tor_teamx1",
+      "armor_6b13x1",
       "fast_mtx1",
-      "afakx1",
-      "ulachx1",
-      "helmet_6b47x1",
-      "wd40x1",
+      "surgical_kitx1",
+      "helmet_6b47x2",
       "circuit_boardx2",
-      "rotor43x1",
       "boltsx1",
       "nutsx1",
-      "untarx2",
+      "moe_stockx1",
+      "long_barrelx1",
       "cpu_fanx1",
-      "light_stockx1",
-      "water_bottlex1",
-      "canned_foodx1",
+      "mrex1",
+      "ai2x1",
+      "canned_foodx2",
       "juicex1",
-      "crackersx2",
-      "gp_coinx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1",
-      "church_keyx1"
+      "energy_drinkx1",
+      "tetrizx1",
+      "ammo_12x70_slugx1",
+      "suspicious_letterx1"
     ],
     "secureContainerSaved": [
-      "altynx2",
-      "tor_teamx1",
-      "armor_6b13x1"
+      "armor_glukharx2",
+      "fuel_tankx1",
+      "altynx1"
     ],
     "stashItems": [],
     "logs": [
@@ -2379,8 +2372,8 @@
       "Boss": 0
     },
     "pmc": {
-      "level": 18,
-      "xp": 2472,
+      "level": 21,
+      "xp": 2823,
       "energy": 96,
       "hydration": 73,
       "hp": [
@@ -2403,56 +2396,55 @@
     },
     "combatTarget": null,
     "lootFound": [
+      "altynx1",
+      "tor_teamx1",
+      "armor_6b13x1",
       "fast_mtx1",
-      "afakx1",
-      "ulachx1",
-      "helmet_6b47x1",
-      "wd40x1",
+      "surgical_kitx1",
+      "helmet_6b47x2",
       "circuit_boardx2",
-      "rotor43x1",
       "boltsx1",
       "nutsx1",
-      "untarx2",
+      "moe_stockx1",
+      "long_barrelx1",
       "cpu_fanx1",
-      "light_stockx1",
-      "water_bottlex1",
-      "canned_foodx1",
+      "mrex1",
+      "ai2x1",
+      "canned_foodx2",
       "juicex1",
-      "crackersx2",
-      "gp_coinx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1",
-      "church_keyx1"
+      "energy_drinkx1",
+      "tetrizx1",
+      "ammo_12x70_slugx1",
+      "suspicious_letterx1"
     ],
     "secureContainerSaved": [
-      "altynx2",
-      "tor_teamx1",
-      "armor_6b13x1"
+      "armor_glukharx2",
+      "fuel_tankx1",
+      "altynx1"
     ],
     "stashItems": [
-      "fast_mtx1",
-      "afakx1",
-      "ulachx1",
-      "helmet_6b47x1",
-      "wd40x1",
-      "circuit_boardx2",
-      "rotor43x1",
-      "boltsx1",
-      "nutsx1",
-      "untarx2",
-      "cpu_fanx1",
-      "light_stockx1",
-      "water_bottlex1",
-      "canned_foodx1",
-      "juicex1",
-      "crackersx2",
-      "gp_coinx1",
-      "ammo_762x54_snbx1",
-      "ammo_556x45_m855x1",
-      "church_keyx1",
       "altynx2",
       "tor_teamx1",
-      "armor_6b13x1"
+      "armor_6b13x1",
+      "fast_mtx1",
+      "surgical_kitx1",
+      "helmet_6b47x2",
+      "circuit_boardx2",
+      "boltsx1",
+      "nutsx1",
+      "moe_stockx1",
+      "long_barrelx1",
+      "cpu_fanx1",
+      "mrex1",
+      "ai2x1",
+      "canned_foodx2",
+      "juicex1",
+      "energy_drinkx1",
+      "tetrizx1",
+      "ammo_12x70_slugx1",
+      "suspicious_letterx1",
+      "armor_glukharx2",
+      "fuel_tankx1"
     ],
     "logs": [
       {
@@ -2461,7 +2453,7 @@
       },
       {
         "t": "extract",
-        "m": "PMC extracted successfully! Earned +32992 cumulative XP in raid."
+        "m": "PMC extracted successfully! Earned +44743 cumulative XP in raid."
       },
       {
         "t": "info",
@@ -2598,6 +2590,30 @@
       {
         "t": "info",
         "m": "Skill Award: Constitution upgraded to Level 19!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 19!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Perception upgraded to Level 12!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 20!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Constitution upgraded to Level 20!"
+      },
+      {
+        "t": "info",
+        "m": "PMC LEVELED UP! Level reached: 21!"
+      },
+      {
+        "t": "info",
+        "m": "Skill Award: Constitution upgraded to Level 21!"
       }
     ]
   }

@@ -24,7 +24,7 @@ const SCENARIOS: Record<string, Scenario> = {
     configure: () => {},
   },
   combat: {
-    seed: 1337,
+    seed: 15,
     maxTicks: 300,
     expectedStatus: "extracted",
     configure: (state) => {
@@ -180,6 +180,9 @@ describe('runRaidTick Generator conversion', () => {
   });
 
   it('dispatches registered raid-end modules at the terminal tick (extraction rewards, KIA blocked)', async () => {
+    const ai2Quantity = (state: GameState) => state.stash.items.find(e => e.item.id === "ai2")?.quantity;
+    const baseline = await withSeed(SCENARIOS.extraction.seed, () => runTicksWithHooks(SCENARIOS.extraction));
+
     const testModule: ModuleInstance = {
       id: "test_module",
       canExecute: (state: GameState) => state.activeRaid.status === "extracted",
@@ -191,11 +194,11 @@ describe('runRaidTick Generator conversion', () => {
     try {
       const extraction = await withSeed(SCENARIOS.extraction.seed, () => runTicksWithHooks(SCENARIOS.extraction));
       expect(testModule.onRaidEnd).toHaveBeenCalledTimes(1);
-      expect(extraction.state.stash.items.find(e => e.item.id === "ai2")?.quantity).toBe(1);
+      expect(ai2Quantity(extraction.state)).toBe((ai2Quantity(baseline.state) ?? 0) + 1);
 
       const dehydration = await withSeed(SCENARIOS.dehydration.seed, () => runTicksWithHooks(SCENARIOS.dehydration));
       expect(testModule.onRaidEnd).toHaveBeenCalledTimes(1);
-      expect(dehydration.state.stash.items.find(e => e.item.id === "ai2")?.quantity).toBeUndefined();
+      expect(ai2Quantity(dehydration.state)).toBeUndefined();
     } finally {
       RAID_END_MODULES.splice(RAID_END_MODULES.indexOf(testModule), 1);
     }
