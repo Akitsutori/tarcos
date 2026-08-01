@@ -5,9 +5,8 @@ import { makeGoldenState, makeEnemy, runScenario } from './goldenHarness';
  * Golden Master characterization baseline.
  *
  * Freezes the current runRaidTick behavior as committed JSON transcripts.
- * These files are the regression contract for the Phase 3 AsyncGenerator
- * conversion — any change to simulation behavior (intentional or not) shows up
- * as a diff here. Regenerate with: vitest run -u
+ * Any change to simulation behavior (intentional or not) shows up as a diff
+ * here. Regenerate with: vitest run -u
  */
 
 const GOLDEN_DIR = "../__golden__";

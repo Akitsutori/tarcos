@@ -12,8 +12,8 @@ import { BODY_PART_ORDER } from '../bodyParts';
  * Makes the engine byte-deterministic by driving Math.random() through a
  * seeded mulberry32 PRNG, then records a compact, stable transcript of every
  * runRaidTick. Scenarios are frozen as committed JSON golden files and act as
- * the regression contract for the Phase 3 AsyncGenerator migration: any
- * conversion MUST reproduce the transcripts byte-for-byte.
+ * the regression contract for tick behavior: any intentional change MUST be
+ * justified and re-baselined with `vitest run -u`.
  */
 
 export const mulberry32 = (seed: number) => {

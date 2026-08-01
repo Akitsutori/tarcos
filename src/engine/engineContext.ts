@@ -30,11 +30,10 @@ const resolveEntity = (state: GameState, entityId: string): PMCCharacter | Enemy
  * Pure intent reducer: applies a single intent to the tick's state and
  * returns the patches it generated.
  *
- * Phase 2 applies intents synchronously (the state is mutated in place) so
- * downstream reads observe the same intermediate state as before the
- * migration; the emitted-intent queue and settle() provide the telemetry /
- * settlement surface that Phase 3 (AsyncGenerator migration) will convert to
- * deferred, structurally-immutable settlement.
+ * Intents are applied synchronously (the state is mutated in place) so
+ * downstream reads observe the same intermediate state as a direct mutation;
+ * the emitted-intent queue and settle() provide the telemetry / settlement
+ * surface for external observers and future deferred settlement.
  */
 export const applyIntent = (state: GameState, intent: IntentPayload): AppliedPatch[] => {
   switch (intent.type) {

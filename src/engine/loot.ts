@@ -16,7 +16,7 @@ import {
 
 /**
  * Rolls a random item from the loot table.
- * Dynamisch aus ALL_ITEMS gebaut — dropWeight > 0 = droppbar, Gewicht via RARITY_WEIGHT.
+ * Built from ALL_ITEMS — only rarities with a positive RARITY_WEIGHT drop.
  */
 export const rollLootItem = (map: MapData): GameItem => {
   const lootTable = Object.values(ALL_ITEMS)
@@ -37,7 +37,7 @@ export const rollLootItem = (map: MapData): GameItem => {
     }
   }
 
-  // Fallback: erster Common
+  // Fallback: first common item in the table
   const fallback = lootTable.find(e => e.item.rarity === "common");
   return structuredClone(fallback?.item ?? ALL_ITEMS.ai2);
 };
