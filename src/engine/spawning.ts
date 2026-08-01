@@ -21,7 +21,7 @@ const rollEquipment = (cfg: EquipmentConfig): GameItem | null => {
  * Mirrors the existing weapon clone pattern in spawnEnemy.
  */
 const cloneEquipment = (item: GameItem | null): GameItem | null => {
-  return item ? JSON.parse(JSON.stringify(item)) as GameItem : null;
+  return item ? structuredClone(item) as GameItem : null;
 };
 
 /**
@@ -49,7 +49,7 @@ const resolveLevel = (mode: LevelConfig, pmcLevel: number): number => {
  * matches the original inline branches exactly per mode.
  */
 const pickWeapon = (mode: WeaponConfig): Weapon => {
-  const cloneWeapon = (w: Weapon) => JSON.parse(JSON.stringify(w)) as Weapon;
+  const cloneWeapon = (w: Weapon) => structuredClone(w) as Weapon;
   switch (mode.mode) {
     case "pool":
       return cloneWeapon(INITIAL_WEAPONS[mode.pool[Math.floor(Math.random() * mode.pool.length)]]);

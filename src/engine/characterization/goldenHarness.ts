@@ -107,7 +107,7 @@ export const makeGoldenState = (): GameState => {
   const stash: Stash = {
     items: [],
     roubles: 0,
-    weapons: [JSON.parse(JSON.stringify(INITIAL_WEAPONS[ClassType.SOLDIER])) as Weapon],
+    weapons: [structuredClone(INITIAL_WEAPONS[ClassType.SOLDIER]) as Weapon],
     equippedWeaponId: INITIAL_WEAPONS[ClassType.SOLDIER].id,
   };
 
