@@ -4405,13 +4405,13 @@
       "energy": 95,
       "hydration": 59,
       "hp": [
-        60,
-        60,
-        23,
-        0,
-        0,
-        0,
-        0
+        75,
+        75,
+        28,
+        5,
+        5,
+        5,
+        5
       ],
       "isBleeding": false,
       "killsCount": 5,

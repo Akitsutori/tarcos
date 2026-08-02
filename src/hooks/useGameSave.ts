@@ -7,6 +7,7 @@ import {
 import { ALL_ITEMS } from "../data/content/items";
 import { INITIAL_WEAPONS } from "../data/content/weapons";
 import { ALL_QUESTS } from "../data/content/quests";
+import { applyConstitutionHealth } from "../engine/bodyParts";
 
 export const STORAGE_KEY = "tarkov_zero_player_state_v1";
 
@@ -106,6 +107,10 @@ export const useGameSave = () => {
           const conLevel = parsed.pmc.skills?.constitution?.level || 5;
           parsed.pmc.bodyParts = calculateBodyParts(conLevel);
         }
+
+        // Normalize body part max HP to the current constitution level so
+        // constitution HP scaling earned before this fix is honored.
+        applyConstitutionHealth(parsed.pmc);
 
         if (!parsed.activeQuests) parsed.activeQuests = defaultState.activeQuests;
         if (!parsed.completedQuestIds) parsed.completedQuestIds = defaultState.completedQuestIds || [];

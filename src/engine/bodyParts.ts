@@ -1,4 +1,5 @@
-import { PMCBodyParts } from "../types";
+import { PMCBodyParts, PMCCharacter } from "../types";
+import { calculateBodyParts } from "../data/construction";
 
 /**
  * Canonical iteration order for the PMC body, matching golden-transcript
@@ -32,3 +33,20 @@ export const totalCurrentHp = (parts: PMCBodyParts): number =>
 /** Total max HP summed over all body parts, in BODY_PART_ORDER. */
 export const totalMaxHp = (parts: PMCBodyParts): number =>
   BODY_PART_ORDER.reduce((acc, part) => acc + parts[part].max, 0);
+
+/**
+ * Applies the PMC's current constitution level to their body part max HP,
+ * preserving injury: max grows and current rises by exactly the delta gained.
+ * Never reduces max HP below its current value. Idempotent when body parts
+ * already match the current constitution level. Single source of truth for
+ * constitution HP scaling on the PMC.
+ */
+export const applyConstitutionHealth = (pmc: PMCCharacter): void => {
+  const next = calculateBodyParts(pmc.skills.constitution.level);
+  for (const partId of BODY_PART_ORDER) {
+    const part = pmc.bodyParts[partId];
+    const growth = Math.max(0, next[partId].max - part.max);
+    part.max = Math.max(part.max, next[partId].max);
+    part.current = Math.min(part.max, part.current + growth);
+  }
+};

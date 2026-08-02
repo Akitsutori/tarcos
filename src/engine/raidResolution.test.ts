@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { runRaidTick } from './raidSimulation';
-import { createInitialPMC, createInitialHideout } from '../data/construction';
+import { createInitialPMC, createInitialHideout, calculateBodyParts } from '../data/construction';
+import { applyConstitutionHealth } from './bodyParts';
 import { ALL_MAPS } from '../data/content/maps';
 import { ALL_ITEMS } from '../data/content/items';
 import {
@@ -293,5 +294,39 @@ describe('Raid Resolution Characterization (current runRaidTick behavior)', () =
     const helmetPieces = result.stash.items.filter(e => e.item.id === "fast_mt");
     expect(helmetPieces).toHaveLength(1);
     expect(helmetPieces[0].item.durability).toBe(20);
+  });
+
+  it('applyConstitutionHealth: grows max HP and adds the delta to current without healing injuries', () => {
+    const pmc = createInitialPMC(ClassType.SOLDIER);
+    pmc.skills.constitution.level = 5;
+    pmc.bodyParts = calculateBodyParts(5);
+    pmc.bodyParts.head.current = 3;
+
+    pmc.skills.constitution.level = 6;
+    applyConstitutionHealth(pmc);
+
+    expect(pmc.bodyParts.head.max).toBe(15 + 3 * 6);
+    expect(pmc.bodyParts.thorax.max).toBe(15 + 3 * 6);
+    expect(pmc.bodyParts.stomach.max).toBe(15 + 6);
+    expect(pmc.bodyParts.head.current).toBe(3 + 3);
+    expect(pmc.bodyParts.thorax.current).toBe(15 + 3 * 6);
+  });
+
+  it('constitution level-up: body part max HP scales with the awarded skill point', () => {
+    const state = makeGameState();
+    state.pmc.hydration = 0;
+    state.pmc.xp = 100;
+    state.pmc.maxXp = 100;
+    state.pmc.skills.constitution.level = 5;
+    state.pmc.bodyParts = calculateBodyParts(5);
+
+    stubMathRandom([0, 0, 0, 0, 0, 0, 0, 0.4]);
+    const result = runRaidTick(state);
+
+    expect(result.pmc.skills.constitution.level).toBe(6);
+    expect(result.pmc.bodyParts.head.max).toBe(15 + 3 * 6);
+    expect(result.pmc.bodyParts.thorax.max).toBe(15 + 3 * 6);
+    expect(result.pmc.bodyParts.stomach.max).toBe(15 + 6);
+    expect(result.pmc.bodyParts.leftLeg.max).toBe(15 + 6);
   });
 });

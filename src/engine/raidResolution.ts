@@ -3,6 +3,7 @@ import { ARCHETYPE_WEIGHTS } from "../data/construction";
 import { createLog } from "./utils";
 import { KIAReason } from "./contracts";
 import { finalizeQuestsAndXP, refillQuests } from "./progression";
+import { applyConstitutionHealth } from "./bodyParts";
 import { isArmorItem } from "./lootManagement";
 import { XP_PER_LEVEL, PERCEPTION_XP_GAIN } from "../data/tuning/progressionConfig";
 
@@ -58,6 +59,9 @@ const levelUpLoop = (state: GameState) => {
       if (rand <= 0) {
         pmc.skills[key].level++;
         raid.logs.push(createLog(`Skill Award: ${pmc.skills[key].name} upgraded to Level ${pmc.skills[key].level}!`, "info", raid.elapsedSeconds));
+        if (key === "constitution") {
+          applyConstitutionHealth(pmc);
+        }
         break;
       }
     }
