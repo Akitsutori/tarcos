@@ -479,7 +479,7 @@
       },
       {
         "t": "info",
-        "m": "Morozov (Scav) initiated burst spray of 1 rounds."
+        "m": "Morozov (Scav) initiated burst spray of 1 round."
       },
       {
         "t": "info",
@@ -491,11 +491,11 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Morozov (Scav) → PMC [STOMACH]: 4 dmg | Part HP: 24/28"
+        "m": "[DMG] Morozov (Scav) → PMC [STOMACH]: 4 dmg | Part HP: 28/28 → 24"
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] Morozov (Scav) fired 1 rounds (hit 1, miss 0) | Mag: 7 | PMC: 244 HP | Morozov (Scav): 149 HP"
+        "m": "[ROUND] Morozov (Scav) fired 1 round (hit 1, miss 0) | Mag: 7 | PMC: 244 HP | Morozov (Scav): 149 HP"
       },
       {
         "t": "info",
@@ -507,7 +507,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Morozov (Scav) [STOMACH]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Morozov (Scav) [STOMACH]: 60 dmg | Part HP: 19/19 → 0"
       },
       {
         "t": "info",
@@ -519,7 +519,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Morozov (Scav) [RIGHT ARM]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Morozov (Scav) [RIGHT ARM]: 60 dmg | Part HP: 19/19 → 0"
       },
       {
         "t": "info",
@@ -527,7 +527,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Morozov (Scav) [RIGHT ARM]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Morozov (Scav) [RIGHT ARM]: 60 dmg | Part HP: 0/19 → 0"
       },
       {
         "t": "info",
@@ -535,7 +535,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Morozov (Scav) [LEFT LEG]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Morozov (Scav) [LEFT LEG]: 60 dmg | Part HP: 19/19 → 0"
       },
       {
         "t": "combat_round",
@@ -628,7 +628,7 @@
       },
       {
         "t": "info",
-        "m": "Morozov (Scav) initiated burst spray of 1 rounds."
+        "m": "Morozov (Scav) initiated burst spray of 1 round."
       },
       {
         "t": "info",
@@ -636,7 +636,7 @@
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] Morozov (Scav) fired 1 rounds (hit 0, miss 1) | Mag: 6 | PMC: 244 HP | Morozov (Scav): 92 HP"
+        "m": "[ROUND] Morozov (Scav) fired 1 round (hit 0, miss 1) | Mag: 6 | PMC: 244 HP | Morozov (Scav): 92 HP"
       }
     ]
   },
@@ -761,7 +761,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Morozov (Scav) [STOMACH]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Morozov (Scav) [STOMACH]: 60 dmg | Part HP: 0/19 → 0"
       },
       {
         "t": "info",
@@ -769,7 +769,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Morozov (Scav) [RIGHT ARM]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Morozov (Scav) [RIGHT ARM]: 60 dmg | Part HP: 0/19 → 0"
       },
       {
         "t": "info",
@@ -866,7 +866,7 @@
       },
       {
         "t": "info",
-        "m": "Morozov (Scav) initiated burst spray of 1 rounds."
+        "m": "Morozov (Scav) initiated burst spray of 1 round."
       },
       {
         "t": "info",
@@ -874,11 +874,11 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Morozov (Scav) → PMC [RIGHT LEG]: 21 dmg | Part HP: 7/28"
+        "m": "[DMG] Morozov (Scav) → PMC [RIGHT LEG]: 21 dmg | Part HP: 28/28 → 7"
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] Morozov (Scav) fired 1 rounds (hit 1, miss 0) | Mag: 0 | PMC: 223 HP | Morozov (Scav): 92 HP"
+        "m": "[ROUND] Morozov (Scav) fired 1 round (hit 1, miss 0) | Mag: 0 | PMC: 223 HP | Morozov (Scav): 92 HP"
       }
     ]
   },
@@ -965,7 +965,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Morozov (Scav) [HEAD]: 60 dmg | Part HP: 0/27"
+        "m": "[DMG] PMC → Morozov (Scav) [HEAD]: 60 dmg | Part HP: 27/27 → 0"
       },
       {
         "t": "combat_kill",
@@ -973,7 +973,7 @@
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 5 rounds (hit 1, miss 0) | Mag: 21 | PMC: 223 HP | Morozov (Scav): 65 HP"
+        "m": "[ROUND] PMC fired 1 of 5 burst rounds (hit 1, miss 0) | Mag: 21 | PMC: 223 HP | Morozov (Scav): 65 HP"
       },
       {
         "t": "info",
@@ -1582,7 +1582,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Breeki (Scav) → PMC [THORAX]: 8 dmg | Part HP: 46/54"
+        "m": "[DMG] Breeki (Scav) → PMC [THORAX]: 8 dmg | Part HP: 54/54 → 46"
       },
       {
         "t": "info",
@@ -1594,7 +1594,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Breeki (Scav) → PMC [THORAX]: 25 dmg | Part HP: 21/54"
+        "m": "[DMG] Breeki (Scav) → PMC [THORAX]: 25 dmg | Part HP: 46/54 → 21"
       },
       {
         "t": "info",
@@ -1610,7 +1610,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Breeki (Scav) → PMC [RIGHT LEG]: 42 dmg | Part HP: 0/28"
+        "m": "[DMG] Breeki (Scav) → PMC [RIGHT LEG]: 42 dmg | Part HP: 28/28 → 0"
       },
       {
         "t": "combat_round",
@@ -1630,7 +1630,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Breeki (Scav) [RIGHT ARM]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Breeki (Scav) [RIGHT ARM]: 60 dmg | Part HP: 19/19 → 0"
       },
       {
         "t": "info",
@@ -1638,7 +1638,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Breeki (Scav) [RIGHT LEG]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Breeki (Scav) [RIGHT LEG]: 60 dmg | Part HP: 19/19 → 0"
       },
       {
         "t": "info",
@@ -1756,7 +1756,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Breeki (Scav) → PMC [HEAD]: 25 dmg | Part HP: 29/54"
+        "m": "[DMG] Breeki (Scav) → PMC [HEAD]: 25 dmg | Part HP: 54/54 → 29"
       },
       {
         "t": "warning",
@@ -1878,7 +1878,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Breeki (Scav) → PMC [LEFT ARM]: 42 dmg | Part HP: 0/28"
+        "m": "[DMG] Breeki (Scav) → PMC [LEFT ARM]: 42 dmg | Part HP: 28/28 → 0"
       },
       {
         "t": "info",
@@ -1914,7 +1914,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Breeki (Scav) [LEFT LEG]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Breeki (Scav) [LEFT LEG]: 60 dmg | Part HP: 19/19 → 0"
       },
       {
         "t": "info",
@@ -1922,7 +1922,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Breeki (Scav) [STOMACH]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Breeki (Scav) [STOMACH]: 60 dmg | Part HP: 19/19 → 0"
       },
       {
         "t": "info",
@@ -2034,7 +2034,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Breeki (Scav) [HEAD]: 60 dmg | Part HP: 0/27"
+        "m": "[DMG] PMC → Breeki (Scav) [HEAD]: 60 dmg | Part HP: 27/27 → 0"
       },
       {
         "t": "combat_kill",
@@ -2042,7 +2042,7 @@
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 5 rounds (hit 2, miss 1) | Mag: 19 | PMC: 119 HP | Breeki (Scav): 46 HP"
+        "m": "[ROUND] PMC fired 3 of 5 burst rounds (hit 2, miss 1) | Mag: 19 | PMC: 119 HP | Breeki (Scav): 46 HP"
       },
       {
         "t": "info",
@@ -2366,7 +2366,7 @@
       },
       {
         "t": "info",
-        "m": "Serega (Scav) initiated burst spray of 1 rounds."
+        "m": "Serega (Scav) initiated burst spray of 1 round."
       },
       {
         "t": "info",
@@ -2374,7 +2374,7 @@
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] Serega (Scav) fired 1 rounds (hit 0, miss 1) | Mag: 5 | PMC: 226 HP | Serega (Scav): 149 HP"
+        "m": "[ROUND] Serega (Scav) fired 1 round (hit 0, miss 1) | Mag: 5 | PMC: 226 HP | Serega (Scav): 149 HP"
       }
     ]
   },
@@ -2471,7 +2471,7 @@
       },
       {
         "t": "info",
-        "m": "PMC initiated burst spray of 1 rounds."
+        "m": "PMC initiated burst spray of 1 round."
       },
       {
         "t": "info",
@@ -2479,7 +2479,7 @@
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 1 rounds (hit 0, miss 1) | Mag: 29 | PMC: 226 HP | Serega (Scav): 149 HP"
+        "m": "[ROUND] PMC fired 1 round (hit 0, miss 1) | Mag: 29 | PMC: 226 HP | Serega (Scav): 149 HP"
       },
       {
         "t": "info",
@@ -2491,7 +2491,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Serega (Scav) → PMC [LEFT ARM]: 55 dmg | Part HP: 0/28"
+        "m": "[DMG] Serega (Scav) → PMC [LEFT ARM]: 55 dmg | Part HP: 26/28 → 0"
       },
       {
         "t": "info",
@@ -2608,7 +2608,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Serega (Scav) → PMC [LEFT LEG]: 55 dmg | Part HP: 0/28"
+        "m": "[DMG] Serega (Scav) → PMC [LEFT LEG]: 55 dmg | Part HP: 28/28 → 0"
       },
       {
         "t": "combat_round",
@@ -2818,7 +2818,7 @@
       },
       {
         "t": "info",
-        "m": "Serega (Scav) initiated burst spray of 1 rounds."
+        "m": "Serega (Scav) initiated burst spray of 1 round."
       },
       {
         "t": "info",
@@ -2826,7 +2826,7 @@
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] Serega (Scav) fired 1 rounds (hit 0, miss 1) | Mag: 5 | PMC: 172 HP | Serega (Scav): 149 HP"
+        "m": "[ROUND] Serega (Scav) fired 1 round (hit 0, miss 1) | Mag: 5 | PMC: 172 HP | Serega (Scav): 149 HP"
       },
       {
         "t": "info",
@@ -2834,7 +2834,7 @@
       },
       {
         "t": "info",
-        "m": "PMC initiated burst spray of 1 rounds."
+        "m": "PMC initiated burst spray of 1 round."
       },
       {
         "t": "info",
@@ -2842,11 +2842,11 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Serega (Scav) [LEFT LEG]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Serega (Scav) [LEFT LEG]: 60 dmg | Part HP: 19/19 → 0"
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 1 rounds (hit 1, miss 0) | Mag: 26 | PMC: 172 HP | Serega (Scav): 130 HP"
+        "m": "[ROUND] PMC fired 1 round (hit 1, miss 0) | Mag: 26 | PMC: 172 HP | Serega (Scav): 130 HP"
       }
     ]
   },
@@ -2939,7 +2939,7 @@
       },
       {
         "t": "info",
-        "m": "PMC initiated burst spray of 1 rounds."
+        "m": "PMC initiated burst spray of 1 round."
       },
       {
         "t": "info",
@@ -2947,7 +2947,7 @@
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 1 rounds (hit 0, miss 1) | Mag: 25 | PMC: 172 HP | Serega (Scav): 130 HP"
+        "m": "[ROUND] PMC fired 1 round (hit 0, miss 1) | Mag: 25 | PMC: 172 HP | Serega (Scav): 130 HP"
       },
       {
         "t": "info",
@@ -2959,7 +2959,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Serega (Scav) → PMC [LEFT LEG]: 55 dmg | Part HP: 0/28"
+        "m": "[DMG] Serega (Scav) → PMC [LEFT LEG]: 55 dmg | Part HP: 0/28 → 0"
       },
       {
         "t": "info",
@@ -2971,7 +2971,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Serega (Scav) → PMC [HEAD]: 11 dmg | Part HP: 38/54"
+        "m": "[DMG] Serega (Scav) → PMC [HEAD]: 11 dmg | Part HP: 49/54 → 38"
       },
       {
         "t": "info",
@@ -3189,7 +3189,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Serega (Scav) [RIGHT ARM]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Serega (Scav) [RIGHT ARM]: 60 dmg | Part HP: 19/19 → 0"
       },
       {
         "t": "combat_round",
@@ -3201,7 +3201,7 @@
       },
       {
         "t": "info",
-        "m": "Serega (Scav) initiated burst spray of 1 rounds."
+        "m": "Serega (Scav) initiated burst spray of 1 round."
       },
       {
         "t": "info",
@@ -3213,11 +3213,11 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Serega (Scav) → PMC [THORAX]: 11 dmg | Part HP: 30/54"
+        "m": "[DMG] Serega (Scav) → PMC [THORAX]: 11 dmg | Part HP: 41/54 → 30"
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] Serega (Scav) fired 1 rounds (hit 1, miss 0) | Mag: 0 | PMC: 150 HP | Serega (Scav): 111 HP"
+        "m": "[ROUND] Serega (Scav) fired 1 round (hit 1, miss 0) | Mag: 0 | PMC: 150 HP | Serega (Scav): 111 HP"
       }
     ]
   },
@@ -3419,7 +3419,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Serega (Scav) [RIGHT LEG]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Serega (Scav) [RIGHT LEG]: 60 dmg | Part HP: 19/19 → 0"
       },
       {
         "t": "info",
@@ -3431,7 +3431,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Serega (Scav) [STOMACH]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Serega (Scav) [STOMACH]: 60 dmg | Part HP: 19/19 → 0"
       },
       {
         "t": "combat_round",
@@ -3455,7 +3455,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Serega (Scav) → PMC [STOMACH]: 11 dmg | Part HP: 17/28"
+        "m": "[DMG] Serega (Scav) → PMC [STOMACH]: 11 dmg | Part HP: 28/28 → 17"
       },
       {
         "t": "combat_round",
@@ -3556,7 +3556,7 @@
       },
       {
         "t": "info",
-        "m": "PMC initiated burst spray of 1 rounds."
+        "m": "PMC initiated burst spray of 1 round."
       },
       {
         "t": "info",
@@ -3564,7 +3564,7 @@
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 1 rounds (hit 0, miss 1) | Mag: 19 | PMC: 139 HP | Serega (Scav): 73 HP"
+        "m": "[ROUND] PMC fired 1 round (hit 0, miss 1) | Mag: 19 | PMC: 139 HP | Serega (Scav): 73 HP"
       }
     ]
   },
@@ -3673,7 +3673,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Serega (Scav) → PMC [RIGHT LEG]: 55 dmg | Part HP: 0/28"
+        "m": "[DMG] Serega (Scav) → PMC [RIGHT LEG]: 55 dmg | Part HP: 26/28 → 0"
       },
       {
         "t": "info",
@@ -3783,7 +3783,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Serega (Scav) [STOMACH]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Serega (Scav) [STOMACH]: 60 dmg | Part HP: 0/19 → 0"
       },
       {
         "t": "info",
@@ -3795,7 +3795,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Serega (Scav) [RIGHT ARM]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Serega (Scav) [RIGHT ARM]: 60 dmg | Part HP: 0/19 → 0"
       },
       {
         "t": "combat_round",

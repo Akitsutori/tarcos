@@ -66,7 +66,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Test Scav [RIGHT ARM]: 60 dmg | Part HP: 0/60"
+        "m": "[DMG] PMC → Test Scav [RIGHT ARM]: 60 dmg | Part HP: 60/60 → 0"
       },
       {
         "t": "info",
@@ -74,7 +74,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Test Scav [HEAD]: 60 dmg | Part HP: 0/35"
+        "m": "[DMG] PMC → Test Scav [HEAD]: 60 dmg | Part HP: 35/35 → 0"
       },
       {
         "t": "combat_kill",
@@ -82,7 +82,7 @@
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 3 rounds (hit 2, miss 0) | Mag: 28 | PMC: 270 HP | Test Scav: 345 HP"
+        "m": "[ROUND] PMC fired 2 of 3 burst rounds (hit 2, miss 0) | Mag: 28 | PMC: 270 HP | Test Scav: 345 HP"
       },
       {
         "t": "info",
@@ -508,7 +508,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Bomzh (Scav) → PMC [THORAX]: 11 dmg | Part HP: 49/60"
+        "m": "[DMG] Bomzh (Scav) → PMC [THORAX]: 11 dmg | Part HP: 60/60 → 49"
       },
       {
         "t": "combat_round",
@@ -602,7 +602,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Bomzh (Scav) [STOMACH]: 60 dmg | Part HP: 0/17"
+        "m": "[DMG] PMC → Bomzh (Scav) [STOMACH]: 60 dmg | Part HP: 17/17 → 0"
       },
       {
         "t": "info",
@@ -610,7 +610,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Bomzh (Scav) [LEFT ARM]: 60 dmg | Part HP: 0/17"
+        "m": "[DMG] PMC → Bomzh (Scav) [LEFT ARM]: 60 dmg | Part HP: 17/17 → 0"
       },
       {
         "t": "info",
@@ -618,7 +618,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Bomzh (Scav) [LEFT LEG]: 60 dmg | Part HP: 0/17"
+        "m": "[DMG] PMC → Bomzh (Scav) [LEFT LEG]: 60 dmg | Part HP: 17/17 → 0"
       },
       {
         "t": "info",
@@ -642,7 +642,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Bomzh (Scav) → PMC [STOMACH]: 11 dmg | Part HP: 19/30"
+        "m": "[DMG] Bomzh (Scav) → PMC [STOMACH]: 11 dmg | Part HP: 30/30 → 19"
       },
       {
         "t": "info",
@@ -662,7 +662,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Bomzh (Scav) → PMC [HEAD]: 11 dmg | Part HP: 49/60"
+        "m": "[DMG] Bomzh (Scav) → PMC [HEAD]: 11 dmg | Part HP: 60/60 → 49"
       },
       {
         "t": "combat_round",
@@ -842,7 +842,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Bomzh (Scav) → PMC [LEFT LEG]: 55 dmg | Part HP: 0/30"
+        "m": "[DMG] Bomzh (Scav) → PMC [LEFT LEG]: 55 dmg | Part HP: 30/30 → 0"
       },
       {
         "t": "info",
@@ -878,7 +878,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Bomzh (Scav) [LEFT LEG]: 60 dmg | Part HP: 0/17"
+        "m": "[DMG] PMC → Bomzh (Scav) [LEFT LEG]: 60 dmg | Part HP: 0/17 → 0"
       },
       {
         "t": "info",
@@ -890,7 +890,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Bomzh (Scav) [LEFT LEG]: 60 dmg | Part HP: 0/17"
+        "m": "[DMG] PMC → Bomzh (Scav) [LEFT LEG]: 60 dmg | Part HP: 0/17 → 0"
       },
       {
         "t": "info",
@@ -979,19 +979,11 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Bomzh (Scav) [THORAX]: 36 dmg | Part HP: 0/21"
+        "m": "[DMG] PMC → Bomzh (Scav) [THORAX]: 36 dmg | Part HP: 21/21 → 0"
       },
       {
         "t": "combat_damage",
-        "m": "[SPILL] 17 damage overflowed from [THORAX] into [RIGHT ARM]"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[SPILL] 17 damage overflowed from [THORAX] into [RIGHT LEG]"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[SPILL] 2 overflow damage exceeded all remaining body parts"
+        "m": "[SPILL] 15 damage overflowed from [THORAX] into [RIGHT ARM]"
       },
       {
         "t": "combat_kill",
@@ -999,7 +991,7 @@
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 2 rounds (hit 1, miss 0) | Mag: 17 | PMC: 207 HP | Bomzh (Scav): 21 HP"
+        "m": "[ROUND] PMC fired 1 of 2 burst rounds (hit 1, miss 0) | Mag: 17 | PMC: 207 HP | Bomzh (Scav): 40 HP"
       },
       {
         "t": "info",
@@ -1199,7 +1191,7 @@
       },
       {
         "t": "info",
-        "m": "Cheeki (Scav) initiated burst spray of 1 rounds."
+        "m": "Cheeki (Scav) initiated burst spray of 1 round."
       },
       {
         "t": "info",
@@ -1211,11 +1203,11 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Cheeki (Scav) → PMC [THORAX]: 4 dmg | Part HP: 56/60"
+        "m": "[DMG] Cheeki (Scav) → PMC [THORAX]: 4 dmg | Part HP: 60/60 → 56"
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] Cheeki (Scav) fired 1 rounds (hit 1, miss 0) | Mag: 29 | PMC: 266 HP | Cheeki (Scav): 127 HP"
+        "m": "[ROUND] Cheeki (Scav) fired 1 round (hit 1, miss 0) | Mag: 29 | PMC: 266 HP | Cheeki (Scav): 127 HP"
       },
       {
         "t": "info",
@@ -1415,19 +1407,11 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Cheeki (Scav) [THORAX]: 36 dmg | Part HP: 0/21"
+        "m": "[DMG] PMC → Cheeki (Scav) [THORAX]: 36 dmg | Part HP: 21/21 → 0"
       },
       {
         "t": "combat_damage",
-        "m": "[SPILL] 17 damage overflowed from [THORAX] into [STOMACH]"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[SPILL] 17 damage overflowed from [THORAX] into [LEFT ARM]"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[SPILL] 2 damage overflowed from [THORAX] into [RIGHT ARM]"
+        "m": "[SPILL] 15 damage overflowed from [THORAX] into [STOMACH]"
       },
       {
         "t": "combat_kill",
@@ -1435,7 +1419,7 @@
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 4 rounds (hit 1, miss 2) | Mag: 12 | PMC: 266 HP | Cheeki (Scav): 70 HP"
+        "m": "[ROUND] PMC fired 3 of 4 burst rounds (hit 1, miss 2) | Mag: 12 | PMC: 266 HP | Cheeki (Scav): 91 HP"
       },
       {
         "t": "info",
@@ -1935,7 +1919,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Ghost (PMC) [LEFT ARM]: 60 dmg | Part HP: 0/21"
+        "m": "[DMG] PMC → Ghost (PMC) [LEFT ARM]: 60 dmg | Part HP: 21/21 → 0"
       },
       {
         "t": "info",
@@ -2041,7 +2025,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Ghost (PMC) [STOMACH]: 60 dmg | Part HP: 0/21"
+        "m": "[DMG] PMC → Ghost (PMC) [STOMACH]: 60 dmg | Part HP: 21/21 → 0"
       },
       {
         "t": "info",
@@ -2077,7 +2061,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Ghost (PMC) → PMC [LEFT LEG]: 42 dmg | Part HP: 0/30"
+        "m": "[DMG] Ghost (PMC) → PMC [LEFT LEG]: 42 dmg | Part HP: 30/30 → 0"
       },
       {
         "t": "info",
@@ -2089,7 +2073,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Ghost (PMC) → PMC [RIGHT ARM]: 42 dmg | Part HP: 0/30"
+        "m": "[DMG] Ghost (PMC) → PMC [RIGHT ARM]: 42 dmg | Part HP: 30/30 → 0"
       },
       {
         "t": "combat_round",
@@ -2191,7 +2175,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Ghost (PMC) → PMC [RIGHT LEG]: 42 dmg | Part HP: 0/30"
+        "m": "[DMG] Ghost (PMC) → PMC [RIGHT LEG]: 42 dmg | Part HP: 30/30 → 0"
       },
       {
         "t": "info",
@@ -2199,7 +2183,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Ghost (PMC) → PMC [RIGHT LEG]: 42 dmg | Part HP: 0/30"
+        "m": "[DMG] Ghost (PMC) → PMC [RIGHT LEG]: 42 dmg | Part HP: 0/30 → 0"
       },
       {
         "t": "info",
@@ -2211,7 +2195,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Ghost (PMC) → PMC [HEAD]: 25 dmg | Part HP: 35/60"
+        "m": "[DMG] Ghost (PMC) → PMC [HEAD]: 25 dmg | Part HP: 60/60 → 35"
       },
       {
         "t": "combat_round",
@@ -2311,7 +2295,7 @@
       },
       {
         "t": "info",
-        "m": "Ghost (PMC) initiated burst spray of 1 rounds."
+        "m": "Ghost (PMC) initiated burst spray of 1 round."
       },
       {
         "t": "info",
@@ -2319,7 +2303,7 @@
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] Ghost (PMC) fired 1 rounds (hit 0, miss 1) | Mag: 21 | PMC: 155 HP | Ghost (PMC): 129 HP"
+        "m": "[ROUND] Ghost (PMC) fired 1 round (hit 0, miss 1) | Mag: 21 | PMC: 155 HP | Ghost (PMC): 129 HP"
       },
       {
         "t": "info",
@@ -2335,7 +2319,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Ghost (PMC) [LEFT LEG]: 60 dmg | Part HP: 0/21"
+        "m": "[DMG] PMC → Ghost (PMC) [LEFT LEG]: 60 dmg | Part HP: 21/21 → 0"
       },
       {
         "t": "info",
@@ -2343,7 +2327,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Ghost (PMC) [THORAX]: 60 dmg | Part HP: 0/33"
+        "m": "[DMG] PMC → Ghost (PMC) [THORAX]: 60 dmg | Part HP: 33/33 → 0"
       },
       {
         "t": "combat_damage",
@@ -2351,11 +2335,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[SPILL] 21 damage overflowed from [THORAX] into [RIGHT LEG]"
-      },
-      {
-        "t": "combat_damage",
-        "m": "[SPILL] 18 overflow damage exceeded all remaining body parts"
+        "m": "[SPILL] 6 damage overflowed from [THORAX] into [RIGHT LEG]"
       },
       {
         "t": "combat_kill",
@@ -2363,7 +2343,7 @@
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 3 rounds (hit 2, miss 0) | Mag: 6 | PMC: 155 HP | Ghost (PMC): 33 HP"
+        "m": "[ROUND] PMC fired 2 of 3 burst rounds (hit 2, miss 0) | Mag: 6 | PMC: 155 HP | Ghost (PMC): 48 HP"
       },
       {
         "t": "info",
@@ -2499,7 +2479,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Cheeki (Scav) [RIGHT ARM]: 60 dmg | Part HP: 0/20"
+        "m": "[DMG] PMC → Cheeki (Scav) [RIGHT ARM]: 60 dmg | Part HP: 20/20 → 0"
       },
       {
         "t": "combat_round",
@@ -2599,7 +2579,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Cheeki (Scav) [HEAD]: 60 dmg | Part HP: 0/30"
+        "m": "[DMG] PMC → Cheeki (Scav) [HEAD]: 60 dmg | Part HP: 30/30 → 0"
       },
       {
         "t": "combat_kill",
@@ -2607,7 +2587,7 @@
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 3 rounds (hit 1, miss 1) | Mag: 2 | PMC: 155 HP | Cheeki (Scav): 110 HP"
+        "m": "[ROUND] PMC fired 2 of 3 burst rounds (hit 1, miss 1) | Mag: 2 | PMC: 155 HP | Cheeki (Scav): 110 HP"
       },
       {
         "t": "info",
@@ -3024,7 +3004,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Serega (Scav) → PMC [STOMACH]: 4 dmg | Part HP: 26/30"
+        "m": "[DMG] Serega (Scav) → PMC [STOMACH]: 4 dmg | Part HP: 30/30 → 26"
       },
       {
         "t": "info",
@@ -3036,7 +3016,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Serega (Scav) → PMC [RIGHT LEG]: 21 dmg | Part HP: 9/30"
+        "m": "[DMG] Serega (Scav) → PMC [RIGHT LEG]: 21 dmg | Part HP: 30/30 → 9"
       },
       {
         "t": "info",
@@ -3044,7 +3024,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Serega (Scav) → PMC [LEFT ARM]: 21 dmg | Part HP: 9/30"
+        "m": "[DMG] Serega (Scav) → PMC [LEFT ARM]: 21 dmg | Part HP: 30/30 → 9"
       },
       {
         "t": "warning",
@@ -3056,7 +3036,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Serega (Scav) → PMC [LEFT ARM]: 21 dmg | Part HP: 0/30"
+        "m": "[DMG] Serega (Scav) → PMC [LEFT ARM]: 21 dmg | Part HP: 9/30 → 0"
       },
       {
         "t": "combat_round",
@@ -3169,7 +3149,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Serega (Scav) → PMC [HEAD]: 12 dmg | Part HP: 48/60"
+        "m": "[DMG] Serega (Scav) → PMC [HEAD]: 12 dmg | Part HP: 60/60 → 48"
       },
       {
         "t": "info",
@@ -3181,7 +3161,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Serega (Scav) → PMC [THORAX]: 4 dmg | Part HP: 56/60"
+        "m": "[DMG] Serega (Scav) → PMC [THORAX]: 4 dmg | Part HP: 60/60 → 56"
       },
       {
         "t": "info",
@@ -3193,7 +3173,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] Serega (Scav) → PMC [HEAD]: 12 dmg | Part HP: 36/60"
+        "m": "[DMG] Serega (Scav) → PMC [HEAD]: 12 dmg | Part HP: 48/60 → 36"
       },
       {
         "t": "combat_round",
@@ -3217,7 +3197,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Serega (Scav) [STOMACH]: 60 dmg | Part HP: 0/19"
+        "m": "[DMG] PMC → Serega (Scav) [STOMACH]: 60 dmg | Part HP: 19/19 → 0"
       },
       {
         "t": "info",
@@ -3431,7 +3411,7 @@
       },
       {
         "t": "combat_damage",
-        "m": "[DMG] PMC → Serega (Scav) [HEAD]: 36 dmg | Part HP: 0/27"
+        "m": "[DMG] PMC → Serega (Scav) [HEAD]: 36 dmg | Part HP: 27/27 → 0"
       },
       {
         "t": "combat_kill",
@@ -3439,7 +3419,7 @@
       },
       {
         "t": "combat_round",
-        "m": "[ROUND] PMC fired 2 rounds (hit 1, miss 0) | Mag: 29 | PMC: 142 HP | Serega (Scav): 103 HP"
+        "m": "[ROUND] PMC fired 1 of 2 burst rounds (hit 1, miss 0) | Mag: 29 | PMC: 142 HP | Serega (Scav): 103 HP"
       },
       {
         "t": "info",

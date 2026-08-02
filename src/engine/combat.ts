@@ -250,7 +250,7 @@ export const simulateCombatRoundGenerator = function* (
       const burstCount = Math.floor(Math.random() * (maxPossible - minBurst + 1)) + minBurst;
 
       if (burstCount <= 0) continue;
-      roundLogs.push(createLog(`${attacker.name} initiated burst spray of ${burstCount} rounds.`, "info", elapsedSeconds));
+      roundLogs.push(createLog(`${attacker.name} initiated burst spray of ${burstCount} round${burstCount === 1 ? "" : "s"}.`, "info", elapsedSeconds));
 
       let burstHits = 0;
       let burstMisses = 0;
@@ -314,12 +314,13 @@ export const simulateCombatRoundGenerator = function* (
         if (attacker.type === "pmc") bulletDmg = Math.floor(bulletDmg * dmgMultipliers.outgoing);
         else if (attacker.type === "enemy") bulletDmg = Math.floor(bulletDmg * dmgMultipliers.incoming);
 
+        const partHpBeforeHit = targetedPart.current;
         context.emitIntent({
           targetEntityId: defender.type === "pmc" ? "pmc" : "enemy",
           type: "DAMAGE",
           value: { bodyPart: targetedPartId, amount: bulletDmg },
         });
-        roundLogs.push(createLog(`[DMG] ${attacker.name} → ${defender.name} [${targetedPart.name.toUpperCase()}]: ${bulletDmg} dmg | Part HP: ${targetedPart.current}/${targetedPart.max}`, "combat_damage", elapsedSeconds));
+        roundLogs.push(createLog(`[DMG] ${attacker.name} → ${defender.name} [${targetedPart.name.toUpperCase()}]: ${bulletDmg} dmg | Part HP: ${partHpBeforeHit}/${targetedPart.max} → ${targetedPart.current}`, "combat_damage", elapsedSeconds));
 
         yield {
           sourceEntityId: attacker.type === "pmc" ? "pmc" : "enemy",
@@ -333,8 +334,8 @@ export const simulateCombatRoundGenerator = function* (
           },
         };
 
-        if (targetedPartId === "thorax" && targetedPart.current <= 0 && bulletDmg > targetedPart.current) {
-          let overflow = bulletDmg;
+        if (targetedPartId === "thorax" && targetedPart.current <= 0) {
+          let overflow = Math.max(0, bulletDmg - partHpBeforeHit);
           const spilloverOrder = DAMAGE_SPILLOVER_ORDER;
           for (const spillId of spilloverOrder) {
             const spillPart = defender.bodyParts[spillId];
@@ -390,7 +391,11 @@ export const simulateCombatRoundGenerator = function* (
       
       const pmcHp = Object.values(pmcView.bodyParts).reduce((s, p) => s + p.current, 0);
       const enemyHp = Object.values(enemyView.bodyParts).reduce((s, p) => s + p.current, 0);
-      roundLogs.push(createLog(`[ROUND] ${attacker.name} fired ${burstCount} rounds (hit ${burstHits}, miss ${burstMisses}) | Mag: ${curWep.currentMagRounds} | PMC: ${pmcHp} HP | ${enemyView.name}: ${enemyHp} HP`, "combat_round", elapsedSeconds));
+      const burstResolved = burstHits + burstMisses;
+      const burstLabel = burstResolved === burstCount
+        ? `${burstResolved} round${burstResolved === 1 ? "" : "s"}`
+        : `${burstResolved} of ${burstCount} burst round${burstCount === 1 ? "" : "s"}`;
+      roundLogs.push(createLog(`[ROUND] ${attacker.name} fired ${burstLabel} (hit ${burstHits}, miss ${burstMisses}) | Mag: ${curWep.currentMagRounds} | PMC: ${pmcHp} HP | ${enemyView.name}: ${enemyHp} HP`, "combat_round", elapsedSeconds));
 
       if (attacker.isDead || defender.isDead) break;
     }
