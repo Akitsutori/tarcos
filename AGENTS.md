@@ -11,8 +11,9 @@ Instructions for AI coding assistants (and humans) working on TARCOS.
 | Watch tests | `npm run test:watch` |
 | Dev server | `npm run dev` |
 | Production build | `npm run build` (rebuilds `dist/index.html`) |
+| Visual layout scan | `npm run ui:check` (Playwright, system Edge/Chrome, no browser download) |
 
-A task is **not done** until `npm run lint` and `npm test` both pass.
+A task is **not done** until `npm run lint`, `npm test`, and `npm run ui:check` (for any UI change) all pass.
 
 ## Code Map
 
