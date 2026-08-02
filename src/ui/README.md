@@ -16,6 +16,7 @@ Everything lives in the `@theme` block of `src/index.css`.
 | `--chrome-height` | header + tab nav + main padding + footer | **Bump it** if the App chrome grows |
 | `--item-grid-cols` | stash item grid column count | `2` → `3` if cards get roomier |
 | `--radius-card` / `--radius-control` | panel / control radii | corner sharpness |
+| `--cat-gap` / `--cat-bar-pad` / `--cat-pill-x` / `--cat-pill-y` | category switch-bar footprint | tighten the bar to fit narrow columns |
 | `--text-*` | semantic type scale (`text-label` … `text-stat`) | font sizing |
 | `--color-*` | semantic palette (never raw `slate-*`/hex) | palette shift |
 | `h-app-viewport` (utility) | `calc(100dvh - var(--chrome-height))` | the single source for "fits under the chrome" |
@@ -29,6 +30,12 @@ constraint is mandatory — an implicit `auto` grid row grows to content and
 the page starts scrolling again. All overflow lives inside the two bounded
 columns, which scroll internally. The page never scrolls; the weapons vault
 can never sit under the footer.
+
+**The category switch-bar** follows the inversion principle: the pills come
+first, the `bg-panel-2` backdrop is just a background effect hugging them
+(`w-fit`). It is `flex-wrap`, so when horizontal space runs out the pills
+wrap inside the backdrop — it can never scroll. Its footprint is tuned only
+through the `--cat-*` tokens (gap, backdrop padding, pill padding).
 
 ## Primitives (`src/ui/*`)
 
@@ -53,12 +60,12 @@ migrate a screen, delete its entry in the same commit (see below).
 ## Visual verification (`npm run ui:check`)
 
 Boots Vite on port 3100, drives the app in headless Edge, opens the Stash
-tab, and asserts at 1920×1080 and 2560×1440:
+tab, and asserts at 1920×1080, 2560×1440, and 1280×800:
 
 - page never scrolls (horizontally or vertically)
 - no clipped/spilling elements inside `#stash-screen`
 - sidebar bounded on screen (footer can't overlap the vault)
-- category bar is one line
+- category bar is one line and never scrolls horizontally (wraps, no scrollbar)
 - item grid renders the token column count
 - at 1440p the sidebar fits with ≤ 8px of internal scroll
 

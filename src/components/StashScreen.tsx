@@ -399,14 +399,19 @@ export const StashScreen: React.FC<StashScreenProps> = ({
               Inventory & Market
             </h3>
 
-            {/* CATEGORY SELECTOR — always one line; scrolls horizontally if it outgrows its track */}
-            <div className="flex gap-1.5 bg-panel-2 p-1.5 rounded-control border border-border max-w-full overflow-x-auto">
+            {/* CATEGORY SELECTOR — items first; the backdrop is just a background
+                effect on all pills. Spacing comes from the --cat-* tokens so the
+                bar adapts to available width (pills wrap, never scroll). */}
+            <div
+              id="stash-cat-bar"
+              className="flex flex-wrap gap-(--cat-gap) bg-panel-2 p-(--cat-bar-pad) rounded-control border border-border w-fit max-w-full"
+            >
               {(["all", "barter", "medical", "provision", "weapon_mod", "armor"] as const).map((cat) => (
                 <button
                   id={`stash-cat-${cat}-btn`}
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-3 py-1.5 text-label font-mono font-bold rounded-control capitalize transition flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
+                  className={`px-(--cat-pill-x) py-(--cat-pill-y) text-label font-mono font-bold rounded-control capitalize transition flex items-center gap-1 whitespace-nowrap shrink-0 ${
                     activeCategory === cat ? "bg-panel-hi text-accent" : "text-fg-low hover:text-fg-mid"
                   }`}
                 >

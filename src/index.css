@@ -55,6 +55,13 @@
   --chrome-height: 14rem;     /* header + tab nav + main padding + footer.
                                  EDIT THIS ONE NUMBER if App chrome changes. */
   --item-grid-cols: 2;        /* stash item grid column count */
+
+  /* Category switch-bar — the bar is the sum of its pills (inversion:
+     items first, backdrop hugs). Tune these to fit available width. */
+  --cat-gap: 0.25rem;         /* gap between pills */
+  --cat-bar-pad: 0.25rem;     /* backdrop padding around the pill group */
+  --cat-pill-x: 0.125rem;     /* pill (active highlight) horizontal padding */
+  --cat-pill-y: 0.125rem;     /* pill (active highlight) vertical padding */
 }
 
 /* First-class, variant-capable utilities driven purely by tokens. */

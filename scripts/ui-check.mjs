@@ -4,12 +4,15 @@
  * Boots a Vite dev server on a throwaway port, drives the app with
  * Playwright against the system Edge/Chrome (no browser download needed),
  * navigates to the Stash tab, and asserts no clipped overflow / page scroll
- * at a desktop reference size (1920x1080) and a high-res size (2560x1440).
+ * at three sizes: 1920x1080 (desktop reference), 2560x1440 (high-res), and
+ * 1280x800 (the width where the category-bar scrollbar used to appear).
  *
  * Contract being verified:
  *   - the page never scrolls (layout is viewport-anchored via h-app-viewport)
  *   - every overflow lives inside a bounded, internally-scrolling column,
  *     so the weapons vault can never sit under the page footer
+ *   - the category bar never scrolls horizontally (items-first bar; pills
+ *     wrap inside the backdrop instead — scrolling is forbidden)
  *   - at 1440p the whole sidebar fits with zero internal scroll
  *
  * Usage: npm run ui:check   (exit code 0 = clean, 1 = a check failed)
@@ -78,8 +81,9 @@ async function measureStash(page) {
       .slice(0, 8)
       .map((el) => el.id || el.className?.toString().slice(0, 40) || el.tagName);
     const vspill = [...scope.querySelectorAll("*")].filter(verticalSpill).length;
-    const catBtns = [...scope.querySelectorAll('[id^="stash-cat-"]')];
+    const catBtns = [...scope.querySelectorAll("#stash-cat-bar button")];
     const catLines = catBtns.length ? new Set(catBtns.map((b) => b.offsetTop)).size : null;
+    const catBar = document.getElementById("stash-cat-bar");
     const doc = document.documentElement;
     const grid = document.getElementById("stash-grid");
     const sidebar = document.getElementById("stash-sidebar");
@@ -92,6 +96,7 @@ async function measureStash(page) {
       horiz,
       vspill,
       catLines,
+      catBar: catBar ? { client: catBar.clientWidth, scroll: catBar.scrollWidth } : null,
       vitals: rectOf("stash-vitals-card"),
       armor: rectOf("stash-armor-card"),
       vault: rectOf("stash-weapons-card"),
@@ -146,6 +151,12 @@ async function runViewport(browser, width, height, expectFullFit) {
   report(vp, "category bar is a single line", m.catLines === 1, `lines=${m.catLines}`);
   report(
     vp,
+    "category bar never scrolls horizontally (no scrollbar; wraps instead)",
+    !!m.catBar && m.catBar.scroll <= m.catBar.client + 1,
+    m.catBar ? `scroll=${m.catBar.scroll} client=${m.catBar.client}` : "bar missing"
+  );
+  report(
+    vp,
     "item grid uses token column count (2)",
     !!m.gridCols && m.gridCols.trim().split(/\s+/).length === 2,
     m.gridCols ? `${m.gridCols} (${m.gridItems} items)` : "grid not rendered (empty stash)"
@@ -170,6 +181,7 @@ try {
   browser = await launchBrowser();
   await runViewport(browser, 1920, 1080, false);
   await runViewport(browser, 2560, 1440, true);
+  await runViewport(browser, 1280, 800, false);
 } catch (e) {
   console.error("\nui:check harness error:", e.message || e);
   results.push({ ok: false });
