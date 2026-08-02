@@ -4,17 +4,17 @@ import { createLog } from "./utils";
 import { KIAReason } from "./contracts";
 import { finalizeQuestsAndXP, refillQuests } from "./progression";
 import { applyConstitutionHealth } from "./bodyParts";
-import { isArmorItem } from "./lootManagement";
+import { addArmorToStash, isArmorItem } from "./lootManagement";
 import { XP_PER_LEVEL, PERCEPTION_XP_GAIN } from "../data/tuning/progressionConfig";
 
 /**
- * Moves a single loot entry into the stash. Armor/helmet pieces are instances
- * and always become their own stash entry (per-piece durability); other items
+ * Moves a single loot entry into the stash. Armor/helmet pieces collapse into
+ * a medkit-style stack per id (lowest-durability piece shown); other items
  * merge with any existing stack by id.
  */
 const moveIntoStash = (state: GameState, entry: { item: GameItem; quantity: number }) => {
   if (isArmorItem(entry.item)) {
-    state.stash.items.push({ item: entry.item, quantity: entry.quantity });
+    addArmorToStash(state.stash, entry.item);
     return;
   }
   const stashEntry = state.stash.items.find(st => st.item.id === entry.item.id);
@@ -102,7 +102,7 @@ export const handleKIA = (state: GameState, reason: KIAReason): void => {
 
   raid.secureContainerSaved.forEach((containerEntry) => {
     if (isArmorItem(containerEntry.item)) {
-      state.stash.items.push({ item: containerEntry.item, quantity: containerEntry.quantity });
+      addArmorToStash(state.stash, containerEntry.item);
       return;
     }
     const stashEntry = state.stash.items.find(i => i.item.id === containerEntry.item.id);

@@ -23,7 +23,7 @@ import { ScrollPane } from "../ui/ScrollPane";
 interface StashScreenProps {
   gameState: GameState;
   onSellItem: (itemId: string, quantity: number) => void;
-  onSellArmor: (stashIndex: number) => void;
+  onSellArmor: (stashIndex: number, quantity: number) => void;
   onBuyItem: (itemId: string, cost: number) => void;
   onConsumeItem: (itemId: string) => void;
   onEquipWeapon: (weaponId: string) => void;
@@ -62,14 +62,18 @@ const renderLoadoutChip = (label: string, piece: GameItem | null) => {
   );
 };
 
-// A per-instance armor/helmet stash piece (own entry, own durability).
+// A medkit-parity armor/helmet stash stack (one card per piece id; the shown
+// item is the lowest-durability piece, owned = quantity + 1).
 const ArmorPieceCard: React.FC<{
   item: GameItem;
   stashIndex: number;
+  quantity: number;
   onEquip: () => void;
   onSell: () => void;
-}> = ({ item, stashIndex, onEquip, onSell }) => {
+  onSellAll: () => void;
+}> = ({ item, stashIndex, quantity, onEquip, onSell, onSellAll }) => {
   const hasDurability = item.durability !== undefined && item.maxDurability !== undefined && item.maxDurability > 0;
+  const owned = quantity + 1;
 
   return (
     <div className="p-3 border rounded-card flex flex-col justify-between transition bg-panel-2 border-border hover:border-border-soft">
@@ -95,7 +99,7 @@ const ArmorPieceCard: React.FC<{
 
       <div className="border-t border-border mt-3 pt-2.5 flex items-center justify-between gap-2">
         <div className="font-mono text-meta whitespace-nowrap">
-          <span className="text-fg-low">Qty:</span> <span className="text-fg font-bold">1</span>
+          <span className="text-fg-low">Qty:</span> <span className="text-fg font-bold">{owned}</span>
           <span className="text-fg-faint mx-1.5">|</span>
           <span className="text-fg-low">Sell:</span> <span className="text-accent font-bold">₽{item.value}</span>
         </div>
@@ -106,6 +110,11 @@ const ArmorPieceCard: React.FC<{
           <Button id={`sell-armor-btn-${item.id}-${stashIndex}`} variant="sell" onClick={onSell}>
             SELL 1
           </Button>
+          {owned > 1 && (
+            <Button id={`sell-armor-all-btn-${item.id}-${stashIndex}`} variant="sell" onClick={onSellAll}>
+              ALL
+            </Button>
+          )}
         </div>
       </div>
     </div>
@@ -244,17 +253,19 @@ export const StashScreen: React.FC<StashScreenProps> = ({
   const [activeCategory, setActiveCategory] = useState<ItemType | "all">("all");
 
   // Unified item list: owned items + buyable items from traders.
-  // Armor/helmet are per-instance pieces (own stash entry, own durability),
-  // rendered as separate rows; everything else aggregates by id.
+  // Armor/helmet are medkit-parity stacks (one card per piece id, owned =
+  // quantity + 1, shown item is the lowest-durability piece); everything else
+  // aggregates by id.
   const { armorPieces, aggregatedRows } = useMemo(() => {
     const armorPieces: {
       item: GameItem;
       stashIndex: number;
+      quantity: number;
     }[] = [];
     const nonArmorEntries: { item: GameItem; quantity: number }[] = [];
 
     stash.items.forEach((entry, index) => {
-      if (isArmorItem(entry.item)) armorPieces.push({ item: entry.item, stashIndex: index });
+      if (isArmorItem(entry.item)) armorPieces.push({ item: entry.item, stashIndex: index, quantity: entry.quantity });
       else nonArmorEntries.push(entry);
     });
 
@@ -432,14 +443,16 @@ export const StashScreen: React.FC<StashScreenProps> = ({
             </div>
           ) : (
             <div id="stash-grid" className="grid grid-cols-items gap-3 pr-1 lg:flex-1 lg:min-h-0 lg:overflow-y-auto">
-              {/* Armor/helmet pieces: one card per instance with its own durability */}
-              {filteredArmorPieces.map(({ item, stashIndex }) => (
+              {/* Armor/helmet stacks: one card per piece id (owned = quantity + 1) */}
+              {filteredArmorPieces.map(({ item, stashIndex, quantity }) => (
                 <ArmorPieceCard
                   key={`armor-piece-${stashIndex}`}
                   item={item}
                   stashIndex={stashIndex}
+                  quantity={quantity}
                   onEquip={() => onEquipArmor(stashIndex)}
-                  onSell={() => onSellArmor(stashIndex)}
+                  onSell={() => onSellArmor(stashIndex, 1)}
+                  onSellAll={() => onSellArmor(stashIndex, quantity + 1)}
                 />
               ))}
 

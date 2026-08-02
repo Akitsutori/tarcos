@@ -3721,12 +3721,12 @@
     ],
     "stashItems": [
       "armor_6b13_heavyx1",
-      "tor_teamx1",
+      "tor_teamx0",
       "scope_thermalx1",
       "wd40x1",
       "scope_4xx1",
       "rotor43x1",
-      "ssh68x1",
+      "ssh68x0",
       "moe_stockx2",
       "mag_pmagx1",
       "cpu_fanx1",
@@ -3742,9 +3742,8 @@
       "ammo_9x18_pmx1",
       "church_keyx1",
       "golden_roosterx1",
-      "armor_killax1",
-      "altynx1",
-      "armor_6b13_heavyx1"
+      "armor_killax0",
+      "altynx0"
     ],
     "logs": [
       {

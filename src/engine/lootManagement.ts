@@ -1,13 +1,37 @@
-import { GameItem, RaidState } from "../types";
+import { GameItem, RaidState, Stash } from "../types";
 
 export type LootStack = { item: GameItem; quantity: number }[];
 
 /**
- * Whether an item is a durability-tracked armor/helmet piece. Such pieces are
- * instances: each one keeps its own durability and is never stacked by id.
+ * Whether an item is a durability-tracked armor/helmet piece.
+ *
+ * In-raid loot treats armor/helmet as per-piece instances so per-piece
+ * durability survives sorting; once committed to the stash, identical pieces
+ * collapse into a single medkit-style entry via {@link addArmorToStash}.
  */
 export const isArmorItem = (item: GameItem): boolean =>
   item.type === "armor" || item.type === "helmet";
+
+/**
+ * Stash-commit rule for armor/helmet pieces (medkit parity).
+ *
+ * Keeps a single stash entry per armor id: the entry's `item` is the piece
+ * with the LOWEST durability (shown on the card), and `quantity` counts every
+ * other piece. Owned pieces = `quantity + 1`. A more-damaged piece replaces
+ * the shown one (the old shown piece becomes one of the counted backups).
+ */
+export const addArmorToStash = (stash: Stash, piece: GameItem): void => {
+  const entry = stash.items.find(e => e.item.id === piece.id);
+  if (!entry) {
+    stash.items.push({ item: piece, quantity: 0 });
+    return;
+  }
+  const pieceDur = piece.durability ?? Infinity;
+  if (pieceDur < (entry.item.durability ?? Infinity)) {
+    entry.item = piece;
+  }
+  entry.quantity++;
+};
 
 /**
  * Adds one item to a bucket, merging only non-armor items by id. Armor/helmet

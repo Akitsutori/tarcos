@@ -1,5 +1,6 @@
 import { GameState, PMCCharacter, EnemyState } from "../types";
 import { ALL_ITEMS } from "../data/content/items";
+import { addArmorToStash, isArmorItem } from "./lootManagement";
 import {
   AppliedPatch,
   EngineContext,
@@ -67,15 +68,27 @@ export const applyIntent = (state: GameState, intent: IntentPayload): AppliedPat
     }
     case "STASH_ADD": {
       const { itemId, quantity } = intent.value;
-      const stashEntry = state.stash.items.find(entry => entry.item.id === itemId);
-      if (stashEntry) {
-        const before = stashEntry.quantity;
-        stashEntry.quantity += quantity;
-        return [{ entity: "stash", field: `items.${itemId}`, before, after: stashEntry.quantity }];
+      const existing = state.stash.items.find(entry => entry.item.id === itemId);
+      if (existing) {
+        if (isArmorItem(existing.item)) {
+          const before = existing.quantity;
+          for (let i = 0; i < quantity; i++) addArmorToStash(state.stash, { ...existing.item });
+          const after = state.stash.items.find(e => e.item.id === itemId)?.quantity ?? 0;
+          return [{ entity: "stash", field: `items.${itemId}`, before, after }];
+        }
+        const before = existing.quantity;
+        existing.quantity += quantity;
+        return [{ entity: "stash", field: `items.${itemId}`, before, after: existing.quantity }];
       }
       const template = ALL_ITEMS[itemId];
       if (!template) {
         throw new Error(`[engineContext] STASH_ADD: unknown item id "${itemId}".`);
+      }
+      if (isArmorItem(template)) {
+        const before = 0;
+        for (let i = 0; i < quantity; i++) addArmorToStash(state.stash, { ...template });
+        const after = state.stash.items.find(e => e.item.id === itemId)?.quantity ?? 0;
+        return [{ entity: "stash", field: `items.${itemId}`, before, after }];
       }
       state.stash.items.push({ item: { ...template }, quantity });
       return [{ entity: "stash", field: `items.${itemId}`, before: 0, after: quantity }];

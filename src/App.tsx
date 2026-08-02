@@ -20,7 +20,7 @@ import {
 
 import { useGameSave, STORAGE_KEY } from "./hooks/useGameSave";
 import { useRaidTick } from "./hooks/useRaidTick";
-import { isArmorItem } from "./engine/lootManagement";
+import { addArmorToStash, isArmorItem } from "./engine/lootManagement";
 import { produce, current } from "immer";
 
 /**
@@ -138,7 +138,7 @@ export default function App() {
         // Secure container saved
         raid.secureContainerSaved.forEach((containerEntry) => {
           if (isArmorItem(containerEntry.item)) {
-            draft.stash.items.push({ item: containerEntry.item, quantity: containerEntry.quantity });
+            addArmorToStash(draft.stash, containerEntry.item);
             return;
           }
           const stashEntry = draft.stash.items.find(i => i.item.id === containerEntry.item.id);
@@ -177,15 +177,17 @@ export default function App() {
     });
   };
 
-  // SELL A SPECIFIC ARMOR/HELMET PIECE (per-instance, keyed by stash index)
-  const handleSellArmor = (stashIndex: number) => {
+  // SELL A SPECIFIC ARMOR/HELMET STACK (medkit parity: owned = quantity + 1)
+  const handleSellArmor = (stashIndex: number, quantity: number) => {
     setGameState((prev) => {
       const next = produce(prev, (draft) => {
         const entry = draft.stash.items[stashIndex];
-        if (!entry || entry.quantity <= 0) return;
-        const gain = entry.item.value * entry.quantity;
-        draft.stash.roubles += gain;
-        draft.stash.items.splice(stashIndex, 1);
+        if (!entry) return;
+        const toSell = Math.min(quantity, entry.quantity + 1);
+        if (toSell <= 0) return;
+        draft.stash.roubles += entry.item.value * toSell;
+        entry.quantity -= toSell;
+        if (entry.quantity <= 0) draft.stash.items.splice(stashIndex, 1);
       });
       if (next !== prev) localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       return next;
@@ -202,8 +204,11 @@ export default function App() {
 
         draft.stash.roubles -= cost;
 
-        // Medical items: single entry, quantity = additional backup kits
-        if (targetItem.type === "medical" || targetItem.type === "provision") {
+        // Armor/helmet: merge into the medkit-parity stack for that piece.
+        if (isArmorItem(targetItem)) {
+          addArmorToStash(draft.stash, cloneItem(targetItem));
+        } else if (targetItem.type === "medical" || targetItem.type === "provision") {
+          // Medical items: single entry, quantity = additional backup kits
           const existing = draft.stash.items.find((e) => e.item.id === itemId);
           if (existing) {
             existing.quantity++;
@@ -333,14 +338,16 @@ export default function App() {
     });
   };
 
-  // EQUIP ARMOR / HELMET — swaps a specific stash piece into the equipped slot,
-  // returning the previously worn piece (with its durability) to the stash.
-  // Pieces are per-instance stash entries, so the target is a stash index.
+  // EQUIP ARMOR / HELMET — takes one piece off a medkit-parity stash stack and
+  // returns the previously worn piece to the stash (merging into its stack).
+  // The entry holds the lowest-durability piece; in practice all stash armor is
+  // full-durability (looted armor spawns full, equipped armor is repaired on
+  // extraction), so the equipped piece is a full copy of the shown item.
   const handleEquipArmor = (stashIndex: number) => {
     setGameState((prev) => {
       const next = produce(prev, (draft) => {
         const entry = draft.stash.items[stashIndex];
-        if (!entry || entry.quantity <= 0) return;
+        if (!entry) return;
 
         const item = entry.item;
         const isHelmet = item.type === "helmet";
@@ -348,14 +355,15 @@ export default function App() {
         if (!isHelmet && !isArmor) return;
 
         const old = isHelmet ? draft.pmc.equippedHelmet : draft.pmc.equippedArmor;
-        if (isHelmet) draft.pmc.equippedHelmet = item;
-        else draft.pmc.equippedArmor = item;
+        if (isHelmet) draft.pmc.equippedHelmet = { ...item };
+        else draft.pmc.equippedArmor = { ...item };
 
-        // Remove the equipped piece from the stash (it now lives on the PMC).
-        draft.stash.items.splice(stashIndex, 1);
+        // Remove the equipped piece from the stack (it now lives on the PMC).
+        if (entry.quantity > 0) entry.quantity--;
+        else draft.stash.items.splice(stashIndex, 1);
 
-        // Return the previously worn piece to the stash as its own entry.
-        if (old) draft.stash.items.push({ item: old, quantity: 1 });
+        // Return the previously worn piece to the stash, merging into its stack.
+        if (old) addArmorToStash(draft.stash, old);
       });
       if (next !== prev) localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       return next;

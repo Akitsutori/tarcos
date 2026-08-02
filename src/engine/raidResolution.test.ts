@@ -273,7 +273,7 @@ describe('Raid Resolution Characterization (current runRaidTick behavior)', () =
     expect(raid.logs.some(l => l.message.includes("PMC extracted successfully"))).toBe(true);
   });
 
-  it('extraction: armor/helmet loot stays as distinct stash pieces with their own durability', () => {
+  it('extraction: armor/helmet loot merges into medkit-parity stacks (lowest durability shown)', () => {
     const state = makeGameState();
     state.activeRaid.status = "scavenging";
     state.activeRaid.tiles = [{ name: "Exit", description: "Extraction point", type: "extraction" } as RoomTile];
@@ -289,11 +289,13 @@ describe('Raid Resolution Characterization (current runRaidTick behavior)', () =
     const result = runRaidTick(state);
 
     const armorPieces = result.stash.items.filter(e => e.item.id === "armor_6b23");
-    expect(armorPieces).toHaveLength(2);
-    expect(armorPieces.map(e => e.item.durability).sort()).toEqual([12, 33]);
+    expect(armorPieces).toHaveLength(1);
+    expect(armorPieces[0].item.durability).toBe(12);
+    expect(armorPieces[0].quantity).toBe(1);
     const helmetPieces = result.stash.items.filter(e => e.item.id === "fast_mt");
     expect(helmetPieces).toHaveLength(1);
     expect(helmetPieces[0].item.durability).toBe(20);
+    expect(helmetPieces[0].quantity).toBe(0);
   });
 
   it('applyConstitutionHealth: grows max HP and adds the delta to current without healing injuries', () => {

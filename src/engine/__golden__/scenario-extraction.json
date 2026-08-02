@@ -4089,7 +4089,7 @@
     "stashItems": [
       "mag_drumx1",
       "wd40x2",
-      "pacax1",
+      "pacax0",
       "rotor43x1",
       "boltsx1",
       "laser_gripx1",
@@ -4103,9 +4103,9 @@
       "suspicious_letterx1",
       "church_keyx1",
       "cpux1",
-      "tor_teamx1",
+      "tor_teamx0",
       "hosex1",
-      "fast_mtx1"
+      "fast_mtx0"
     ],
     "logs": [
       {
