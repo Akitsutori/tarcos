@@ -16,9 +16,11 @@ export const BODY_PART_ORDER: readonly (keyof PMCBodyParts)[] = ["head", "thorax
 export const HEAL_PART_ORDER: readonly (keyof PMCBodyParts)[] = ["head", "thorax", "stomach", "leftLeg", "rightLeg", "leftArm", "rightArm"];
 
 /**
- * Surgical-kit repair priority: blacked-out stomach/legs first, then arms.
+ * Surgical-kit repair priority: blacked-out vitals (thorax/head) first, then
+ * stomach/legs, then arms. Vitals are repairable because a KIA leaves the body
+ * blacked and the PMC can persist with a 0/X thorax or head between raids.
  */
-export const SURGICAL_TARGET_ORDER: readonly (keyof PMCBodyParts)[] = ["stomach", "leftLeg", "rightLeg", "leftArm", "rightArm"];
+export const SURGICAL_TARGET_ORDER: readonly (keyof PMCBodyParts)[] = ["thorax", "head", "stomach", "leftLeg", "rightLeg", "leftArm", "rightArm"];
 
 /**
  * Combat damage-spillover priority (blacked-out limb redistribution):

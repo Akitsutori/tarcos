@@ -211,7 +211,7 @@ const ItemCard: React.FC<{
               id={`consume-btn-${item.id}`}
               variant="success"
               onClick={onConsume}
-              title={isSurgicalKit ? "Fix one blacked-out limb" : isMedkit ? "Heal all damaged body parts" : "Consume to restore hydration/energy"}
+              title={isSurgicalKit ? "Patch blacked-out body parts to 1 HP" : isMedkit ? "Heal all damaged body parts" : "Consume to restore hydration/energy"}
             >
               USE
             </Button>
