@@ -112,7 +112,7 @@ describe('simulateCombatRound Generator conversion', () => {
   });
 
   it('enemy 9x19 shots at a SCOUT PMC use baseline pen 20 (SMG bonus is attacker-only)', async () => {
-    const seed = 9;
+    const seed = 11;
     const logs = await withSeed(seed, () => {
       const pmc = createInitialPMC(ClassType.SCOUT);
       pmc.equippedArmor = { ...ALL_ITEMS.armor_6b23 }; // Class 3 full dur -> threshold 30: pen 20 BLOCKs, pen 32 PENETRATEs

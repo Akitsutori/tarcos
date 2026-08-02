@@ -1,4 +1,4 @@
-import { MapData, GameItem, PMCCharacter, RaidState } from "../types";
+import { MapData, GameItem, PMCCharacter, RaidState, Quest } from "../types";
 import { ALL_ITEMS } from "../data/content/items";
 import { createLog } from "./utils";
 import { allocateLoot } from "./lootManagement";
@@ -51,14 +51,21 @@ export const getBackpackCapacity = (constitution: number): number => {
 };
 
 /**
+ * True when the item id is the objective of an active, incomplete Find/Collect quest.
+ */
+export const isQuestItem = (itemId: string, activeQuests: Quest[]): boolean =>
+  activeQuests.some(q => !q.completed && (q.type === "Find" || q.type === "Collect") && q.target === itemId);
+
+/**
  * Performs looting phase of a map tile.
  * Rolls up to 3 times for loot depending on base chances and perception skill.
  *
  * @param pmc Player character state
  * @param raid Active raid state (mutated with new loot/logs)
  * @param map Map context
+ * @param activeQuests Active quest pool, used to flag quest-objective loot
  */
-export const executeLootPhase = (pmc: PMCCharacter, raid: RaidState, map: MapData, intelligenceCenterLevel: number) => {
+export const executeLootPhase = (pmc: PMCCharacter, raid: RaidState, map: MapData, intelligenceCenterLevel: number, activeQuests: Quest[]) => {
   const perceptionLevel = pmc.skills.perception.level;
   const mapMult = map.lootMultiplier ?? 1.0;
   const lootChance = Math.min(LOOT_CHANCE_CAP, (LOOT_BASE_CHANCE + perceptionLevel * LOOT_PERCEPTION_PER_LEVEL) * mapMult);
@@ -74,7 +81,8 @@ export const executeLootPhase = (pmc: PMCCharacter, raid: RaidState, map: MapDat
       const backpackCap = getBackpackCapacity(pmc.skills.constitution.level);
 
       if (allocateLoot(raid, item, backpackCap, secureContainerCapacity(intelligenceCenterLevel))) {
-        raid.logs.push(createLog(`Found ${item.name} (Value: ₽${item.value})`, "loot", raid.elapsedSeconds));
+        const questMarker = isQuestItem(item.id, activeQuests) ? " (Quest Item)" : "";
+        raid.logs.push(createLog(`Found ${item.name} (Value: ₽${item.value})${questMarker}`, "loot", raid.elapsedSeconds));
         itemsFoundCount++;
       } else {
         raid.logs.push(createLog(`Backpack is full! Left behind discovered loot: ${item.name}.`, "warning", raid.elapsedSeconds));

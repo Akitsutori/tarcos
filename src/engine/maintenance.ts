@@ -58,7 +58,10 @@ export const executeMaintenancePhase = (pmc: PMCCharacter, raid: RaidState, equi
 
         consumeFoundEntry(raid.lootFound, backupIdx);
       } else {
-        raid.logs.push(createLog("Warning: Arterial bleeding continues — No medical resource pool available to stop clot!", "warning", raid.elapsedSeconds));
+        const reason = pmc.equippedMedkit
+          ? `equipped ${pmc.equippedMedkit.name} depleted (${pmc.equippedMedkit.resourceCurrent ?? 0}/${BLEED_STOP_COST} points needed)`
+          : "no medkit equipped";
+        raid.logs.push(createLog(`Warning: Arterial bleeding continues — ${reason}, and no medkit found in backpack loot to stop the clot!`, "warning", raid.elapsedSeconds));
       }
     }
   }
@@ -157,6 +160,13 @@ export const executeMaintenancePhase = (pmc: PMCCharacter, raid: RaidState, equi
     }
   }
 
-  const hpStr = `Vital Monitor: Head ${pmc.bodyParts.head.current}/${pmc.bodyParts.head.max} | Thorax ${pmc.bodyParts.thorax.current}/${pmc.bodyParts.thorax.max} | Stomach ${pmc.bodyParts.stomach.current}/${pmc.bodyParts.stomach.max} | L.Arm ${pmc.bodyParts.leftArm.current}/${pmc.bodyParts.leftArm.max} | R.Arm ${pmc.bodyParts.rightArm.current}/${pmc.bodyParts.rightArm.max} | L.Leg ${pmc.bodyParts.leftLeg.current}/${pmc.bodyParts.leftLeg.max} | R.Leg ${pmc.bodyParts.rightLeg.current}/${pmc.bodyParts.rightLeg.max}`;
+  const armorStr = pmc.equippedArmor
+    ? ` | Armor: ${pmc.equippedArmor.name} (Dur ${pmc.equippedArmor.durability}/${pmc.equippedArmor.maxDurability})`
+    : "";
+  const helmetStr = pmc.equippedHelmet
+    ? ` | Helmet: ${pmc.equippedHelmet.name} (Dur ${pmc.equippedHelmet.durability}/${pmc.equippedHelmet.maxDurability})`
+    : "";
+  const bleedStr = pmc.isBleeding ? " BLEEDING" : "";
+  const hpStr = `Vital Monitor:${bleedStr} | Head ${pmc.bodyParts.head.current}/${pmc.bodyParts.head.max} | Thorax ${pmc.bodyParts.thorax.current}/${pmc.bodyParts.thorax.max} | Stomach ${pmc.bodyParts.stomach.current}/${pmc.bodyParts.stomach.max} | L.Arm ${pmc.bodyParts.leftArm.current}/${pmc.bodyParts.leftArm.max} | R.Arm ${pmc.bodyParts.rightArm.current}/${pmc.bodyParts.rightArm.max} | L.Leg ${pmc.bodyParts.leftLeg.current}/${pmc.bodyParts.leftLeg.max} | R.Leg ${pmc.bodyParts.rightLeg.current}/${pmc.bodyParts.rightLeg.max}${armorStr}${helmetStr}`;
   raid.logs.push(createLog(hpStr, "info", raid.elapsedSeconds));
 };

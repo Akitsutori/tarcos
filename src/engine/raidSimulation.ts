@@ -2,9 +2,9 @@ import { GameState } from "../types";
 import { createDraft, finishDraft } from "immer";
 import { getWeaponStats } from "../data/construction";
 import { buildProceduralMap } from "../data/content/maps";
-import { createLog } from "./utils";
+import { createLog, resetLogSequence } from "./utils";
 import { spawnEnemy } from "./spawning";
-import { executeLootPhase, rollLootItem, getBackpackCapacity } from "./loot";
+import { executeLootPhase, isQuestItem, rollLootItem, getBackpackCapacity } from "./loot";
 import { allocateLoot } from "./lootManagement";
 import { executeMaintenancePhase } from "./maintenance";
 import { simulateCombatRoundGenerator } from "./combat";
@@ -16,6 +16,14 @@ import { NUTRITION_UNIT_DECAY_RATE, NUTRITION_UNIT_DECAY_ACTIVE_FROM_LEVEL, secu
 import { ENCOUNTER_CHANCE, REINFORCEMENT_MAX_PER_TILE, REINFORCEMENT_CHANCE } from "../data/tuning/enemySpawning";
 import { getLuckyLootRolls } from "./behaviors/classPassives";
 import { dispatchRaidEndModules } from "./behaviors/hideoutModules";
+
+/**
+ * Enemy names already carry the tier suffix (e.g. "Kolya (Scav)") except for
+ * bosses, whose name is the map boss name. Ensure the tier is shown exactly
+ * once in logs.
+ */
+const formatEnemyName = (name: string, tier: string): string =>
+  name.endsWith(` (${tier})`) ? name : `${name} (${tier})`;
 
 /**
  * Executes a single simulation tick for the active raid as a synchronous
@@ -35,6 +43,7 @@ import { dispatchRaidEndModules } from "./behaviors/hideoutModules";
  * @returns A fresh GameState object representing the next simulation state
  */
 export const runRaidTickGenerator = function* (state: GameState): Generator<InterruptHook, GameState, unknown> {
+  resetLogSequence();
   if (!state.activeRaid.isActive || !state.activeRaid.map) return state;
 
   const newState = createDraft(state);
@@ -126,7 +135,8 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
         const capacity = getBackpackCapacity(pmc.skills.constitution.level);
 
         if (allocateLoot(raid, item, capacity, secureContainerCapacity(newState.hideout.intelligenceCenter.level))) {
-          raid.logs.push(createLog(`Looted corpse: found ${item.name} (Value: ₽${item.value})`, "loot", raid.elapsedSeconds));
+          const questMarker = isQuestItem(item.id, newState.activeQuests) ? " (Quest Item)" : "";
+          raid.logs.push(createLog(`Looted corpse: found ${item.name} (Value: ₽${item.value})${questMarker}`, "loot", raid.elapsedSeconds));
         } else {
           raid.logs.push(createLog(`Loot ${item.name} left behind — Backpack is full!`, "warning", raid.elapsedSeconds));
         }
@@ -137,7 +147,7 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
         const nextReinforcement = spawnEnemy(map, pmc.level);
         raid.combatTarget = nextReinforcement;
         const armorStr = nextReinforcement.equippedArmor ? `${nextReinforcement.equippedArmor.name} (Class ${nextReinforcement.equippedArmor.armorClass})` : "None";
-        raid.logs.push(createLog(`[REINFORCE] ${raid.reinforcementsSpawnedThisTile}/3 reinforcements on tile. ${nextReinforcement.name} (${nextReinforcement.tier}) Lv.${nextReinforcement.level} | Armor: ${armorStr} | Weapon: ${nextReinforcement.equippedWeapon.name}`, "warning", raid.elapsedSeconds));
+        raid.logs.push(createLog(`[REINFORCE] ${raid.reinforcementsSpawnedThisTile}/3 reinforcements on tile. ${formatEnemyName(nextReinforcement.name, nextReinforcement.tier)} Lv.${nextReinforcement.level} | Armor: ${armorStr} | Weapon: ${nextReinforcement.equippedWeapon.name}`, "warning", raid.elapsedSeconds));
       } else {
         raid.status = "scavenging";
         raid.combatTarget = null;
@@ -145,7 +155,7 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
         raid.reinforcementsSpawnedThisTile = 0;
 
         executeMaintenancePhase(pmc, raid, equippedWeapon);
-        executeLootPhase(pmc, raid, map, newState.hideout.intelligenceCenter.level);
+        executeLootPhase(pmc, raid, map, newState.hideout.intelligenceCenter.level, newState.activeQuests);
 
         context.emitIntent({ targetEntityId: "raid", type: "POSITION_CHANGE", value: { to: raid.currentStage + 1 } });
       }
@@ -181,9 +191,9 @@ export const runRaidTickGenerator = function* (state: GameState): Generator<Inte
     raid.combatTarget = hostile;
     raid.status = "combat";
     const armorStr = hostile.equippedArmor ? `${hostile.equippedArmor.name} (Class ${hostile.equippedArmor.armorClass})` : "None";
-    raid.logs.push(createLog(`[ENCOUNTER] Spotted ${hostile.name} (${hostile.tier}) Lv.${hostile.level} in [${currentTile.name}] | Armor: ${armorStr} | Weapon: ${hostile.equippedWeapon.name}`, "warning", raid.elapsedSeconds));
+    raid.logs.push(createLog(`[ENCOUNTER] Spotted ${formatEnemyName(hostile.name, hostile.tier)} Lv.${hostile.level} in [${currentTile.name}] | Armor: ${armorStr} | Weapon: ${hostile.equippedWeapon.name}`, "warning", raid.elapsedSeconds));
   } else {
-    executeLootPhase(pmc, raid, map, newState.hideout.intelligenceCenter.level);
+    executeLootPhase(pmc, raid, map, newState.hideout.intelligenceCenter.level, newState.activeQuests);
     executeMaintenancePhase(pmc, raid, equippedWeapon);
     context.emitIntent({ targetEntityId: "raid", type: "POSITION_CHANGE", value: { to: raid.currentStage + 1 } });
   }

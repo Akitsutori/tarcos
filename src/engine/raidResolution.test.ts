@@ -222,7 +222,7 @@ describe('Raid Resolution Characterization (current runRaidTick behavior)', () =
       { item: makeItem("secure_item", 500), quantity: 1 },
     ];
 
-    stubMathRandom([0, 0, 0, 0, 0, 0.5, 0, 0, 0.5, 0.1, 0, 0, 0.05, 0.05, 0.1, 0, 0, 0]);
+    stubMathRandom([0, 0, 0, 0, 0.99, 0.99, 0.99, 0, 0.99, 0]);
     const result = runRaidTick(state);
 
     const raid = result.activeRaid;
@@ -320,7 +320,7 @@ describe('Raid Resolution Characterization (current runRaidTick behavior)', () =
     state.pmc.skills.constitution.level = 5;
     state.pmc.bodyParts = calculateBodyParts(5);
 
-    stubMathRandom([0, 0, 0, 0, 0, 0, 0, 0.4]);
+    stubMathRandom([0, 0, 0, 0.4]);
     const result = runRaidTick(state);
 
     expect(result.pmc.skills.constitution.level).toBe(6);

@@ -52,6 +52,19 @@ const createDefaultWeapon = (): Weapon => ({
   maxReserveMags: 3
 });
 
+const PART_LABELS: Record<keyof PMCBodyParts, string> = {
+  head: "H", thorax: "T", stomach: "ST", leftArm: "LA", rightArm: "RA", leftLeg: "LL", rightLeg: "RL",
+};
+
+const formatBodyPartSummary = (parts: PMCBodyParts): string =>
+  BODY_PART_ORDER.map((id) => `${PART_LABELS[id]} ${parts[id].current}/${parts[id].max}`).join(" ");
+
+const formatProtection = (item: GameItem | null | undefined, label: string): string => {
+  if (!item) return `${label}: None`;
+  const zones = item.protectedZones && item.protectedZones.length > 0 ? ` [${item.protectedZones.join("/")}]` : "";
+  return `${label}: ${item.name} (Class ${item.armorClass}, Dur ${item.durability}/${item.maxDurability})${zones}`;
+};
+
 const calculateAccuracy = (attacker: CombatantView, defender: CombatantView, burstDecay: number, shootingRangeLevel: number): number => {
   const baseAcc = attacker.baseAccuracy;
   const skillWeap = attacker.skills.weaponSkill.level;
@@ -136,17 +149,22 @@ export const simulateCombatRoundGenerator = function* (
   };
 
   // 2. Initiative
-  const pmcInitRoll = Math.floor(Math.random() * INITIATIVE_DIE) + pmcView.skills.initiative.level;
-  const enemyInitRoll = Math.floor(Math.random() * INITIATIVE_DIE) + enemyView.skills.initiative.level;
+  const pmcInitDie = Math.floor(Math.random() * INITIATIVE_DIE);
+  const enemyInitDie = Math.floor(Math.random() * INITIATIVE_DIE);
+  const pmcInitRoll = pmcInitDie + pmcView.skills.initiative.level;
+  const enemyInitRoll = enemyInitDie + enemyView.skills.initiative.level;
   const pmcFirst = pmcInitRoll >= enemyInitRoll;
 
   const enemyHpTotal = Object.values(enemyView.bodyParts).reduce((s, p) => s + p.current, 0);
   const enemyHpMax = Object.values(enemyView.bodyParts).reduce((s, p) => s + p.max, 0);
-  const enemyArmorStr = enemyView.equippedArmor ? `${enemyView.equippedArmor.name} (Class ${enemyView.equippedArmor.armorClass})` : "None";
-  roundLogs.push(createLog(`[COMBAT] ${enemyView.name} Lv.${enemyView.level} | HP: ${enemyHpTotal}/${enemyHpMax} | Armor: ${enemyArmorStr} | Weapon: ${enemyView.equippedWeapon.name}`, "combat_profile", elapsedSeconds));
-  
-  const pmcInitStr = `PMC rolled ${pmcInitRoll}`;
-  const enemyInitStr = `${enemyView.name} rolled ${enemyInitRoll}`;
+  roundLogs.push(createLog(`[COMBAT] ${enemyView.name} Lv.${enemyView.level} | HP: ${enemyHpTotal}/${enemyHpMax} (${formatBodyPartSummary(enemyView.bodyParts)}) | ${formatProtection(enemyView.equippedArmor, "Armor")} | ${formatProtection(enemyView.equippedHelmet, "Helmet")} | Weapon: ${enemyView.equippedWeapon.name}`, "combat_profile", elapsedSeconds));
+
+  const pmcHpTotal = Object.values(pmcView.bodyParts).reduce((s, p) => s + p.current, 0);
+  const pmcHpMax = Object.values(pmcView.bodyParts).reduce((s, p) => s + p.max, 0);
+  roundLogs.push(createLog(`[COMBAT] PMC Lv.${pmcView.level} | HP: ${pmcHpTotal}/${pmcHpMax} (${formatBodyPartSummary(pmcView.bodyParts)}) | ${formatProtection(pmcView.equippedArmor, "Armor")} | ${formatProtection(pmcView.equippedHelmet, "Helmet")} | Weapon: ${pmcView.equippedWeapon.name}`, "combat_profile", elapsedSeconds));
+
+  const pmcInitStr = `PMC rolled ${pmcInitRoll} (die ${pmcInitDie} + skill ${pmcView.skills.initiative.level})`;
+  const enemyInitStr = `${enemyView.name} rolled ${enemyInitRoll} (die ${enemyInitDie} + skill ${enemyView.skills.initiative.level})`;
   roundLogs.push(createLog(`[INIT] ${pmcInitStr} vs ${enemyInitStr} → ${pmcFirst ? "PMC acts first" : "Enemy acts first"}`, "info", elapsedSeconds));
 
   const actors = pmcFirst ? [pmcView, enemyView] : [enemyView, pmcView];
@@ -234,6 +252,9 @@ export const simulateCombatRoundGenerator = function* (
       if (burstCount <= 0) continue;
       roundLogs.push(createLog(`${attacker.name} initiated burst spray of ${burstCount} rounds.`, "info", elapsedSeconds));
 
+      let burstHits = 0;
+      let burstMisses = 0;
+
       const activeWeaponStats = attacker.type === "pmc" ? weaponStats : getWeaponStats(curWep, 0);
 
       for (let b = 0; b < burstCount; b++) {
@@ -242,10 +263,16 @@ export const simulateCombatRoundGenerator = function* (
         const decayRate = attacker.type === "pmc" ? BURST_DECAY_PMC : BURST_DECAY_ENEMY;
         const burstDecay = b * decayRate;
         const finalAccuracy = calculateAccuracy(attacker, defender, burstDecay, shootingRangeLevel);
+        const accuracyRoll = Math.random() * 100;
+        const isHit = accuracyRoll < finalAccuracy;
 
-        roundLogs.push(createLog(`[ACC] ${attacker.name} Accuracy: ${finalAccuracy.toFixed(1)}%`, "info", elapsedSeconds));
+        roundLogs.push(createLog(`[ACC] ${attacker.name} Accuracy: ${finalAccuracy.toFixed(1)}% (rolled ${accuracyRoll.toFixed(1)} → ${isHit ? "HIT" : "MISS"})`, "info", elapsedSeconds));
 
-        if (Math.random() * 100 >= finalAccuracy) continue;
+        if (!isHit) {
+          burstMisses++;
+          continue;
+        }
+        burstHits++;
 
         const dodgeMult = attacker.type === "enemy" ? getDodgeMultiplier(pmc.classType) : 1.0;
         if (Math.random() < defender.skills.agility.level * DODGE_AGILITY_FACTOR * dodgeMult) {
@@ -274,11 +301,11 @@ export const simulateCombatRoundGenerator = function* (
           if (bulletPen < armorThreshold) {
             dmgMultiplier = ARMOR_BLOCK_DAMAGE_MULTIPLIER;
             activeArmor.durability = Math.max(0, activeArmor.durability - ARMOR_BLOCK_DURABILITY_LOSS);
-            roundLogs.push(createLog(`[PEN] BLOCKED by ${activeArmor.name} (20% dmg) | Armor Dur: ${activeArmor.durability}/${activeArmor.maxDurability}`, "combat_damage", elapsedSeconds));
+            roundLogs.push(createLog(`[PEN] BLOCKED by ${activeArmor.name} (20% dmg) | Armor Dur: ${activeArmor.durability}/${activeArmor.maxDurability} | (pen ${bulletPen} vs threshold ${armorThreshold.toFixed(1)})`, "combat_damage", elapsedSeconds));
           } else {
             dmgMultiplier = ARMOR_PENETRATE_DAMAGE_MULTIPLIER;
             activeArmor.durability = Math.max(0, activeArmor.durability - ARMOR_PENETRATE_DURABILITY_LOSS);
-            roundLogs.push(createLog(`[PEN] PENETRATED ${activeArmor.name} (60% dmg) | Armor Dur: ${activeArmor.durability}/${activeArmor.maxDurability}`, "combat_damage", elapsedSeconds));
+            roundLogs.push(createLog(`[PEN] PENETRATED ${activeArmor.name} (60% dmg) | Armor Dur: ${activeArmor.durability}/${activeArmor.maxDurability} | (pen ${bulletPen} vs threshold ${armorThreshold.toFixed(1)})`, "combat_damage", elapsedSeconds));
           }
         }
 
@@ -315,8 +342,12 @@ export const simulateCombatRoundGenerator = function* (
               const absorb = Math.min(spillPart.current, overflow);
               spillPart.current = Math.max(0, spillPart.current - absorb);
               overflow -= absorb;
+              roundLogs.push(createLog(`[SPILL] ${absorb} damage overflowed from [THORAX] into [${spillPart.name.toUpperCase()}]`, "combat_damage", elapsedSeconds));
               if (overflow <= 0) break;
             }
+          }
+          if (overflow > 0) {
+            roundLogs.push(createLog(`[SPILL] ${overflow} overflow damage exceeded all remaining body parts`, "combat_damage", elapsedSeconds));
           }
         }
 
@@ -330,15 +361,18 @@ export const simulateCombatRoundGenerator = function* (
             }
           }
 
-          if (Math.random() * 100 < bleedChance) {
+          const bleedRoll = Math.random() * 100;
+          const alreadyBleeding = defender.isBleeding;
+          if (bleedRoll < bleedChance) {
             defender.isBleeding = true;
-            roundLogs.push(createLog(`[BLEED] ${attacker.name} → ${defender.name}: HIT! Target is now BLEEDING!`, "warning", elapsedSeconds));
+            roundLogs.push(createLog(`[BLEED] ${attacker.name} → ${defender.name} [${targetedPart.name.toUpperCase()}]: ${alreadyBleeding ? "ALREADY BLEEDING" : "NOW BLEEDING"} (chance ${bleedChance.toFixed(1)}%, rolled ${bleedRoll.toFixed(1)})`, "warning", elapsedSeconds));
           }
         }
 
         if (defender.bodyParts.head.current <= 0 || defender.bodyParts.thorax.current <= 0) {
+          const fatalZones = [defender.bodyParts.head.current <= 0 ? "[HEAD]" : "", defender.bodyParts.thorax.current <= 0 ? "[THORAX]" : ""].filter(Boolean).join(" + ");
           if (attacker.type === "pmc") {
-            roundLogs.push(createLog(`PMC neutralized ${defender.name} with a fatal shot!`, "combat_kill", elapsedSeconds));
+            roundLogs.push(createLog(`PMC neutralized ${defender.name} with a fatal ${fatalZones} hit!`, "combat_kill", elapsedSeconds));
             defender.isDead = true;
           } else {
             if (getFatalSurviveChance(pmc.classType) > 0 && Math.random() < getFatalSurviveChance(pmc.classType)) {
@@ -346,7 +380,7 @@ export const simulateCombatRoundGenerator = function* (
               defender.bodyParts.thorax.current = 1;
               roundLogs.push(createLog("LUCKY PASSIVE TRIGGERED! PMC bypassed a fatal hit and survived at 1 HP!", "warning", elapsedSeconds));
             } else {
-              roundLogs.push(createLog("PMC was KILLED IN ACTION (KIA) due to trauma in critical zones!", "death", elapsedSeconds));
+              roundLogs.push(createLog(`PMC was KILLED IN ACTION (KIA) due to fatal ${fatalZones} trauma!`, "death", elapsedSeconds));
               defender.isDead = true;
             }
           }
@@ -356,7 +390,7 @@ export const simulateCombatRoundGenerator = function* (
       
       const pmcHp = Object.values(pmcView.bodyParts).reduce((s, p) => s + p.current, 0);
       const enemyHp = Object.values(enemyView.bodyParts).reduce((s, p) => s + p.current, 0);
-      roundLogs.push(createLog(`[ROUND] ${attacker.name} fired ${burstCount} rounds | PMC: ${pmcHp} HP | ${enemyView.name}: ${enemyHp} HP`, "combat_round", elapsedSeconds));
+      roundLogs.push(createLog(`[ROUND] ${attacker.name} fired ${burstCount} rounds (hit ${burstHits}, miss ${burstMisses}) | Mag: ${curWep.currentMagRounds} | PMC: ${pmcHp} HP | ${enemyView.name}: ${enemyHp} HP`, "combat_round", elapsedSeconds));
 
       if (attacker.isDead || defender.isDead) break;
     }
