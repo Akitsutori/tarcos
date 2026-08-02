@@ -442,7 +442,7 @@ export const StashScreen: React.FC<StashScreenProps> = ({
               <span className="text-meta text-fg-faint font-mono mt-1">Deploy on raids to scavenge supplies or buy from market.</span>
             </div>
           ) : (
-            <div id="stash-grid" className="grid grid-cols-items gap-3 pr-1 lg:flex-1 lg:min-h-0 lg:overflow-y-auto">
+            <div id="stash-grid" className="grid grid-cols-items content-start gap-3 pr-1 lg:flex-1 lg:min-h-0 lg:overflow-y-auto">
               {/* Armor/helmet stacks: one card per piece id (owned = quantity + 1) */}
               {filteredArmorPieces.map(({ item, stashIndex, quantity }) => (
                 <ArmorPieceCard

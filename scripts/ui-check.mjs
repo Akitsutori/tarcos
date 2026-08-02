@@ -108,6 +108,93 @@ async function measureStash(page) {
   });
 }
 
+const SPARSE_ARMOR_STATE = {
+  stash: {
+    items: [
+      {
+        item: {
+          id: "paca",
+          name: "PACA",
+          description: "Body Armor Class 2. Protects: Thorax. Max Durability: 30.",
+          type: "armor",
+          rarity: "common",
+          value: 15000,
+          armorClass: 2,
+          durability: 30,
+          maxDurability: 30,
+          protectedZones: ["Thorax"],
+          iconName: "Shield",
+        },
+        quantity: 0,
+      },
+    ],
+    roubles: 120000,
+    weapons: [],
+    equippedWeaponId: "",
+  },
+  activeRaid: {
+    isActive: false,
+    map: null,
+    tiles: [],
+    currentStage: 0,
+    status: "deploying",
+    combatTarget: null,
+    logs: [],
+    lootFound: [],
+    secureContainerSaved: [],
+    elapsedSeconds: 0,
+    playSpeed: 1,
+    usedMedkitDuringRaid: false,
+    reinforcementsSpawnedThisTile: 0,
+    killsByTier: { Scav: 0, PMC: 0, Boss: 0 },
+  },
+  selectedMapId: "factory",
+};
+
+async function runSparseArmorViewport(browser, width, height) {
+  const page = await browser.newPage({ viewport: { width, height } });
+  const pageErrors = [];
+  page.on("pageerror", (e) => pageErrors.push(String(e)));
+  page.on("console", (m) => {
+    if (m.type() === "error" && !m.text().includes("Failed to load resource")) pageErrors.push(m.text());
+  });
+  await page.addInitScript((stateJson) => {
+    localStorage.setItem("tarkov_zero_player_state_v1", stateJson);
+  }, JSON.stringify(SPARSE_ARMOR_STATE));
+
+  await page.goto(BASE + "/", { waitUntil: "load", timeout: 30000 });
+  await page.waitForSelector("#tab-stash-btn", { timeout: 15000 });
+  await page.click("#tab-stash-btn");
+  await page.waitForSelector("#stash-screen", { timeout: 15000 });
+  await page.click("#stash-cat-armor-btn");
+  await page.waitForTimeout(400);
+
+  const vp = `${width}x${height}-sparse-armor`;
+  const m = await page.evaluate(() => {
+    const grid = document.getElementById("stash-grid");
+    if (!grid) return { gridPresent: false, cardCount: 0, cardHeight: null, gridHeight: 0 };
+    const cards = [...grid.children];
+    const first = cards[0]?.getBoundingClientRect();
+    return {
+      gridPresent: true,
+      cardCount: cards.length,
+      cardHeight: first ? Math.round(first.height) : null,
+      gridHeight: grid.clientHeight,
+    };
+  });
+
+  report(vp, "seeded sparse armor stash renders in the grid", m.gridPresent && m.cardCount === 1, `${m.cardCount} card(s)`);
+  report(
+    vp,
+    "lone armor card does not stretch to fill the grid column",
+    !!m.cardHeight && m.cardHeight < m.gridHeight - 2,
+    `card=${m.cardHeight}px grid=${m.gridHeight}px`
+  );
+  report(vp, "no page errors", pageErrors.length === 0, pageErrors.slice(0, 3).join(" | ") || "clean");
+
+  await page.close();
+}
+
 async function runViewport(browser, width, height, expectFullFit) {
   const page = await browser.newPage({ viewport: { width, height } });
   const pageErrors = [];
@@ -182,6 +269,7 @@ try {
   await runViewport(browser, 1920, 1080, false);
   await runViewport(browser, 2560, 1440, true);
   await runViewport(browser, 1280, 800, false);
+  await runSparseArmorViewport(browser, 1920, 1080);
 } catch (e) {
   console.error("\nui:check harness error:", e.message || e);
   results.push({ ok: false });
