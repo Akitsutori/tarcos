@@ -358,10 +358,10 @@ export const StashScreen: React.FC<StashScreenProps> = ({
   const totalStashValue = stash.items.reduce((acc, entry) => acc + (entry.item.value * entry.quantity), 0) + stash.roubles;
 
   return (
-    <div id="stash-screen" className="space-y-4">
+    <div id="stash-screen" className="flex flex-col gap-4 lg:h-app-viewport lg:overflow-hidden">
 
       {/* COMPACT STAT STRIP */}
-      <Card padding="sm" className="flex flex-wrap items-center justify-between gap-x-5 gap-y-2">
+      <Card id="stash-vitals-card" padding="sm" className="flex flex-wrap items-center justify-between gap-x-5 gap-y-2 shrink-0">
         <div className="flex items-center gap-5">
           <div>
             <SectionLabel className="flex items-center gap-1.5">
@@ -389,8 +389,8 @@ export const StashScreen: React.FC<StashScreenProps> = ({
         </div>
       </Card>
 
-      {/* MAIN CONTENT: 2/3 INVENTORY + 1/3 SIDEBAR (proportional, viewport-anchored at lg) */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-4 lg:h-app-viewport">
+      {/* MAIN CONTENT: 2/3 INVENTORY + 1/3 SIDEBAR (proportional, fills the app-viewport) */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)] lg:flex-1 lg:min-h-0 gap-4">
         {/* STASH ITEMS SECTION */}
         <div className="bg-panel border border-border rounded-card p-4 flex flex-col min-h-[400px] lg:min-h-0 min-w-0">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-border pb-3 mb-3">
@@ -426,7 +426,7 @@ export const StashScreen: React.FC<StashScreenProps> = ({
               <span className="text-meta text-fg-faint font-mono mt-1">Deploy on raids to scavenge supplies or buy from market.</span>
             </div>
           ) : (
-            <div className="grid grid-cols-items gap-3 pr-1 lg:flex-1 lg:min-h-0 lg:overflow-y-auto">
+            <div id="stash-grid" className="grid grid-cols-items gap-3 pr-1 lg:flex-1 lg:min-h-0 lg:overflow-y-auto">
               {/* Armor/helmet pieces: one card per instance with its own durability */}
               {filteredArmorPieces.map(({ item, stashIndex }) => (
                 <ArmorPieceCard
@@ -458,18 +458,18 @@ export const StashScreen: React.FC<StashScreenProps> = ({
           )}
         </div>
 
-        {/* RIGHT SIDEBAR: VITALS -> EQUIPPED ARMOR -> WEAPONS VAULT (scrollable tail) */}
-        <div className="space-y-4 flex flex-col lg:min-h-0 min-w-0">
+        {/* RIGHT SIDEBAR: VITALS -> EQUIPPED ARMOR -> WEAPONS VAULT (scrolls as one bounded column) */}
+        <div id="stash-sidebar" className="space-y-4 flex flex-col lg:min-h-0 lg:overflow-y-auto min-w-0">
 
           {/* PMC REAL-TIME VITAL MONITOR CARD */}
-          <Card className="shrink-0">
+          <Card id="stash-pmc-vitals-card" className="shrink-0">
             <PanelHeader
               title="PMC Vitals Monitor"
               icon={<Heart size={16} className="text-good fill-good animate-pulse" />}
             />
 
             {/* OVERALL HEALTH INTEGRITY */}
-            <div className="mb-3">
+            <div className="mb-2.5">
               <div className="flex justify-between items-center text-strong font-mono mb-1.5">
                 <span className="text-fg-mid font-bold">Overall Integrity</span>
                 <span className={`font-bold ${totalCurrentHP === totalMaxHP ? "text-good" : "text-warn"}`}>
@@ -485,13 +485,13 @@ export const StashScreen: React.FC<StashScreenProps> = ({
             </div>
 
             {/* 7-ZONE LIMBS HP MATRIX */}
-            <div className="border-t border-border/60 pt-3 mb-3">
+            <div className="border-t border-border/60 pt-2.5 mb-2.5">
               <SectionLabel className="mb-2">7-Zone Body Integrity Matrix</SectionLabel>
               {pmc.bodyParts && <BodyMap bodyParts={pmc.bodyParts} />}
             </div>
 
             {/* ENERGY & HYDRATION STATUS */}
-            <div className="grid grid-cols-2 gap-2.5 border-t border-border/60 pt-3">
+            <div className="grid grid-cols-2 gap-2.5 border-t border-border/60 pt-2.5">
               <div className="p-2 bg-panel-2 rounded-control border border-border/80">
                 <div className="flex justify-between items-center text-meta font-mono mb-1">
                   <span className="text-fg-mid flex items-center gap-1">
@@ -521,7 +521,7 @@ export const StashScreen: React.FC<StashScreenProps> = ({
 
             {/* PASSIVE RECOVERY BADGE */}
             {totalCurrentHP < totalMaxHP && (
-              <div className="mt-2.5 p-1.5 bg-good/20 border border-good/40 rounded-control text-meta font-mono text-good flex items-center justify-center gap-1.5">
+              <div className="mt-2 p-1.5 bg-good/20 border border-good/40 rounded-control text-meta font-mono text-good flex items-center justify-center gap-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-good animate-ping" />
                 <span>Passive recovery active (+{MEDSTATION_HEAL_PER_5S_BY_LEVEL[hideout.medstation?.level ?? 0]} HP/5s)</span>
               </div>
@@ -529,13 +529,13 @@ export const StashScreen: React.FC<StashScreenProps> = ({
           </Card>
 
           {/* EQUIPPED ARMOR CARD */}
-          <Card className="shrink-0">
+          <Card id="stash-armor-card" className="shrink-0">
             <PanelHeader title="Equipped Armor" />
 
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               {/* Body Armor */}
-              <div className={`p-2.5 rounded-control border ${pmc.equippedArmor ? "bg-panel-2 border-info" : "bg-panel-2/60 border-border/60"}`}>
-                <div className="flex justify-between items-center mb-1.5">
+              <div className={`p-2 rounded-control border ${pmc.equippedArmor ? "bg-panel-2 border-info" : "bg-panel-2/60 border-border/60"}`}>
+                <div className="flex justify-between items-center mb-1">
                   <span className="text-meta text-fg-low font-mono font-bold uppercase">Body Armor</span>
                   {pmc.equippedArmor && <Badge tone="info">Equipped</Badge>}
                 </div>
@@ -549,7 +549,7 @@ export const StashScreen: React.FC<StashScreenProps> = ({
                     </div>
                     {pmc.equippedArmor.durability !== undefined && pmc.equippedArmor.maxDurability !== undefined && (
                       <DurabilityBar
-                        className="mt-2"
+                        className="mt-1.5"
                         label="Durability"
                         statusText={`${pmc.equippedArmor.durability}/${pmc.equippedArmor.maxDurability}`}
                         current={pmc.equippedArmor.durability}
@@ -563,8 +563,8 @@ export const StashScreen: React.FC<StashScreenProps> = ({
               </div>
 
               {/* Helmet */}
-              <div className={`p-2.5 rounded-control border ${pmc.equippedHelmet ? "bg-panel-2 border-info" : "bg-panel-2/60 border-border/60"}`}>
-                <div className="flex justify-between items-center mb-1.5">
+              <div className={`p-2 rounded-control border ${pmc.equippedHelmet ? "bg-panel-2 border-info" : "bg-panel-2/60 border-border/60"}`}>
+                <div className="flex justify-between items-center mb-1">
                   <span className="text-meta text-fg-low font-mono font-bold uppercase">Helmet</span>
                   {pmc.equippedHelmet && <Badge tone="info">Equipped</Badge>}
                 </div>
@@ -578,7 +578,7 @@ export const StashScreen: React.FC<StashScreenProps> = ({
                     </div>
                     {pmc.equippedHelmet.durability !== undefined && pmc.equippedHelmet.maxDurability !== undefined && (
                       <DurabilityBar
-                        className="mt-2"
+                        className="mt-1.5"
                         label="Durability"
                         statusText={`${pmc.equippedHelmet.durability}/${pmc.equippedHelmet.maxDurability}`}
                         current={pmc.equippedHelmet.durability}
@@ -593,12 +593,12 @@ export const StashScreen: React.FC<StashScreenProps> = ({
             </div>
           </Card>
 
-          {/* WEAPONS VAULT STORAGE CARD — scrollable tail of the sidebar */}
-          <Card className="flex flex-col justify-between lg:min-h-0 lg:flex-1">
-            <div className="lg:min-h-0 lg:flex-1 flex flex-col">
+          {/* WEAPONS VAULT STORAGE CARD — natural height at the tail of the sidebar */}
+          <Card id="stash-weapons-card" className="flex flex-col justify-between shrink-0">
+            <div className="flex flex-col">
               <PanelHeader title="Weapons Vault" />
 
-              <ScrollPane className="space-y-3 lg:flex-1">
+              <ScrollPane className="space-y-3">
                 {(stash.weapons || []).map((gun) => {
                   const isEquipped = stash.equippedWeaponId === gun.id;
 

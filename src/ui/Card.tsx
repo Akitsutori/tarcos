@@ -11,12 +11,13 @@ interface CardProps {
   children: React.ReactNode;
   className?: string;
   padding?: "sm" | "md";
+  id?: string;
 }
 
-export const Card: React.FC<CardProps> = ({ children, className = "", padding = "md" }) => {
+export const Card: React.FC<CardProps> = ({ children, className = "", padding = "md", id }) => {
   const pad = padding === "sm" ? "p-3" : "p-4";
   return (
-    <div className={`bg-panel border border-border rounded-card ${pad} ${className}`}>
+    <div id={id} className={`bg-panel border border-border rounded-card ${pad} ${className}`}>
       {children}
     </div>
   );
