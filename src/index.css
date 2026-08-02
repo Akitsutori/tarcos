@@ -4,6 +4,67 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* ------------------------------------------------------------------ */
+  /* Design tokens (semantic)                                            */
+  /* ------------------------------------------------------------------ */
+  /* Surfaces */
+  --color-bg: #020617;        /* page background (slate-950) */
+  --color-panel: #0f172a;     /* card surface (slate-900) */
+  --color-panel-2: #020617;   /* raised / inner surface (slate-950) */
+  --color-panel-hi: #1e293b;  /* active / hover surface (slate-800) */
+
+  /* Borders */
+  --color-border: #1e293b;    /* default border (slate-800) */
+  --color-border-soft: #334155; /* hover / highlight border (slate-700) */
+
+  /* Foreground / text hierarchy */
+  --color-fg-hi: #f1f5f9;     /* primary text (slate-100) */
+  --color-fg: #cbd5e1;        /* default text (slate-300) */
+  --color-fg-mid: #94a3b8;    /* secondary text (slate-400) */
+  --color-fg-low: #64748b;    /* muted text (slate-500) */
+  --color-fg-faint: #475569;  /* faint text (slate-600) */
+
+  /* Status / semantic */
+  --color-accent: #f59e0b;    /* money / selected (amber-500) */
+  --color-good: #10b981;      /* ok / serviceable (emerald-500) */
+  --color-warn: #fbbf24;      /* worn / attention (amber-400) */
+  --color-crit: #ef4444;      /* broken / danger (red-500) */
+  --color-info: #06b6d4;      /* info / equipped (cyan-500) */
+
+  /* Radii */
+  --radius-card: 0.5rem;      /* panels (was rounded-lg) */
+  --radius-control: 0.375rem; /* buttons / inputs (was rounded-md) */
+  --radius-pill: 9999px;
+
+  /* Type scale (semantic) */
+  --text-label: 0.6875rem;    /* uppercase micro labels (11px) */
+  --text-label--line-height: 1rem;
+  --text-meta: 0.6875rem;     /* meta rows / buttons (11px) */
+  --text-meta--line-height: 1rem;
+  --text-body: 0.75rem;       /* descriptions (12px) */
+  --text-body--line-height: 1rem;
+  --text-strong: 0.8125rem;   /* item / weapon names (13px) */
+  --text-strong--line-height: 1.125rem;
+  --text-title: 0.875rem;     /* panel headings (14px) */
+  --text-title--line-height: 1.25rem;
+  --text-stat: 1.125rem;      /* headline numbers (18px) */
+  --text-stat--line-height: 1.5rem;
+
+  /* Layout */
+  --chrome-height: 14rem;     /* header + tab nav + main padding + footer.
+                                 EDIT THIS ONE NUMBER if App chrome changes. */
+  --item-grid-cols: 2;        /* stash item grid column count */
+}
+
+/* First-class, variant-capable utilities driven purely by tokens. */
+@utility h-app-viewport {
+  height: calc(100dvh - var(--chrome-height));
+  min-height: 560px;
+}
+
+@utility grid-cols-items {
+  grid-template-columns: repeat(var(--item-grid-cols), minmax(0, 1fr));
 }
 
 /* Custom Scrollbars for a clean tech monitor */
@@ -21,4 +82,3 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #334155;
 }
-
