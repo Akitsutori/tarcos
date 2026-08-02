@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GameState, RaidLog, ClassType, PMCBodyParts, BodyPart } from "../types";
 import { getWeaponStats } from "../data/construction";
 import { ALL_MAPS } from "../data/content/maps";
@@ -12,7 +12,7 @@ import { totalCurrentHp, totalMaxHp } from "../engine/bodyParts";
 import { BodyMap } from "./BodyMap";
 import { 
   Play, Pause, Heart, Zap, Droplet, Skull, 
-  MapPin, ShieldAlert, Crosshair, Package, ArrowRight, ShieldCheck 
+  MapPin, ShieldAlert, Crosshair, Package, ArrowRight, ShieldCheck, ChevronDown 
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -38,6 +38,12 @@ export const RaidScreen: React.FC<RaidScreenProps> = ({
   const { activeRaid, pmc, stash, hideout } = gameState;
   const raid = activeRaid;
   const logContainerRef = useRef<HTMLDivElement>(null);
+  const [raidResultsOpen, setRaidResultsOpen] = useState(false);
+
+  // Reset the raid results panel to collapsed whenever a new raid deploys
+  useEffect(() => {
+    if (activeRaid.isActive) setRaidResultsOpen(false);
+  }, [activeRaid.isActive]);
 
   // Auto scroll terminal logs (only the log panel, not the page)
   useEffect(() => {
@@ -101,11 +107,12 @@ export const RaidScreen: React.FC<RaidScreenProps> = ({
   };
 
   return (
-    <div id="raid-screen" className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="space-y-6">
+      <div id="raid-screen" className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[calc(100vh-10.5rem)] lg:min-h-[560px]">
       
       {/* LEFT COLUMN: ACTIVE PMC STATUS MONITOR */}
-      <div className="bg-slate-900 border border-slate-800 rounded-lg p-5 flex flex-col justify-between">
-        <div>
+      <div className="bg-slate-900 border border-slate-800 rounded-lg p-5 flex flex-col lg:overflow-hidden">
+        <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto lg:pr-1">
           <div className="flex justify-between items-start border-b border-slate-800 pb-3 mb-4">
             <div>
               <span className="text-xs text-slate-500 font-mono uppercase tracking-widest">Operator State</span>
@@ -305,8 +312,8 @@ export const RaidScreen: React.FC<RaidScreenProps> = ({
 
         </div>
 
-        {/* CONTROLLERS OR RAID LAUNCH PANEL */}
-        <div className="mt-4 pt-4 border-t border-slate-800">
+        {/* CONTROLLERS OR RAID LAUNCH PANEL — pinned below the scrollable status column */}
+        <div className="mt-4 pt-4 border-t border-slate-800 shrink-0">
           {activeRaid.isActive ? (
             <div className="space-y-3">
               <div className="flex items-center justify-between text-xs font-mono text-slate-400">
@@ -365,26 +372,31 @@ export const RaidScreen: React.FC<RaidScreenProps> = ({
       </div>
 
       {/* CENTER & RIGHT COLUMNS: RAID SIMULATION TRACKER & LOGS */}
-      <div className="lg:col-span-2 flex flex-col gap-6">
+      <div className="lg:col-span-2 flex flex-col gap-4 lg:gap-5 min-h-0">
         
         {/* TACTICAL MAP SELECTOR / STAGE STATUS */}
         {activeRaid.isActive && activeRaid.map ? (
-          <div className="bg-slate-900 border border-slate-800 rounded-lg p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <MapPin className="text-amber-500" size={18} />
-                <h4 className="text-sm font-bold text-white font-mono uppercase tracking-wide">
-                  Raid: {activeRaid.map.name}
-                </h4>
-              </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-slate-800 border border-slate-700 text-amber-400 font-bold">
+          <div className="bg-slate-900 border border-slate-800 rounded-lg px-4 py-3">
+          <div className="flex items-center justify-between gap-3 mb-2.5">
+            <div className="flex items-center gap-2 min-w-0">
+              <MapPin className="text-amber-500 shrink-0" size={16} />
+              <h4 className="text-sm font-bold text-white font-mono uppercase tracking-wide truncate">
+                Raid: {activeRaid.map.name}
+              </h4>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-[10px] text-slate-400 font-mono">
+                Tile {activeRaid.currentStage + 1}/{activeRaid.tiles.length} · {Math.floor((activeRaid.currentStage / (activeRaid.tiles.length || 1)) * 100)}%
+              </span>
+              <span className="px-2 py-0.5 rounded text-[9px] font-mono uppercase bg-slate-800 border border-slate-700 text-amber-400 font-bold">
                 {activeRaid.status.toUpperCase()}
               </span>
             </div>
+          </div>
 
             {/* PROCEDURAL MAP VISUAL TILES TRACK */}
-            <span className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-wider block mb-2">Procedural Room Tiles Sequence</span>
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-4 mt-1 select-none scrollbar-thin">
+            <span className="text-[8px] text-slate-500 font-mono font-bold uppercase tracking-wider block mb-1.5">Procedural Room Tiles Sequence</span>
+            <div className="flex items-center gap-1 overflow-x-auto pb-0.5 select-none scrollbar-thin">
               {activeRaid.tiles.map((tile, idx) => {
                 const isPassed = idx < activeRaid.currentStage;
                 const isCurrent = idx === activeRaid.currentStage;
@@ -393,7 +405,7 @@ export const RaidScreen: React.FC<RaidScreenProps> = ({
                 return (
                   <div 
                     key={idx} 
-                    className={`flex-shrink-0 px-2.5 py-2 rounded border font-mono text-[9px] min-w-[100px] text-center transition ${
+                    className={`flex-shrink-0 px-2 py-1 rounded border font-mono text-[8px] min-w-[76px] text-center transition ${
                       isCurrent 
                         ? "bg-amber-950/40 border-amber-500 text-amber-400 font-bold scale-105 shadow shadow-amber-500/20" 
                         : isPassed 
@@ -403,116 +415,52 @@ export const RaidScreen: React.FC<RaidScreenProps> = ({
                             : "bg-slate-950/60 border-slate-900/40 text-slate-600"
                     }`}
                   >
-                    <div className="uppercase text-[7px] opacity-60">Tile {idx}</div>
-                    <div className="truncate font-bold mt-0.5">{tile.name}</div>
+                    <div className="uppercase text-[6px] opacity-60">Tile {idx}</div>
+                    <div className="truncate font-bold mt-px">{tile.name}</div>
                   </div>
                 );
               })}
             </div>
-            
-            <div className="flex justify-between text-[10px] text-slate-500 font-mono mt-3 border-t border-slate-800/60 pt-2">
-              <span>Infiltration</span>
-              <span>Raid Progress: {Math.floor((activeRaid.currentStage / (activeRaid.tiles.length || 1)) * 100)}%</span>
-              <span>Extraction Zone</span>
             </div>
-
-            {/* ACTIVE ENCOUNTER PANEL */}
-            <AnimatePresence mode="wait">
-              {activeRaid.status === "combat" && activeRaid.combatTarget && (
-                <motion.div 
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="mt-5 p-4 bg-red-950/20 border border-red-900 rounded-lg flex flex-col md:flex-row items-center justify-between gap-4"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-red-950 rounded border border-red-800 text-red-500 animate-pulse">
-                      <Crosshair size={22} />
-                    </div>
-                    <div>
-                      <div className="text-xs font-mono text-red-400/80 uppercase font-bold tracking-wider">Hostile Combat Contact</div>
-                      <div className="text-base font-bold text-white font-mono">{activeRaid.combatTarget.name}</div>
-                    </div>
-                  </div>
-
-                  {/* ENEMY HP BAR */}
-                  {(() => {
-                    const enemyPartList = Object.values(activeRaid.combatTarget.bodyParts) as BodyPart[];
-                    const enemyCurrentHp = enemyPartList.reduce((acc, p) => acc + p.current, 0);
-                    const enemyMaxHp = enemyPartList.reduce((acc, p) => acc + p.max, 0);
-                    return (
-                      <div className="w-full md:w-48 text-right">
-                        <div className="flex justify-between text-xs font-mono text-red-400 mb-1">
-                          <span>HP:</span>
-                          <span>{enemyCurrentHp} / {enemyMaxHp}</span>
-                        </div>
-                        <div className="h-2 bg-slate-950 rounded overflow-hidden border border-red-900/60">
-                          <div 
-                            className="h-full bg-red-600" 
-                            style={{ width: `${(enemyCurrentHp / enemyMaxHp) * 100}%` }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })()}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
         ) : (
           /* DEPLOYMENT SELECTOR IF NOT IN RAID */
-          <div className="bg-slate-900 border border-slate-800 rounded-lg p-5">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <MapPin className="text-slate-400" size={18} /> Tactician Deployment Map
-            </h3>
-            <p className="text-xs text-slate-400 mb-5">
-              Choose a deployment zone below. Ensure your hydration, energy, and signature firearm modifications are optimal before deploying. PMC automatically loots, fights, and seeks extraction!
-            </p>
+          <div className="bg-slate-900 border border-slate-800 rounded-lg px-4 py-3">
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <MapPin className="text-amber-500" size={16} /> Tactician Deployment Map
+              </h3>
+              <span className="text-[10px] text-slate-500 font-mono">Select a zone to deploy</span>
+            </div>
 
-            <div className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-2.5">
               {ALL_MAPS.map((map) => {
                 const isLocked = pmc.level < map.levelRequired;
                 
                 return (
                   <div 
                     key={map.id}
-                    className={`p-4 rounded-lg border transition flex flex-col md:flex-row items-center justify-between gap-4 ${
+                    title={`${map.description} — Loot x${map.lootMultiplier.toFixed(1)} | Danger ${Math.floor(map.scavSpawnChance * 100)}% | Sector Depth ${map.stagesCount} stages`}
+                    className={`p-3 rounded-lg border flex flex-col justify-between gap-2 transition ${
                       isLocked 
-                        ? "bg-slate-950/60 border-slate-900 opacity-60 cursor-not-allowed" 
+                        ? "bg-slate-950/60 border-slate-900 opacity-60" 
                         : "bg-slate-950 border-slate-800/80 hover:border-slate-700 hover:bg-slate-950"
                     }`}
                   >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className={`text-sm font-bold font-mono text-slate-200`}>
-                          {map.name}
-                        </span>
-                        <span className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold ${
-                          map.difficulty === "Easy" ? "bg-emerald-950/60 text-emerald-400 border border-emerald-900" :
-                          map.difficulty === "Medium" ? "bg-amber-950/60 text-amber-400 border border-amber-900" :
-                          "bg-red-950/60 text-red-400 border border-red-900"
-                        }`}>
-                          {map.difficulty}
-                        </span>
+                    <div>
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="text-[11px] font-bold font-mono text-slate-200 leading-tight">{map.name}</span>
                         {isLocked && (
-                          <span className="text-[10px] text-red-500 font-mono">
-                            Requires Level {map.levelRequired}
-                          </span>
+                          <span className="text-[8px] text-red-500 font-mono font-bold shrink-0">LV{map.levelRequired}</span>
                         )}
                       </div>
-                      <p className="text-xs text-slate-500 mt-1">{map.description}</p>
-                      
-                      <div className="grid grid-cols-3 gap-2 mt-2.5 text-[10px] font-mono text-slate-400">
-                        <div>
-                          <span className="text-slate-600">Loot Tier:</span> x{map.lootMultiplier.toFixed(1)}
-                        </div>
-                        <div>
-                          <span className="text-slate-600">Danger:</span> {Math.floor(map.scavSpawnChance * 100)}%
-                        </div>
-                        <div>
-                          <span className="text-slate-600">Sector Depth:</span> {map.stagesCount} stages
-                        </div>
-                      </div>
+                      <span className={`inline-block mt-1 px-1.5 py-0.5 rounded text-[8px] font-mono font-bold ${
+                        map.difficulty === "Easy" ? "bg-emerald-950/60 text-emerald-400 border border-emerald-900" :
+                        map.difficulty === "Medium" ? "bg-amber-950/60 text-amber-400 border border-amber-900" :
+                        map.difficulty === "Hard" ? "bg-orange-950/60 text-orange-400 border border-orange-900" :
+                        "bg-red-950/60 text-red-400 border border-red-900"
+                      }`}>
+                        {map.difficulty}
+                      </span>
                     </div>
 
                     <div>
@@ -520,14 +468,14 @@ export const RaidScreen: React.FC<RaidScreenProps> = ({
                         <button
                           id={`deploy-btn-${map.id}`}
                           onClick={() => onDeployRaid(map.id)}
-                          className="w-full md:w-auto px-4 py-2 rounded-md bg-amber-500 text-slate-950 font-mono font-bold text-xs hover:bg-amber-400 transition flex items-center gap-1.5"
+                          className="w-full py-1.5 rounded-md bg-amber-500 text-slate-950 font-mono font-bold text-[10px] hover:bg-amber-400 transition flex items-center justify-center gap-1"
                         >
-                          DEPLOY RAID <ArrowRight size={12} />
+                          DEPLOY <ArrowRight size={10} />
                         </button>
                       ) : (
                         <button
                           disabled
-                          className="w-full md:w-auto px-4 py-2 rounded-md bg-slate-900 text-slate-600 font-mono font-bold text-xs border border-slate-800"
+                          className="w-full py-1.5 rounded-md bg-slate-900 text-slate-600 font-mono font-bold text-[10px] border border-slate-800"
                         >
                           LOCKED
                         </button>
@@ -541,7 +489,7 @@ export const RaidScreen: React.FC<RaidScreenProps> = ({
         )}
 
         {/* TERMINAL / LOGS INTERFACE */}
-        <div className="bg-slate-900 border border-slate-800 rounded-lg flex-1 flex flex-col overflow-hidden min-h-[300px] max-h-[500px]">
+        <div className="bg-slate-900 border border-slate-800 rounded-lg flex-1 min-h-0 overflow-hidden flex flex-col relative min-h-[300px] max-h-[60vh] lg:min-h-0 lg:max-h-none">
           <div className="bg-slate-950 px-4 py-2 border-b border-slate-800/80 flex items-center justify-between text-xs font-mono text-slate-400">
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
@@ -550,7 +498,7 @@ export const RaidScreen: React.FC<RaidScreenProps> = ({
             <span>Raid Events Log</span>
           </div>
 
-          <div ref={logContainerRef} className="flex-1 overflow-y-auto p-4 space-y-2 bg-slate-950/40 text-xs font-mono select-text selection:bg-slate-800 selection:text-white">
+          <div ref={logContainerRef} className="flex-1 min-h-0 overflow-y-auto p-4 space-y-2 bg-slate-950/40 text-xs font-mono select-text selection:bg-slate-800 selection:text-white">
             {activeRaid.logs.length === 0 ? (
               <div className="h-full flex items-center justify-center text-slate-600 italic">
                 Logs will populate automatically as raid progresses...
@@ -567,20 +515,20 @@ export const RaidScreen: React.FC<RaidScreenProps> = ({
 
           {/* LOOT SECURED AND GATHERED PANEL — during raid */}
           {activeRaid.isActive && (
-            <div className="bg-slate-950 border-t border-slate-800 p-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-slate-950 border-t border-slate-800 px-3 py-2.5 grid grid-cols-2 gap-2.5 shrink-0 h-24 lg:h-28 overflow-y-auto">
               {/* BackPack Loot */}
               <div>
                 <span className="text-[10px] text-slate-500 font-mono font-bold uppercase tracking-wider block mb-1">
                   Backpack Inventory (Lost if KIA)
                 </span>
-                <div className="flex flex-wrap gap-1 bg-slate-900 p-2 rounded min-h-[44px] border border-slate-800/80">
+                <div className="flex flex-wrap gap-1 bg-slate-900 p-1.5 rounded border border-slate-800/80">
                   {raid.lootFound.length === 0 ? (
                     <span className="text-[10px] text-slate-600 font-mono italic">Backpack empty</span>
                   ) : (
                     raid.lootFound.map((entry, index) => (
                       <div 
                         key={index} 
-                        className="px-2 py-1 bg-slate-950 text-slate-300 rounded border border-slate-800 text-[10px] font-mono flex items-center gap-1.5"
+                        className="px-1.5 py-0.5 bg-slate-950 text-slate-300 rounded border border-slate-800 text-[10px] font-mono flex items-center gap-1"
                         title={entry.item.description}
                       >
                         <Package size={10} className="text-slate-500" />
@@ -596,7 +544,110 @@ export const RaidScreen: React.FC<RaidScreenProps> = ({
                 <span className="text-[10px] text-slate-500 font-mono font-bold uppercase tracking-wider block mb-1 flex items-center gap-1">
                   <ShieldCheck size={11} className="text-emerald-400" /> Secure Container (Saved if KIA)
                 </span>
-                <div className="flex flex-wrap gap-1 bg-slate-900 p-2 rounded min-h-[44px] border border-slate-800/80">
+                <div className="flex flex-wrap gap-1 bg-slate-900 p-1.5 rounded border border-slate-800/80">
+                  {raid.secureContainerSaved.length === 0 ? (
+                    <span className="text-[10px] text-slate-600 font-mono italic">Secure container empty</span>
+                  ) : (
+                    raid.secureContainerSaved.map((entry, index) => (
+                      <div 
+                        key={index} 
+                        className="px-1.5 py-0.5 bg-emerald-950/20 text-emerald-400 rounded border border-emerald-900/40 text-[10px] font-mono flex items-center gap-1"
+                        title={entry.item.description}
+                      >
+                        <Package size={10} className="text-emerald-500" />
+                        {entry.item.name} {entry.quantity > 1 ? `x${entry.quantity}` : ""}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ACTIVE COMBAT CONTACT — overlay, never shifts the log */}
+          <AnimatePresence mode="wait">
+            {activeRaid.status === "combat" && activeRaid.combatTarget && (
+              <motion.div 
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                className="absolute top-[44px] right-2 z-20 w-[300px] max-w-[calc(100%-1rem)] p-2.5 bg-red-950/90 border border-red-900 rounded-lg flex items-center justify-between gap-3 shadow-lg shadow-red-950/40 backdrop-blur-sm"
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="p-1.5 bg-red-950 rounded border border-red-800 text-red-500 animate-pulse shrink-0">
+                    <Crosshair size={14} />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[9px] font-mono text-red-400/80 uppercase font-bold tracking-wider">Hostile Contact</div>
+                    <div className="text-sm font-bold text-white font-mono truncate">{activeRaid.combatTarget.name}</div>
+                  </div>
+                </div>
+
+                {/* ENEMY HP BAR */}
+                {(() => {
+                  const enemyPartList = Object.values(activeRaid.combatTarget.bodyParts) as BodyPart[];
+                  const enemyCurrentHp = enemyPartList.reduce((acc, p) => acc + p.current, 0);
+                  const enemyMaxHp = enemyPartList.reduce((acc, p) => acc + p.max, 0);
+                  return (
+                    <div className="w-24 shrink-0 text-right">
+                      <div className="flex justify-between text-[9px] font-mono text-red-400 mb-0.5">
+                        <span>HP</span>
+                        <span>{enemyCurrentHp}/{enemyMaxHp}</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-950 rounded overflow-hidden border border-red-900/60">
+                        <div 
+                          className="h-full bg-red-600" 
+                          style={{ width: `${(enemyCurrentHp / enemyMaxHp) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })()}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+        </div>
+
+        {/* POST-RAID SUMMARY — after raid ends (collapsible) */}
+        {!activeRaid.isActive && activeRaid.map && (
+          <div className="bg-slate-900 border border-slate-800 rounded-lg shrink-0 overflow-hidden">
+            <button
+              onClick={() => setRaidResultsOpen(o => !o)}
+              className="w-full px-4 py-2.5 flex items-center justify-between gap-3 bg-slate-950/60 border-b border-slate-800/80 hover:bg-slate-950 transition"
+              aria-expanded={raidResultsOpen}
+            >
+              <span className="flex items-center gap-2 min-w-0">
+                <Package size={14} className="text-slate-400 shrink-0" />
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">Raid Results</span>
+                <span className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold ${
+                  activeRaid.status === "extracted" 
+                    ? "bg-emerald-950/60 text-emerald-400 border border-emerald-900" 
+                    : "bg-red-950/60 text-red-400 border border-red-900"
+                }`}>
+                  {activeRaid.status === "extracted" ? "Extraction Successful" : "PMC Killed in Action"}
+                </span>
+              </span>
+              <ChevronDown size={14} className={`text-slate-400 shrink-0 transition-transform duration-200 ${raidResultsOpen ? "" : "-rotate-90"}`} />
+            </button>
+
+            <AnimatePresence initial={false}>
+              {raidResultsOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <div className="p-4 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Secure Container — always saved */}
+              <div>
+                <span className="text-[10px] text-emerald-500 font-mono font-bold uppercase tracking-wider block mb-1 flex items-center gap-1">
+                  <ShieldCheck size={11} className="text-emerald-400" /> Secure Container (Saved to Stash)
+                </span>
+                <div className="flex flex-wrap gap-1 bg-slate-950 p-2 rounded min-h-[44px] border border-slate-800/80">
                   {raid.secureContainerSaved.length === 0 ? (
                     <span className="text-[10px] text-slate-600 font-mono italic">Secure container empty</span>
                   ) : (
@@ -613,80 +664,46 @@ export const RaidScreen: React.FC<RaidScreenProps> = ({
                   )}
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* POST-RAID SUMMARY — after raid ends */}
-          {!activeRaid.isActive && activeRaid.map && (
-            <div className="bg-slate-900 border border-slate-800 rounded-lg p-5 space-y-4">
-              {/* Status Banner */}
-              <div className={`p-3 rounded border text-center text-xs font-mono font-bold uppercase tracking-wider ${
-                activeRaid.status === "extracted" 
-                  ? "bg-emerald-950/30 border-emerald-900 text-emerald-400" 
-                  : "bg-red-950/30 border-red-900 text-red-400"
-              }`}>
-                {activeRaid.status === "extracted" ? "Extraction Successful" : "PMC Killed in Action"}
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Secure Container — always saved */}
-                <div>
-                  <span className="text-[10px] text-emerald-500 font-mono font-bold uppercase tracking-wider block mb-1 flex items-center gap-1">
-                    <ShieldCheck size={11} className="text-emerald-400" /> Secure Container (Saved to Stash)
-                  </span>
-                  <div className="flex flex-wrap gap-1 bg-slate-950 p-2 rounded min-h-[44px] border border-slate-800/80">
-                    {raid.secureContainerSaved.length === 0 ? (
-                      <span className="text-[10px] text-slate-600 font-mono italic">Secure container empty</span>
-                    ) : (
-                      raid.secureContainerSaved.map((entry, index) => (
-                        <div 
-                          key={index} 
-                          className="px-2 py-1 bg-emerald-950/20 text-emerald-400 rounded border border-emerald-900/40 text-[10px] font-mono flex items-center gap-1"
-                          title={entry.item.description}
-                        >
-                          <Package size={10} className="text-emerald-500" />
-                          {entry.item.name} {entry.quantity > 1 ? `x${entry.quantity}` : ""}
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-
-                {/* Backpack — depends on outcome */}
-                <div>
-                  <span className={`text-[10px] font-mono font-bold uppercase tracking-wider block mb-1 flex items-center gap-1 ${
-                    activeRaid.status === "extracted" ? "text-emerald-500" : "text-red-500"
-                  }`}>
-                    <Package size={11} className={activeRaid.status === "extracted" ? "text-emerald-400" : "text-red-400"} /> 
-                    Backpack {activeRaid.status === "extracted" ? "(Moved to Stash)" : "(Lost — KIA)"}
-                  </span>
-                  <div className="flex flex-wrap gap-1 bg-slate-950 p-2 rounded min-h-[44px] border border-slate-800/80">
-                    {raid.lootFound.length === 0 ? (
-                      <span className="text-[10px] text-slate-600 font-mono italic">Backpack empty</span>
-                    ) : (
-                      raid.lootFound.map((entry, index) => (
-                        <div 
-                          key={index} 
-                          className={`px-2 py-1 rounded border text-[10px] font-mono flex items-center gap-1.5 ${
-                            activeRaid.status === "extracted" 
-                              ? "bg-emerald-950/20 text-emerald-400 border-emerald-900/40" 
-                              : "bg-red-950/20 text-red-400 border-red-900/40 line-through opacity-60"
-                          }`}
-                          title={entry.item.description}
-                        >
-                          <Package size={10} className={activeRaid.status === "extracted" ? "text-emerald-500" : "text-red-500"} />
-                          {entry.item.name} {entry.quantity > 1 ? `x${entry.quantity}` : ""}
-                        </div>
-                      ))
-                    )}
-                  </div>
+              {/* Backpack — depends on outcome */}
+              <div>
+                <span className={`text-[10px] font-mono font-bold uppercase tracking-wider block mb-1 flex items-center gap-1 ${
+                  activeRaid.status === "extracted" ? "text-emerald-500" : "text-red-500"
+                }`}>
+                  <Package size={11} className={activeRaid.status === "extracted" ? "text-emerald-400" : "text-red-400"} /> 
+                  Backpack {activeRaid.status === "extracted" ? "(Moved to Stash)" : "(Lost — KIA)"}
+                </span>
+                <div className="flex flex-wrap gap-1 bg-slate-950 p-2 rounded min-h-[44px] border border-slate-800/80">
+                  {raid.lootFound.length === 0 ? (
+                    <span className="text-[10px] text-slate-600 font-mono italic">Backpack empty</span>
+                  ) : (
+                    raid.lootFound.map((entry, index) => (
+                      <div 
+                        key={index} 
+                        className={`px-2 py-1 rounded border text-[10px] font-mono flex items-center gap-1.5 ${
+                          activeRaid.status === "extracted" 
+                            ? "bg-emerald-950/20 text-emerald-400 border-emerald-900/40" 
+                            : "bg-red-950/20 text-red-400 border-red-900/40 line-through opacity-60"
+                        }`}
+                        title={entry.item.description}
+                      >
+                        <Package size={10} className={activeRaid.status === "extracted" ? "text-emerald-500" : "text-red-500"} />
+                        {entry.item.name} {entry.quantity > 1 ? `x${entry.quantity}` : ""}
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             </div>
-          )}
-        </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
 
       </div>
+    </div>
     </div>
   );
 };
