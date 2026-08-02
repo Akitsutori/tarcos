@@ -1523,7 +1523,8 @@
     "combatTarget": null,
     "lootFound": [
       "surgical_kitx1",
-      "helmet_6b47x2",
+      "helmet_6b47x1",
+      "helmet_6b47x1",
       "circuit_boardx1",
       "nutsx1",
       "moe_stockx1",
@@ -1660,7 +1661,8 @@
     },
     "lootFound": [
       "surgical_kitx1",
-      "helmet_6b47x2",
+      "helmet_6b47x1",
+      "helmet_6b47x1",
       "circuit_boardx1",
       "nutsx1",
       "moe_stockx1",
@@ -1745,7 +1747,8 @@
     },
     "lootFound": [
       "surgical_kitx1",
-      "helmet_6b47x2",
+      "helmet_6b47x1",
+      "helmet_6b47x1",
       "circuit_boardx1",
       "nutsx1",
       "moe_stockx1",
@@ -1833,7 +1836,8 @@
       "tor_teamx1",
       "fast_mtx1",
       "surgical_kitx1",
-      "helmet_6b47x2",
+      "helmet_6b47x1",
+      "helmet_6b47x1",
       "circuit_boardx1",
       "nutsx1",
       "moe_stockx1",
@@ -1846,8 +1850,10 @@
       "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
-      "armor_glukharx2",
-      "altynx2"
+      "armor_glukharx1",
+      "armor_glukharx1",
+      "altynx1",
+      "altynx1"
     ],
     "stashItems": [],
     "logs": [
@@ -1991,7 +1997,8 @@
       "tor_teamx1",
       "fast_mtx1",
       "surgical_kitx1",
-      "helmet_6b47x2",
+      "helmet_6b47x1",
+      "helmet_6b47x1",
       "circuit_boardx1",
       "nutsx1",
       "moe_stockx1",
@@ -2005,8 +2012,10 @@
       "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
-      "armor_glukharx2",
-      "altynx2"
+      "armor_glukharx1",
+      "armor_glukharx1",
+      "altynx1",
+      "altynx1"
     ],
     "stashItems": [],
     "logs": [
@@ -2070,7 +2079,8 @@
       "tor_teamx1",
       "fast_mtx1",
       "surgical_kitx1",
-      "helmet_6b47x2",
+      "helmet_6b47x1",
+      "helmet_6b47x1",
       "circuit_boardx1",
       "boltsx1",
       "nutsx1",
@@ -2086,8 +2096,10 @@
       "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
-      "armor_glukharx2",
-      "altynx2"
+      "armor_glukharx1",
+      "armor_glukharx1",
+      "altynx1",
+      "altynx1"
     ],
     "stashItems": [],
     "logs": [
@@ -2152,7 +2164,8 @@
       "armor_6b13x1",
       "fast_mtx1",
       "surgical_kitx1",
-      "helmet_6b47x2",
+      "helmet_6b47x1",
+      "helmet_6b47x1",
       "circuit_boardx2",
       "boltsx1",
       "nutsx1",
@@ -2168,8 +2181,10 @@
       "ammo_12x70_slugx1"
     ],
     "secureContainerSaved": [
-      "armor_glukharx2",
-      "altynx2"
+      "armor_glukharx1",
+      "armor_glukharx1",
+      "altynx1",
+      "altynx1"
     ],
     "stashItems": [],
     "logs": [
@@ -2235,7 +2250,8 @@
       "armor_6b13x1",
       "fast_mtx1",
       "surgical_kitx1",
-      "helmet_6b47x2",
+      "helmet_6b47x1",
+      "helmet_6b47x1",
       "circuit_boardx2",
       "boltsx1",
       "nutsx1",
@@ -2252,7 +2268,8 @@
       "suspicious_letterx1"
     ],
     "secureContainerSaved": [
-      "armor_glukharx2",
+      "armor_glukharx1",
+      "armor_glukharx1",
       "fuel_tankx1",
       "altynx1"
     ],
@@ -2320,7 +2337,8 @@
       "armor_6b13x1",
       "fast_mtx1",
       "surgical_kitx1",
-      "helmet_6b47x2",
+      "helmet_6b47x1",
+      "helmet_6b47x1",
       "circuit_boardx2",
       "boltsx1",
       "nutsx1",
@@ -2337,7 +2355,8 @@
       "suspicious_letterx1"
     ],
     "secureContainerSaved": [
-      "armor_glukharx2",
+      "armor_glukharx1",
+      "armor_glukharx1",
       "fuel_tankx1",
       "altynx1"
     ],
@@ -2401,7 +2420,8 @@
       "armor_6b13x1",
       "fast_mtx1",
       "surgical_kitx1",
-      "helmet_6b47x2",
+      "helmet_6b47x1",
+      "helmet_6b47x1",
       "circuit_boardx2",
       "boltsx1",
       "nutsx1",
@@ -2418,17 +2438,19 @@
       "suspicious_letterx1"
     ],
     "secureContainerSaved": [
-      "armor_glukharx2",
+      "armor_glukharx1",
+      "armor_glukharx1",
       "fuel_tankx1",
       "altynx1"
     ],
     "stashItems": [
-      "altynx2",
+      "altynx1",
       "tor_teamx1",
       "armor_6b13x1",
       "fast_mtx1",
       "surgical_kitx1",
-      "helmet_6b47x2",
+      "helmet_6b47x1",
+      "helmet_6b47x1",
       "circuit_boardx2",
       "boltsx1",
       "nutsx1",
@@ -2443,8 +2465,10 @@
       "tetrizx1",
       "ammo_12x70_slugx1",
       "suspicious_letterx1",
-      "armor_glukharx2",
-      "fuel_tankx1"
+      "armor_glukharx1",
+      "armor_glukharx1",
+      "fuel_tankx1",
+      "altynx1"
     ],
     "logs": [
       {

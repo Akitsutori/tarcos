@@ -271,4 +271,27 @@ describe('Raid Resolution Characterization (current runRaidTick behavior)', () =
     expect(result.pmc.skills.perception.xp).toBe(25);
     expect(raid.logs.some(l => l.message.includes("PMC extracted successfully"))).toBe(true);
   });
+
+  it('extraction: armor/helmet loot stays as distinct stash pieces with their own durability', () => {
+    const state = makeGameState();
+    state.activeRaid.status = "scavenging";
+    state.activeRaid.tiles = [{ name: "Exit", description: "Extraction point", type: "extraction" } as RoomTile];
+    state.activeRaid.lootFound = [
+      { item: { ...ALL_ITEMS.armor_6b23, durability: 33 }, quantity: 1 },
+      { item: { ...ALL_ITEMS.armor_6b23, durability: 12 }, quantity: 1 },
+    ];
+    state.activeRaid.secureContainerSaved = [
+      { item: { ...ALL_ITEMS.fast_mt, durability: 20 }, quantity: 1 },
+    ];
+
+    stubMathRandom([0, 0, 0]);
+    const result = runRaidTick(state);
+
+    const armorPieces = result.stash.items.filter(e => e.item.id === "armor_6b23");
+    expect(armorPieces).toHaveLength(2);
+    expect(armorPieces.map(e => e.item.durability).sort()).toEqual([12, 33]);
+    const helmetPieces = result.stash.items.filter(e => e.item.id === "fast_mt");
+    expect(helmetPieces).toHaveLength(1);
+    expect(helmetPieces[0].item.durability).toBe(20);
+  });
 });

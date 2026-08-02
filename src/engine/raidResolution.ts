@@ -3,12 +3,19 @@ import { ARCHETYPE_WEIGHTS } from "../data/construction";
 import { createLog } from "./utils";
 import { KIAReason } from "./contracts";
 import { finalizeQuestsAndXP, refillQuests } from "./progression";
+import { isArmorItem } from "./lootManagement";
 import { XP_PER_LEVEL, PERCEPTION_XP_GAIN } from "../data/tuning/progressionConfig";
 
 /**
- * Moves a single loot entry into the stash, merging with any existing stack.
+ * Moves a single loot entry into the stash. Armor/helmet pieces are instances
+ * and always become their own stash entry (per-piece durability); other items
+ * merge with any existing stack by id.
  */
 const moveIntoStash = (state: GameState, entry: { item: GameItem; quantity: number }) => {
+  if (isArmorItem(entry.item)) {
+    state.stash.items.push({ item: entry.item, quantity: entry.quantity });
+    return;
+  }
   const stashEntry = state.stash.items.find(st => st.item.id === entry.item.id);
   if (stashEntry) stashEntry.quantity += entry.quantity;
   else state.stash.items.push({ item: entry.item, quantity: entry.quantity });
@@ -90,6 +97,10 @@ export const handleKIA = (state: GameState, reason: KIAReason): void => {
   raid.isActive = false;
 
   raid.secureContainerSaved.forEach((containerEntry) => {
+    if (isArmorItem(containerEntry.item)) {
+      state.stash.items.push({ item: containerEntry.item, quantity: containerEntry.quantity });
+      return;
+    }
     const stashEntry = state.stash.items.find(i => i.item.id === containerEntry.item.id);
     if (stashEntry) stashEntry.quantity += containerEntry.quantity;
     else state.stash.items.push({ item: containerEntry.item, quantity: containerEntry.quantity });

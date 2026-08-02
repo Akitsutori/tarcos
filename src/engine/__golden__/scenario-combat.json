@@ -3251,7 +3251,8 @@
     },
     "combatTarget": null,
     "lootFound": [
-      "armor_6b23x2",
+      "armor_6b23x1",
+      "armor_6b23x1",
       "nutsx1",
       "untarx1",
       "collimatorx1",
@@ -3264,7 +3265,8 @@
     "secureContainerSaved": [
       "golden_roosterx1",
       "tor_teamx1",
-      "fast_mtx2"
+      "fast_mtx1",
+      "fast_mtx1"
     ],
     "stashItems": [],
     "logs": [
@@ -3342,7 +3344,8 @@
     },
     "combatTarget": null,
     "lootFound": [
-      "armor_6b23x2",
+      "armor_6b23x1",
+      "armor_6b23x1",
       "nutsx1",
       "untarx1",
       "collimatorx1",
@@ -3356,7 +3359,8 @@
     "secureContainerSaved": [
       "golden_roosterx1",
       "tor_teamx1",
-      "fast_mtx2"
+      "fast_mtx1",
+      "fast_mtx1"
     ],
     "stashItems": [],
     "logs": [
@@ -3434,7 +3438,8 @@
     },
     "combatTarget": null,
     "lootFound": [
-      "armor_6b23x2",
+      "armor_6b23x1",
+      "armor_6b23x1",
       "nutsx1",
       "untarx1",
       "cpu_fanx1",
@@ -3450,7 +3455,8 @@
     "secureContainerSaved": [
       "golden_roosterx1",
       "tor_teamx1",
-      "fast_mtx2"
+      "fast_mtx1",
+      "fast_mtx1"
     ],
     "stashItems": [],
     "logs": [
@@ -3528,7 +3534,8 @@
     },
     "combatTarget": null,
     "lootFound": [
-      "armor_6b23x2",
+      "armor_6b23x1",
+      "armor_6b23x1",
       "nutsx1",
       "untarx1",
       "cpu_fanx1",
@@ -3545,7 +3552,8 @@
     "secureContainerSaved": [
       "golden_roosterx1",
       "tor_teamx1",
-      "fast_mtx2"
+      "fast_mtx1",
+      "fast_mtx1"
     ],
     "stashItems": [],
     "logs": [
@@ -3619,7 +3627,8 @@
     },
     "combatTarget": null,
     "lootFound": [
-      "armor_6b23x2",
+      "armor_6b23x1",
+      "armor_6b23x1",
       "nutsx1",
       "untarx1",
       "cpu_fanx1",
@@ -3638,7 +3647,8 @@
     "secureContainerSaved": [
       "golden_roosterx1",
       "tor_teamx1",
-      "fast_mtx2"
+      "fast_mtx1",
+      "fast_mtx1"
     ],
     "stashItems": [],
     "logs": [
@@ -3720,7 +3730,8 @@
     },
     "combatTarget": null,
     "lootFound": [
-      "armor_6b23x2",
+      "armor_6b23x1",
+      "armor_6b23x1",
       "pacax1",
       "nutsx1",
       "untarx1",
@@ -3741,7 +3752,8 @@
     "secureContainerSaved": [
       "golden_roosterx1",
       "tor_teamx1",
-      "fast_mtx2"
+      "fast_mtx1",
+      "fast_mtx1"
     ],
     "stashItems": [],
     "logs": [
@@ -3834,7 +3846,8 @@
       ]
     },
     "lootFound": [
-      "armor_6b23x2",
+      "armor_6b23x1",
+      "armor_6b23x1",
       "pacax1",
       "nutsx1",
       "untarx1",
@@ -3855,7 +3868,8 @@
     "secureContainerSaved": [
       "golden_roosterx1",
       "tor_teamx1",
-      "fast_mtx2"
+      "fast_mtx1",
+      "fast_mtx1"
     ],
     "stashItems": [],
     "logs": [
@@ -3924,7 +3938,8 @@
       ]
     },
     "lootFound": [
-      "armor_6b23x2",
+      "armor_6b23x1",
+      "armor_6b23x1",
       "pacax1",
       "nutsx1",
       "untarx1",
@@ -3945,7 +3960,8 @@
     "secureContainerSaved": [
       "golden_roosterx1",
       "tor_teamx1",
-      "fast_mtx2"
+      "fast_mtx1",
+      "fast_mtx1"
     ],
     "stashItems": [],
     "logs": [
@@ -4008,7 +4024,8 @@
     "combatTarget": null,
     "lootFound": [
       "fast_mtx1",
-      "armor_6b23x2",
+      "armor_6b23x1",
+      "armor_6b23x1",
       "pacax1",
       "nutsx1",
       "untarx1",
@@ -4198,7 +4215,9 @@
     "combatTarget": null,
     "lootFound": [
       "fast_mtx1",
-      "armor_6b23x3",
+      "armor_6b23x1",
+      "armor_6b23x1",
+      "armor_6b23x1",
       "pacax1",
       "nutsx1",
       "untarx1",
@@ -4295,8 +4314,11 @@
     },
     "combatTarget": null,
     "lootFound": [
-      "fast_mtx2",
-      "armor_6b23x3",
+      "fast_mtx1",
+      "fast_mtx1",
+      "armor_6b23x1",
+      "armor_6b23x1",
+      "armor_6b23x1",
       "pacax1",
       "nutsx1",
       "untarx1",
@@ -4402,8 +4424,11 @@
     },
     "combatTarget": null,
     "lootFound": [
-      "fast_mtx2",
-      "armor_6b23x3",
+      "fast_mtx1",
+      "fast_mtx1",
+      "armor_6b23x1",
+      "armor_6b23x1",
+      "armor_6b23x1",
       "pacax1",
       "nutsx1",
       "untarx1",
@@ -4430,8 +4455,11 @@
       "tor_teamx1"
     ],
     "stashItems": [
-      "fast_mtx2",
-      "armor_6b23x3",
+      "fast_mtx1",
+      "fast_mtx1",
+      "armor_6b23x1",
+      "armor_6b23x1",
+      "armor_6b23x1",
       "pacax1",
       "nutsx1",
       "untarx1",

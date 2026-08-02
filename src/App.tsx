@@ -20,6 +20,7 @@ import {
 
 import { useGameSave, STORAGE_KEY } from "./hooks/useGameSave";
 import { useRaidTick } from "./hooks/useRaidTick";
+import { isArmorItem } from "./engine/lootManagement";
 import { produce, current } from "immer";
 
 /**
@@ -136,6 +137,10 @@ export default function App() {
 
         // Secure container saved
         raid.secureContainerSaved.forEach((containerEntry) => {
+          if (isArmorItem(containerEntry.item)) {
+            draft.stash.items.push({ item: containerEntry.item, quantity: containerEntry.quantity });
+            return;
+          }
           const stashEntry = draft.stash.items.find(i => i.item.id === containerEntry.item.id);
           if (stashEntry) {
             stashEntry.quantity += containerEntry.quantity;
@@ -166,6 +171,21 @@ export default function App() {
           // Clean out empty slots
           draft.stash.items = draft.stash.items.filter((i) => i.quantity > 0);
         }
+      });
+      if (next !== prev) localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
+    });
+  };
+
+  // SELL A SPECIFIC ARMOR/HELMET PIECE (per-instance, keyed by stash index)
+  const handleSellArmor = (stashIndex: number) => {
+    setGameState((prev) => {
+      const next = produce(prev, (draft) => {
+        const entry = draft.stash.items[stashIndex];
+        if (!entry || entry.quantity <= 0) return;
+        const gain = entry.item.value * entry.quantity;
+        draft.stash.roubles += gain;
+        draft.stash.items.splice(stashIndex, 1);
       });
       if (next !== prev) localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       return next;
@@ -313,43 +333,29 @@ export default function App() {
     });
   };
 
-  // EQUIP ARMOR / HELMET
-  const handleEquipArmor = (itemId: string) => {
+  // EQUIP ARMOR / HELMET — swaps a specific stash piece into the equipped slot,
+  // returning the previously worn piece (with its durability) to the stash.
+  // Pieces are per-instance stash entries, so the target is a stash index.
+  const handleEquipArmor = (stashIndex: number) => {
     setGameState((prev) => {
       const next = produce(prev, (draft) => {
-        const item = ALL_ITEMS[itemId];
-        if (!item) return;
+        const entry = draft.stash.items[stashIndex];
+        if (!entry || entry.quantity <= 0) return;
 
-        const stashEntry = draft.stash.items.find((e: { item: GameItem; quantity: number }) => e.item.id === itemId && e.quantity > 0);
-        if (!stashEntry) return;
+        const item = entry.item;
+        const isHelmet = item.type === "helmet";
+        const isArmor = item.type === "armor";
+        if (!isHelmet && !isArmor) return;
 
-        if (item.type === "helmet") {
-          const oldHelmet = draft.pmc.equippedHelmet;
-          draft.pmc.equippedHelmet = cloneItem(item);
-          if (oldHelmet) {
-            const existing = draft.stash.items.find((e: { item: GameItem; quantity: number }) => e.item.id === oldHelmet.id);
-            if (existing) existing.quantity++;
-            else draft.stash.items.push({ item: oldHelmet, quantity: 1 });
-          }
-          stashEntry.quantity--;
-          if (stashEntry.quantity <= 0) {
-            const idx = draft.stash.items.indexOf(stashEntry);
-            draft.stash.items.splice(idx, 1);
-          }
-        } else if (item.type === "armor") {
-          const oldArmor = draft.pmc.equippedArmor;
-          draft.pmc.equippedArmor = cloneItem(item);
-          if (oldArmor) {
-            const existing = draft.stash.items.find((e: { item: GameItem; quantity: number }) => e.item.id === oldArmor.id);
-            if (existing) existing.quantity++;
-            else draft.stash.items.push({ item: oldArmor, quantity: 1 });
-          }
-          stashEntry.quantity--;
-          if (stashEntry.quantity <= 0) {
-            const idx = draft.stash.items.indexOf(stashEntry);
-            draft.stash.items.splice(idx, 1);
-          }
-        }
+        const old = isHelmet ? draft.pmc.equippedHelmet : draft.pmc.equippedArmor;
+        if (isHelmet) draft.pmc.equippedHelmet = item;
+        else draft.pmc.equippedArmor = item;
+
+        // Remove the equipped piece from the stash (it now lives on the PMC).
+        draft.stash.items.splice(stashIndex, 1);
+
+        // Return the previously worn piece to the stash as its own entry.
+        if (old) draft.stash.items.push({ item: old, quantity: 1 });
       });
       if (next !== prev) localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       return next;
@@ -617,6 +623,7 @@ export default function App() {
           <StashScreen
             gameState={gameState}
             onSellItem={handleSellItem}
+            onSellArmor={handleSellArmor}
             onBuyItem={handleBuyItem}
             onConsumeItem={handleConsumeItem}
             onEquipWeapon={handleEquipWeapon}

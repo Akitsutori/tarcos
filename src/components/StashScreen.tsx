@@ -9,6 +9,7 @@ import { ALL_ITEMS } from "../data/content/items";
 import { MEDSTATION_HEAL_PER_5S_BY_LEVEL } from "../data/tuning/hideoutConfig";
 import { BodyMap } from "./BodyMap";
 import { totalCurrentHp, totalMaxHp } from "../engine/bodyParts";
+import { isArmorItem } from "../engine/lootManagement";
 import { 
   Coins, PackageOpen, Heart, Zap, 
   Droplet, Package
@@ -17,15 +18,17 @@ import {
 interface StashScreenProps {
   gameState: GameState;
   onSellItem: (itemId: string, quantity: number) => void;
+  onSellArmor: (stashIndex: number) => void;
   onBuyItem: (itemId: string, cost: number) => void;
   onConsumeItem: (itemId: string) => void;
   onEquipWeapon: (weaponId: string) => void;
-  onEquipArmor: (itemId: string) => void;
+  onEquipArmor: (stashIndex: number) => void;
 }
 
 export const StashScreen: React.FC<StashScreenProps> = ({
   gameState,
   onSellItem,
+  onSellArmor,
   onBuyItem,
   onConsumeItem,
   onEquipWeapon,
@@ -39,12 +42,24 @@ export const StashScreen: React.FC<StashScreenProps> = ({
   const hpPercent = totalMaxHP > 0 ? (totalCurrentHP / totalMaxHP) * 100 : 0;
   const [activeCategory, setActiveCategory] = useState<ItemType | "all">("all");
 
-  // Unified item list: owned items + buyable items from traders
-  // Medical/provision items: single entry per type, quantity = backup kits
-  const allVisibleItems = useMemo(() => {
+  // Unified item list: owned items + buyable items from traders.
+  // Armor/helmet are per-instance pieces (own stash entry, own durability),
+  // rendered as separate rows; everything else aggregates by id.
+  const { armorPieces, aggregatedRows } = useMemo(() => {
+    const armorPieces: {
+      item: GameItem;
+      stashIndex: number;
+    }[] = [];
+    const nonArmorEntries: { item: GameItem; quantity: number }[] = [];
+
+    stash.items.forEach((entry, index) => {
+      if (isArmorItem(entry.item)) armorPieces.push({ item: entry.item, stashIndex: index });
+      else nonArmorEntries.push(entry);
+    });
+
     const ownedMap = new Map<string, number>();
     const resourceMap = new Map<string, { lowest: number; max: number }>();
-    for (const entry of stash.items) {
+    for (const entry of nonArmorEntries) {
       const isActive = entry.item.resourceCurrent !== undefined && entry.item.resourceCurrent > 0;
       const hasBackups = entry.quantity > 0;
       if (!isActive && !hasBackups) continue;
@@ -62,7 +77,7 @@ export const StashScreen: React.FC<StashScreenProps> = ({
       }
     }
 
-    const result: {
+    const aggregatedRows: {
       item: GameItem;
       owned: number;
       buyable: boolean;
@@ -74,7 +89,7 @@ export const StashScreen: React.FC<StashScreenProps> = ({
     for (const item of Object.values(ALL_ITEMS)) {
       if (item.soldBy && item.traderCost) {
         const res = resourceMap.get(item.id);
-        result.push({
+        aggregatedRows.push({
           item,
           owned: ownedMap.get(item.id) ?? 0,
           buyable: true,
@@ -85,12 +100,12 @@ export const StashScreen: React.FC<StashScreenProps> = ({
     }
 
     // Owned items that are NOT buyable
-    for (const entry of stash.items) {
+    for (const entry of nonArmorEntries) {
       if (entry.quantity > 0 && !(entry.item.soldBy && entry.item.traderCost)) {
-        const existing = result.find(r => r.item.id === entry.item.id);
+        const existing = aggregatedRows.find(r => r.item.id === entry.item.id);
         if (!existing) {
           const res = resourceMap.get(entry.item.id);
-          result.push({
+          aggregatedRows.push({
             item: entry.item,
             owned: entry.quantity,
             buyable: false,
@@ -101,11 +116,17 @@ export const StashScreen: React.FC<StashScreenProps> = ({
       }
     }
 
-    return result;
+    return { armorPieces, aggregatedRows };
   }, [stash.items]);
 
   // Filter by category
-  const filteredItems = allVisibleItems.filter(({ item }) => {
+  const filteredArmorPieces = armorPieces.filter(({ item }) => {
+    if (activeCategory === "all") return true;
+    if (activeCategory === "armor") return true;
+    return false;
+  });
+
+  const filteredRows = aggregatedRows.filter(({ item }) => {
     if (activeCategory === "all") return true;
     if (activeCategory === "armor") return item.type === "armor" || item.type === "helmet";
     return item.type === activeCategory;
@@ -178,7 +199,7 @@ export const StashScreen: React.FC<StashScreenProps> = ({
             </div>
           </div>
 
-          {filteredItems.length === 0 ? (
+          {filteredArmorPieces.length === 0 && filteredRows.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-slate-500 py-12">
               <PackageOpen size={40} className="text-slate-700 mb-3" />
               <span className="text-sm font-mono italic">No items to display.</span>
@@ -186,16 +207,90 @@ export const StashScreen: React.FC<StashScreenProps> = ({
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-y-auto max-h-[600px] pr-1">
-              {filteredItems.map(({ item, owned, buyable, resourceLowest, resourceMax }) => {
+              {/* Armor/helmet pieces: one card per instance with its own durability */}
+              {filteredArmorPieces.map(({ item, stashIndex }) => {
+                const hasDurability = item.durability !== undefined && item.maxDurability !== undefined && item.maxDurability > 0;
+                const durabilityPercent = hasDurability ? ((item.durability ?? 0) / (item.maxDurability ?? 1)) * 100 : null;
+
+                return (
+                  <div
+                    key={`armor-piece-${stashIndex}`}
+                    className="p-3 border rounded-lg flex flex-col justify-between transition bg-slate-950 border-slate-800/80 hover:border-slate-700"
+                  >
+                    <div>
+                      <div className="flex justify-between items-start gap-2">
+                        <span className="text-xs font-bold line-clamp-1 text-slate-200">
+                          {item.name}
+                        </span>
+                        <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold font-mono uppercase border ${getRarityBadgeStyle(item.rarity)}`}>
+                          {item.rarity}
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-slate-500 mt-1 line-clamp-2 min-h-[30px]">
+                        {item.description}
+                      </p>
+                    </div>
+
+                    {/* Durability bar for armor/helmet pieces */}
+                    {hasDurability && durabilityPercent !== null && (
+                      <div className="mt-2">
+                        <div className="flex justify-between items-center text-[9px] font-mono mb-0.5">
+                          <span className="text-slate-500">Durability {item.armorClass ? `(Class ${item.armorClass})` : ""}</span>
+                          <span className={`font-bold ${
+                            durabilityPercent >= 60 ? "text-emerald-400" : durabilityPercent >= 25 ? "text-amber-400" : "text-red-400"
+                          }`}>
+                            {item.durability}/{item.maxDurability}
+                          </span>
+                        </div>
+                        <div className="h-1 bg-slate-900 rounded overflow-hidden border border-slate-800/50">
+                          <div
+                            className={`h-full rounded transition-all duration-300 ${
+                              durabilityPercent >= 60 ? "bg-emerald-500" : durabilityPercent >= 25 ? "bg-amber-500" : "bg-red-500"
+                            }`}
+                            style={{ width: `${Math.min(100, Math.max(0, durabilityPercent))}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="border-t border-slate-900 mt-3 pt-2.5 flex items-center justify-between">
+                      <div className="font-mono text-[10px]">
+                        <span className="text-slate-500">Qty:</span> <span className="text-slate-200 font-bold">1</span>
+                        <span className="text-slate-600 mx-1.5">|</span>
+                        <span className="text-slate-500">Sell:</span> <span className="text-amber-500 font-bold">₽{item.value}</span>
+                      </div>
+
+                      <div className="flex gap-1">
+                        {/* EQUIP button — every stash piece can be equipped (equipping removes it from the stash) */}
+                        <button
+                          id={`equip-armor-btn-${item.id}-${stashIndex}`}
+                          onClick={() => onEquipArmor(stashIndex)}
+                          className="px-2 py-1 bg-cyan-950/40 text-cyan-400 border border-cyan-900/40 rounded text-[9px] font-mono hover:bg-cyan-950/60 transition"
+                        >
+                          EQUIP
+                        </button>
+                        <button
+                          id={`sell-armor-btn-${item.id}-${stashIndex}`}
+                          onClick={() => onSellArmor(stashIndex)}
+                          className="px-2 py-1 bg-slate-900 text-amber-500 border border-amber-900/40 rounded text-[9px] font-mono hover:bg-amber-500 hover:text-slate-950 transition"
+                        >
+                          SELL 1
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Stacked/market rows for non-armor items */}
+              {filteredRows.map(({ item, owned, buyable, resourceLowest, resourceMax }) => {
                 const isConsumable = item.type === "medical" || item.type === "provision";
                 const isMedkit = item.medicalSubType === "medkit";
                 const isSurgicalKit = item.medicalSubType === "surgical";
                 const hasResource = isMedkit || isSurgicalKit || item.type === "provision";
-                const isArmor = item.type === "armor" || item.type === "helmet";
                 const isAffordable = buyable && stash.roubles >= (item.traderCost ?? 0);
                 const isOwned = owned > 0;
-                const isEquippedArmor = isArmor && isOwned && (item.id === pmc.equippedArmor?.id || item.id === pmc.equippedHelmet?.id);
-                const hasDurability = isArmor && item.durability !== undefined && item.maxDurability !== undefined && item.maxDurability > 0;
+                const hasDurability = item.durability !== undefined && item.maxDurability !== undefined && item.maxDurability > 0;
                 const durabilityPercent = hasDurability ? ((item.durability ?? 0) / (item.maxDurability ?? 1)) * 100 : null;
                 const resourcePercent = hasResource && resourceMax && resourceMax > 0 && resourceLowest !== undefined
                   ? (resourceLowest / resourceMax) * 100
@@ -316,24 +411,6 @@ export const StashScreen: React.FC<StashScreenProps> = ({
                           >
                             USE
                           </button>
-                        )}
-
-                        {/* EQUIP button — show when owned and armor/helmet and not currently equipped */}
-                        {isOwned && isArmor && !isEquippedArmor && (
-                          <button
-                            id={`equip-armor-btn-${item.id}`}
-                            onClick={() => onEquipArmor(item.id)}
-                            className="px-2 py-1 bg-cyan-950/40 text-cyan-400 border border-cyan-900/40 rounded text-[9px] font-mono hover:bg-cyan-950/60 transition"
-                          >
-                            EQUIP
-                          </button>
-                        )}
-
-                        {/* EQUIPPED badge — show when owned and currently equipped */}
-                        {isOwned && isArmor && isEquippedArmor && (
-                          <span className="px-2 py-1 bg-cyan-500 text-slate-950 rounded text-[9px] font-mono font-bold">
-                            Equipped
-                          </span>
                         )}
 
                         {/* SELL buttons — show when owned */}

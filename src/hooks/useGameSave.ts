@@ -137,7 +137,19 @@ export const useGameSave = () => {
         if (parsed.stash.items) {
           parsed.stash.items = parsed.stash.items.map(entry => {
             const freshItem = ALL_ITEMS[entry.item?.id || ""];
-            return freshItem ? { item: freshItem, quantity: entry.quantity } : entry;
+            if (!freshItem) return entry;
+            // Re-sync the item shape against the catalog while preserving
+            // instance state: durability for armor/helmet pieces and remaining
+            // resource for medical/provision kits.
+            const merged = { ...freshItem };
+            if (freshItem.type === "armor" || freshItem.type === "helmet") {
+              merged.durability = entry.item.durability;
+              merged.maxDurability = entry.item.maxDurability;
+            } else if (freshItem.type === "medical" || freshItem.type === "provision") {
+              merged.resourceCurrent = entry.item.resourceCurrent;
+              merged.resourceMax = entry.item.resourceMax;
+            }
+            return { item: merged, quantity: entry.quantity };
           });
         } else {
           parsed.stash.items = defaultState.stash.items;

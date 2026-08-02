@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { sortLootIntoContainers } from './lootManagement';
 import { GameItem } from '../types';
+import { ALL_ITEMS } from '../data/content/items';
 
 const makeItem = (id: string, value: number): GameItem => ({
   id,
@@ -51,5 +52,18 @@ describe('sortLootIntoContainers', () => {
 
     expect(secureContainerSaved.map(e => e.item.id)).toEqual(["b", "a"]);
     expect(lootFound).toEqual([]);
+  });
+
+  it('keeps armor/helmet pieces as separate instances with per-piece durability', () => {
+    const pieceA = { ...ALL_ITEMS.armor_6b23, durability: 40 };
+    const pieceB = { ...ALL_ITEMS.armor_6b23, durability: 45 };
+    const allLoot = [{ item: pieceA, quantity: 1 }, { item: pieceB, quantity: 1 }];
+
+    const { lootFound, secureContainerSaved } = sortLootIntoContainers(allLoot, 0);
+
+    expect(secureContainerSaved).toEqual([]);
+    expect(lootFound).toHaveLength(2);
+    expect(lootFound.map(e => e.quantity)).toEqual([1, 1]);
+    expect(lootFound.map(e => e.item.durability).sort()).toEqual([40, 45]);
   });
 });
